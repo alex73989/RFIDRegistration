@@ -319,43 +319,6 @@ namespace RFIDRegistration
             ResetLoadCertUser();
             ResetLoadCertKey();
             ResetMQTTCA();
-            /*RPC = JsonConvert.DeserializeObject<RPCGet>(DummyData);
-
-            if (RPC.System_Settings[0].Wifi[0].Wifi_Connection_Type != null)
-            {
-                btn_Wifi.Enabled = true;
-            }
-            else
-            {
-                btn_Wifi.Enabled = false;
-            }
-
-            if (RPC.System_Settings[0].StaticIP[0].Enable.ToString() == "true")
-            {
-                btn_StaticIP.Enabled = true;
-            }
-            else
-            {
-                btn_StaticIP.Enabled = false;
-            }
-
-            if (RPC.System_Settings[0].SNTP[0].Enable.ToString() == "true")
-            {
-                btn_Sntp.Enabled = true;
-            }
-            else
-            {
-                btn_Sntp.Enabled = false;
-            }
-
-            if (RPC.System_Settings[0].MQTT[0].Enable.ToString() == "true")
-            {
-                btn_Mqtt.Enabled = true;
-            }
-            else
-            {
-                btn_Mqtt.Enabled = false;
-            }*/
 
             btn_Submit.Enabled = false;
 
@@ -730,7 +693,6 @@ namespace RFIDRegistration
                 tBox_commanddelivered.Text = "";
             }
         }
-
 
         private void btn_GetCurrentNewSetting_Click(object sender, EventArgs e)
         {
