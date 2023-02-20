@@ -3421,6 +3421,11 @@ namespace RFIDRegistration
             }
         }
 
+        private void tBoxReceiverOutput_01_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
         private void btnPubDevUpAttb_04_Click(object sender, EventArgs e)
         {
             if (ConnectionStatus_03)
@@ -3885,8 +3890,8 @@ namespace RFIDRegistration
 
         private void tBoxOverallReceiver_TextChanged(object sender, EventArgs e)
         {
-            //tBoxOverallReceiver.SelectionStart = tBoxOverallReceiver.Text.Length;
-            //tBoxOverallReceiver.ScrollToCaret();
+            tBoxOverallReceiver.SelectionStart = tBoxOverallReceiver.Text.Length;
+            tBoxOverallReceiver.ScrollToCaret();
         }
 
         /* ========== MQTT Functions ========== */

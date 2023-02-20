@@ -84,6 +84,7 @@ namespace RFIDRegistration
             this.btnPubRPCReq_04 = new System.Windows.Forms.Button();
             this.cBoxSelectionMQTTIND_01 = new System.Windows.Forms.ComboBox();
             this.groupBox16 = new System.Windows.Forms.GroupBox();
+            this.btn_TagConfig = new System.Windows.Forms.Button();
             this.btnRPCConfig_03 = new System.Windows.Forms.Button();
             this.btnPubRPCReq_03 = new System.Windows.Forms.Button();
             this.cBoxSelectionMQTTCommandsType = new System.Windows.Forms.ComboBox();
@@ -137,7 +138,6 @@ namespace RFIDRegistration
             this.btnClearOverallReceiver = new System.Windows.Forms.Button();
             this.tBoxOverallReceiver = new System.Windows.Forms.TextBox();
             this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
-            this.btn_TagConfig = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBox14.SuspendLayout();
@@ -968,6 +968,17 @@ namespace RFIDRegistration
             this.groupBox16.TabStop = false;
             this.groupBox16.Text = "MQTT RFID Commands";
             // 
+            // btn_TagConfig
+            // 
+            this.btn_TagConfig.Location = new System.Drawing.Point(15, 216);
+            this.btn_TagConfig.Margin = new System.Windows.Forms.Padding(2);
+            this.btn_TagConfig.Name = "btn_TagConfig";
+            this.btn_TagConfig.Size = new System.Drawing.Size(139, 43);
+            this.btn_TagConfig.TabIndex = 49;
+            this.btn_TagConfig.Text = "Tag Configuration";
+            this.btn_TagConfig.UseVisualStyleBackColor = true;
+            this.btn_TagConfig.Click += new System.EventHandler(this.btn_TagConfig_Click);
+            // 
             // btnRPCConfig_03
             // 
             this.btnRPCConfig_03.Location = new System.Drawing.Point(15, 169);
@@ -1513,6 +1524,7 @@ namespace RFIDRegistration
             this.tBoxReceiverOutput_01.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.tBoxReceiverOutput_01.Size = new System.Drawing.Size(411, 285);
             this.tBoxReceiverOutput_01.TabIndex = 0;
+            this.tBoxReceiverOutput_01.TextChanged += new System.EventHandler(this.tBoxReceiverOutput_01_TextChanged);
             // 
             // btnClearReceiverTxt_01
             // 
@@ -1598,17 +1610,6 @@ namespace RFIDRegistration
             // serialPort1
             // 
             this.serialPort1.DataReceived += new System.IO.Ports.SerialDataReceivedEventHandler(this.serialPort1_DataReceived);
-            // 
-            // btn_TagConfig
-            // 
-            this.btn_TagConfig.Location = new System.Drawing.Point(15, 216);
-            this.btn_TagConfig.Margin = new System.Windows.Forms.Padding(2);
-            this.btn_TagConfig.Name = "btn_TagConfig";
-            this.btn_TagConfig.Size = new System.Drawing.Size(139, 43);
-            this.btn_TagConfig.TabIndex = 49;
-            this.btn_TagConfig.Text = "Tag Configuration";
-            this.btn_TagConfig.UseVisualStyleBackColor = true;
-            this.btn_TagConfig.Click += new System.EventHandler(this.btn_TagConfig_Click);
             // 
             // IndicatorForm
             // 
