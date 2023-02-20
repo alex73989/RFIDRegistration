@@ -16,6 +16,7 @@ namespace RFIDRegistration
     public partial class RPCConfig : Form
     {
         // WIRIO3_58BF25A85088
+        // WIRIO3_68B6B329DEAC
         public string GetData, GetIPAddress, GetWirioID;
         public static RPCConfig instance;
 

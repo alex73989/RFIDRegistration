@@ -199,8 +199,5 @@
   <ItemGroup>
     <Folder Include="Views\" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="Public\UhfReader_API_HID.dll" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

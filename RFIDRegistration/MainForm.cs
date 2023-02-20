@@ -25,7 +25,7 @@ namespace RFIDRegistration
         //private const string requestInputUIIText = "Please input UII (Hex)";
 
         // Address of SQL Server and Database
-        SqlConnection con = new SqlConnection("Data Source=MXPACALEX;Initial Catalog=Dek_MachineDB;Integrated Security=True;MultipleActiveResultSets=true");
+        SqlConnection con = new SqlConnection("Data Source=localhost;Initial Catalog=Dek_MachineDB;Integrated Security=True;MultipleActiveResultSets=true");
 
         public MainForm()
         {

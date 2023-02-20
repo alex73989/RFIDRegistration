@@ -267,6 +267,17 @@ namespace RFIDRegistration.Models
 
         [JsonProperty("s.inputport.setup")]
         public List<InputPortConfig> InputSetup { get; set; }
+
+        /* ========== Temperature Sensor ========== */
+
+        [JsonProperty("s.envsensor.ratectrl")]
+        public string Rate_Control { get; set; }
+
+        [JsonProperty("s.envsensor.ratectrlperiod")]
+        public string Rate_Control_Period { get; set; }
+
+        [JsonProperty("t.envsensor.param")]
+        public List<EvnSensorParam> Sensor_Data { get; set; }
     }
 
     public class Peripharal
@@ -313,5 +324,17 @@ namespace RFIDRegistration.Models
 
         [JsonProperty("debounce")]
         public string Debounce { get; set; }
+    }
+
+    public class EvnSensorParam
+    {
+        [JsonProperty("sht4x_temp")]
+        public string Detect_Temp { get; set; }
+
+        [JsonProperty("sht4x_hum")]
+        public string Detect_Humidity { get; set; }
+
+        [JsonProperty("bmp280a_pressure")]
+        public string Detect_Room_Pressure { get; set; }
     }
 }
