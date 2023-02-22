@@ -12,6 +12,8 @@ namespace RFIDRegistration
 {
     public partial class TagConfig : Form
     {
+        public static TagConfig instance;
+
         public TagConfig()
         {
             InitializeComponent();
@@ -19,6 +21,8 @@ namespace RFIDRegistration
             ResetART();
             ResetTR();
             ResetTW();
+            ResetTS();
+            instance = this;
         }
 
         public void ResetFS()
@@ -177,6 +181,15 @@ namespace RFIDRegistration
             chBox_TW_InvertFalse.Checked = false;
         }
 
+        public void ResetTS()
+        {
+            chBox_TS_Enable.Checked= false;
+            chBox_TS_Disable.Checked= false;
+
+            tBox_TS_RatePeriod.Enabled = false;
+            tBox_TS_RatePeriod.Text = "";
+        }
+
         public void SetLogText(string GetText)
         {
             tBox_log.Text += DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss") + " : " + Environment.NewLine + GetText + Environment.NewLine + Environment.NewLine;
@@ -204,6 +217,12 @@ namespace RFIDRegistration
         {
             ResetTW();
             SetLogText("(Tag Writting) Reset Successfully!");
+        }
+
+        private void btn_TS_Clear_Click(object sender, EventArgs e)
+        {
+            ResetTS();
+            SetLogText("(Temp Sensor) Reset Successfully!");
         }
 
         private void btn_FS_Proceed_Click(object sender, EventArgs e)
@@ -492,6 +511,19 @@ namespace RFIDRegistration
             }
         }
 
+        private void btn_TS_Proceed_Click(object sender, EventArgs e)
+        {
+            if (chBox_TS_Enable.Checked == true && chBox_TS_Disable.Checked == false)
+            {
+                tBox_Comm.Text = "{\"s.envsensor.ratectrl\":1" +
+                    ",\"s.envsensor.ratectrlperiod\":" + tBox_TS_RatePeriod.Text + "}}" ;
+            }
+            else if (chBox_TS_Disable.Checked == true && chBox_TS_Enable.Checked == false)
+            {
+                tBox_Comm.Text = "{\"s.envsensor.ratectrl\":0}";
+            }
+        }
+
         private void chBox_ART_EnableTagData_CheckedChanged(object sender, EventArgs e)
         {
             if (chBox_ART_EnableTagData.Checked == true)
@@ -731,6 +763,49 @@ namespace RFIDRegistration
             {
                 chBox_TW_InvertTrue.Checked = true;
             }
+        }
+
+        private void chBox_TS_Enable_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chBox_TS_Enable.Checked == true)
+            {
+                chBox_TS_Disable.Checked = false;
+                tBox_TS_RatePeriod.Enabled = true;
+            }
+            else
+            {
+                chBox_TS_Disable.Checked = true;
+            }
+        }
+
+        private void chBox_TS_Disable_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chBox_TS_Disable.Checked == true)
+            {
+                chBox_TS_Enable.Checked = false;
+                tBox_TS_RatePeriod.Enabled = false;
+            }
+            else
+            {
+                chBox_TS_Enable.Checked = true;
+            }
+        }
+
+        private void btn_Submit_Click(object sender, EventArgs e)
+        {
+            IndicatorForm.instance.RPCTxt.Text = tBox_Comm.Text.ToString();
+            if (tBox_Comm.Text.Contains("r.uhfrfid.readtag") || tBox_Comm.Text.Contains("r.uhfrfid.writetag"))
+            {
+                IndicatorForm.instance.PubAttb.Enabled = false;
+                IndicatorForm.instance.PubRPCReq.Enabled = true;
+            }
+            else
+            {
+                IndicatorForm.instance.PubAttb.Enabled = true;
+                IndicatorForm.instance.PubRPCReq.Enabled = false;
+            }
+            
+            SetLogText("Successfully Submit RPC Reply!");
         }
     }
 }

@@ -138,6 +138,9 @@ namespace RFIDRegistration
             RPCTxt = tBoxPublish_03;
             PubRPCReq = btnPubRPCReq_03;
             PubAttb = btnPubDevUpAttb_03;
+
+            btnPubRPCReq_03.Enabled = false;
+            btnPubDevUpAttb_03.Enabled = false;
         }
 
         public void MQTTGroupBoxSelection()

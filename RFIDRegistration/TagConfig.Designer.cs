@@ -121,6 +121,14 @@
             this.tBox_TW_Timeout = new System.Windows.Forms.TextBox();
             this.label43 = new System.Windows.Forms.Label();
             this.btn_TW_Proceed = new System.Windows.Forms.Button();
+            this.tabPage_TempSensor = new System.Windows.Forms.TabPage();
+            this.chBox_TS_Disable = new System.Windows.Forms.CheckBox();
+            this.chBox_TS_Enable = new System.Windows.Forms.CheckBox();
+            this.label14 = new System.Windows.Forms.Label();
+            this.tBox_TS_RatePeriod = new System.Windows.Forms.TextBox();
+            this.label18 = new System.Windows.Forms.Label();
+            this.btn_TS_Clear = new System.Windows.Forms.Button();
+            this.btn_TS_Proceed = new System.Windows.Forms.Button();
             this.groupBox4.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.tab_ConfigurationSection.SuspendLayout();
@@ -130,6 +138,7 @@
             this.groupBox2.SuspendLayout();
             this.tabPage_TagWritting.SuspendLayout();
             this.groupBox3.SuspendLayout();
+            this.tabPage_TempSensor.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox4
@@ -186,6 +195,7 @@
             this.btn_Submit.TabIndex = 9;
             this.btn_Submit.Text = "Submit";
             this.btn_Submit.UseVisualStyleBackColor = true;
+            this.btn_Submit.Click += new System.EventHandler(this.btn_Submit_Click);
             // 
             // tBox_Comm
             // 
@@ -212,6 +222,7 @@
             this.tab_ConfigurationSection.Controls.Add(this.tabPage_AutoReadTag);
             this.tab_ConfigurationSection.Controls.Add(this.tabPage_TagReading);
             this.tab_ConfigurationSection.Controls.Add(this.tabPage_TagWritting);
+            this.tab_ConfigurationSection.Controls.Add(this.tabPage_TempSensor);
             this.tab_ConfigurationSection.Location = new System.Drawing.Point(6, 19);
             this.tab_ConfigurationSection.Name = "tab_ConfigurationSection";
             this.tab_ConfigurationSection.SelectedIndex = 0;
@@ -1140,6 +1151,98 @@
             this.btn_TW_Proceed.UseVisualStyleBackColor = true;
             this.btn_TW_Proceed.Click += new System.EventHandler(this.btn_TW_Proceed_Click);
             // 
+            // tabPage_TempSensor
+            // 
+            this.tabPage_TempSensor.Controls.Add(this.btn_TS_Clear);
+            this.tabPage_TempSensor.Controls.Add(this.btn_TS_Proceed);
+            this.tabPage_TempSensor.Controls.Add(this.tBox_TS_RatePeriod);
+            this.tabPage_TempSensor.Controls.Add(this.label18);
+            this.tabPage_TempSensor.Controls.Add(this.chBox_TS_Disable);
+            this.tabPage_TempSensor.Controls.Add(this.chBox_TS_Enable);
+            this.tabPage_TempSensor.Controls.Add(this.label14);
+            this.tabPage_TempSensor.Location = new System.Drawing.Point(4, 22);
+            this.tabPage_TempSensor.Name = "tabPage_TempSensor";
+            this.tabPage_TempSensor.Size = new System.Drawing.Size(737, 448);
+            this.tabPage_TempSensor.TabIndex = 4;
+            this.tabPage_TempSensor.Text = "Temp Sensor";
+            this.tabPage_TempSensor.UseVisualStyleBackColor = true;
+            // 
+            // chBox_TS_Disable
+            // 
+            this.chBox_TS_Disable.AutoSize = true;
+            this.chBox_TS_Disable.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chBox_TS_Disable.Location = new System.Drawing.Point(449, 92);
+            this.chBox_TS_Disable.Name = "chBox_TS_Disable";
+            this.chBox_TS_Disable.Size = new System.Drawing.Size(81, 24);
+            this.chBox_TS_Disable.TabIndex = 97;
+            this.chBox_TS_Disable.Text = "Disable";
+            this.chBox_TS_Disable.UseVisualStyleBackColor = true;
+            this.chBox_TS_Disable.CheckedChanged += new System.EventHandler(this.chBox_TS_Disable_CheckedChanged);
+            // 
+            // chBox_TS_Enable
+            // 
+            this.chBox_TS_Enable.AutoSize = true;
+            this.chBox_TS_Enable.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chBox_TS_Enable.Location = new System.Drawing.Point(365, 92);
+            this.chBox_TS_Enable.Name = "chBox_TS_Enable";
+            this.chBox_TS_Enable.Size = new System.Drawing.Size(78, 24);
+            this.chBox_TS_Enable.TabIndex = 96;
+            this.chBox_TS_Enable.Text = "Enable";
+            this.chBox_TS_Enable.UseVisualStyleBackColor = true;
+            this.chBox_TS_Enable.CheckedChanged += new System.EventHandler(this.chBox_TS_Enable_CheckedChanged);
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label14.Location = new System.Drawing.Point(173, 93);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(165, 20);
+            this.label14.TabIndex = 95;
+            this.label14.Text = "Enable Rate Control : ";
+            // 
+            // tBox_TS_RatePeriod
+            // 
+            this.tBox_TS_RatePeriod.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tBox_TS_RatePeriod.Location = new System.Drawing.Point(365, 135);
+            this.tBox_TS_RatePeriod.Name = "tBox_TS_RatePeriod";
+            this.tBox_TS_RatePeriod.Size = new System.Drawing.Size(234, 26);
+            this.tBox_TS_RatePeriod.TabIndex = 99;
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label18.Location = new System.Drawing.Point(173, 138);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(105, 20);
+            this.label18.TabIndex = 98;
+            this.label18.Text = "Rate Period : ";
+            // 
+            // btn_TS_Clear
+            // 
+            this.btn_TS_Clear.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_TS_Clear.ForeColor = System.Drawing.Color.Red;
+            this.btn_TS_Clear.Location = new System.Drawing.Point(413, 395);
+            this.btn_TS_Clear.Name = "btn_TS_Clear";
+            this.btn_TS_Clear.Size = new System.Drawing.Size(153, 40);
+            this.btn_TS_Clear.TabIndex = 117;
+            this.btn_TS_Clear.Text = "Clear";
+            this.btn_TS_Clear.UseVisualStyleBackColor = true;
+            this.btn_TS_Clear.Click += new System.EventHandler(this.btn_TS_Clear_Click);
+            // 
+            // btn_TS_Proceed
+            // 
+            this.btn_TS_Proceed.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_TS_Proceed.ForeColor = System.Drawing.Color.Green;
+            this.btn_TS_Proceed.Location = new System.Drawing.Point(572, 395);
+            this.btn_TS_Proceed.Name = "btn_TS_Proceed";
+            this.btn_TS_Proceed.Size = new System.Drawing.Size(153, 40);
+            this.btn_TS_Proceed.TabIndex = 116;
+            this.btn_TS_Proceed.Text = "Proceed";
+            this.btn_TS_Proceed.UseVisualStyleBackColor = true;
+            this.btn_TS_Proceed.Click += new System.EventHandler(this.btn_TS_Proceed_Click);
+            // 
             // TagConfig
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1166,6 +1269,8 @@
             this.tabPage_TagWritting.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
+            this.tabPage_TempSensor.ResumeLayout(false);
+            this.tabPage_TempSensor.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1265,5 +1370,13 @@
         private System.Windows.Forms.Button btn_TW_Clear;
         private System.Windows.Forms.CheckBox chBox_FS_InvertFalse;
         private System.Windows.Forms.CheckBox chBox_FS_InvertTrue;
+        private System.Windows.Forms.TabPage tabPage_TempSensor;
+        private System.Windows.Forms.Button btn_TS_Clear;
+        private System.Windows.Forms.Button btn_TS_Proceed;
+        private System.Windows.Forms.TextBox tBox_TS_RatePeriod;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.CheckBox chBox_TS_Disable;
+        private System.Windows.Forms.CheckBox chBox_TS_Enable;
+        private System.Windows.Forms.Label label14;
     }
 }
