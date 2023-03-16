@@ -17,7 +17,7 @@ namespace RFIDRegistration
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new IndicatorForm());
+            Application.Run(new MainForm());
         }
     }
 }
