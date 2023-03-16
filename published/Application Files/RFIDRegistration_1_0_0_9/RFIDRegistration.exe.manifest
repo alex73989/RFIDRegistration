@@ -1,0 +1,113 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<asmv1:assembly xsi:schemaLocation="urn:schemas-microsoft-com:asm.v1 assembly.adaptive.xsd" manifestVersion="1.0" xmlns:asmv1="urn:schemas-microsoft-com:asm.v1" xmlns="urn:schemas-microsoft-com:asm.v2" xmlns:asmv2="urn:schemas-microsoft-com:asm.v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:co.v1="urn:schemas-microsoft-com:clickonce.v1" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xmlns:co.v2="urn:schemas-microsoft-com:clickonce.v2">
+  <asmv1:assemblyIdentity name="RFIDRegistration.exe" version="1.0.0.9" publicKeyToken="25abd91ee2c86264" language="neutral" processorArchitecture="msil" type="win32" />
+  <application />
+  <entryPoint>
+    <assemblyIdentity name="RFIDRegistration" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
+    <commandLine file="RFIDRegistration.exe" parameters="" />
+  </entryPoint>
+  <trustInfo>
+    <security>
+      <applicationRequestMinimum>
+        <PermissionSet Unrestricted="true" ID="Custom" SameSite="site" />
+        <defaultAssemblyRequest permissionSetReference="Custom" />
+      </applicationRequestMinimum>
+      <requestedPrivileges xmlns="urn:schemas-microsoft-com:asm.v3">
+        <!--
+          UAC Manifest Options
+          If you want to change the Windows User Account Control level replace the
+          requestedExecutionLevel node with one of the following.
+
+        <requestedExecutionLevel  level="asInvoker" uiAccess="false" />
+        <requestedExecutionLevel  level="requireAdministrator" uiAccess="false" />
+        <requestedExecutionLevel  level="highestAvailable" uiAccess="false" />
+
+         If you want to utilize File and Registry Virtualization for backward
+         compatibility then delete the requestedExecutionLevel node.
+    -->
+        <requestedExecutionLevel level="asInvoker" uiAccess="false" />
+      </requestedPrivileges>
+    </security>
+  </trustInfo>
+  <dependency>
+    <dependentOS>
+      <osVersionInfo>
+        <os majorVersion="5" minorVersion="1" buildNumber="2600" servicePackMajor="0" />
+      </osVersionInfo>
+    </dependentOS>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="preRequisite" allowDelayedBinding="true">
+      <assemblyIdentity name="Microsoft.Windows.CommonLanguageRuntime" version="4.0.30319.0" />
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="M2Mqtt.Net.dll" size="52224">
+      <assemblyIdentity name="M2Mqtt.Net" version="4.3.0.0" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>R4bSX9vXbCeuS0Srq8dO/P+bsJ16YMNalFz8ESV02/U=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Newtonsoft.Json.dll" size="701992">
+      <assemblyIdentity name="Newtonsoft.Json" version="13.0.0.0" publicKeyToken="30AD4FE6B2A6AEED" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>tiSUnfiw46YVP9+3MKfG9JkLZZLuDZIuF4hDPSdmEPM=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="RFIDRegistration.exe" size="381368">
+      <assemblyIdentity name="RFIDRegistration" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>2A+dK7hHxqIjlL/+AEcU19VWzG/kr/IkZQjUbYyFuXo=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="System.Net.Http.Formatting.dll" size="179680">
+      <assemblyIdentity name="System.Net.Http.Formatting" version="5.2.9.0" publicKeyToken="31BF3856AD364E35" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>AGZBMLljrOXxJDrkeGkm6oG8GBCG/HFJ1hI1Z8ME01s=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="System.Web.Http.dll" size="456168">
+      <assemblyIdentity name="System.Web.Http" version="5.2.9.0" publicKeyToken="31BF3856AD364E35" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>FC/L32N+uJxKXtkLQ6G4ExcJH5pC1GTZFjRO9oPNpnQ=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <file name="RFIDRegistration.exe.config" size="864">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>ZaPpkkVH+IHgvfJSh4HtgV2004lycN5mwgSU0wqBN8Q=</dsig:DigestValue>
+    </hash>
+  </file>
+<publisherIdentity name="CN=MXPACALEX\Alex" issuerKeyHash="c689b351e34b9bf1a296f7d10bfd6993f19fa30f" /><Signature Id="StrongNameSignature" xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha256" /><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" /><DigestValue>FfTlmnUC9uffGqJTFb+f+5BFxHEgUrj2OoyaHEjwnUI=</DigestValue></Reference></SignedInfo><SignatureValue>Bxmv3l1jgkhSjmiGS8vGGpRtwyrARYo5PNJAaesq1UyKFcC/dd5QKmY351jP6FiuL0awkYZy5i6+LC6mZAPM1F9jmp/kRQuVy0LExsf/zf9g82SheF0FGdKoqSV4c33lbhkjOiXoii2pkq+34FI+78KTwRuttxAvJ5yaDpIcLWM=</SignatureValue><KeyInfo Id="StrongNameKeyInfo"><KeyValue><RSAKeyValue><Modulus>yJRV6+tajU76hLSxds8zFVxYZur5Eeqi7VzBsA354Igz5pgkBAycroNNMmE+Yo0hRqwJ0WBHMhUTbAtsf7cfEhiQ4Jy2xCdin/mTun8z2733ADwSpB2ZuSW7KKGijVyvWrMGitFC6GuyvYGRfsh00x4eSktPZcn9OrIl+XuK6xE=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue></KeyValue><msrel:RelData xmlns:msrel="http://schemas.microsoft.com/windows/rel/2005/reldata"><r:license xmlns:r="urn:mpeg:mpeg21:2003:01-REL-R-NS" xmlns:as="http://schemas.microsoft.com/windows/pki/2005/Authenticode"><r:grant><as:ManifestInformation Hash="429df0481c9a8c3af6b8522071c44590fb9fbf1553a21adfe7f602759ae5f415" Description="" Url=""><as:assemblyIdentity name="RFIDRegistration.exe" version="1.0.0.9" publicKeyToken="25abd91ee2c86264" language="neutral" processorArchitecture="msil" type="win32" /></as:ManifestInformation><as:SignedBy /><as:AuthenticodePublisher><as:X509SubjectName>CN=MXPACALEX\Alex</as:X509SubjectName></as:AuthenticodePublisher></r:grant><r:issuer><Signature Id="AuthenticodeSignature" xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha256" /><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" /><DigestValue>aBWXvWm8sUBQv0ML/3xMHHH8opP6MQRK5H1Od1lz6FA=</DigestValue></Reference></SignedInfo><SignatureValue>YoXkT0y+OwPf4vHyZrA3pd/cTn9mCkFVDyKdUpVeI6kDln3joi2In4+XdlCfpEGqFuCKEP6qWSZu2IKO+XpRgeFVEs8LiYdt0UXFCDYswEM6odUyE3tzKbVsq3s1rzAqZPuxIombzTo8wQe638i8G+YTIWcyF+h3CGaYEzVPw9g=</SignatureValue><KeyInfo><KeyValue><RSAKeyValue><Modulus>yJRV6+tajU76hLSxds8zFVxYZur5Eeqi7VzBsA354Igz5pgkBAycroNNMmE+Yo0hRqwJ0WBHMhUTbAtsf7cfEhiQ4Jy2xCdin/mTun8z2733ADwSpB2ZuSW7KKGijVyvWrMGitFC6GuyvYGRfsh00x4eSktPZcn9OrIl+XuK6xE=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue></KeyValue><X509Data><X509Certificate>MIIB0TCCATqgAwIBAgIQLew+U2OIgrhK0rRJ/r6XZTANBgkqhkiG9w0BAQsFADAnMSUwIwYDVQQDHhwATQBYAFAAQQBDAEEATABFAFgAXABBAGwAZQB4MB4XDTIzMDMxNjA3NDIzMloXDTI0MDMxNTEzNDIzMlowJzElMCMGA1UEAx4cAE0AWABQAEEAQwBBAEwARQBYAFwAQQBsAGUAeDCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAyJRV6+tajU76hLSxds8zFVxYZur5Eeqi7VzBsA354Igz5pgkBAycroNNMmE+Yo0hRqwJ0WBHMhUTbAtsf7cfEhiQ4Jy2xCdin/mTun8z2733ADwSpB2ZuSW7KKGijVyvWrMGitFC6GuyvYGRfsh00x4eSktPZcn9OrIl+XuK6xECAwEAATANBgkqhkiG9w0BAQsFAAOBgQAPj5GnnGCl7hd2YyXOuiWmSPIP+46xxdgErHsVN28iHl1zjpYz7YFb6ZrIkfee3c107/s+tq+kA++LAfLHW4Oo+XoyNxrKxRcBeSzdMCe4oT+csdN5WbujJPJ2BnmEUksoBAjzEmPq96HWlYuvdAWpaJh2Ntw8gTRBAeiE4eMFhw==</X509Certificate></X509Data></KeyInfo></Signature></r:issuer></r:license></msrel:RelData></KeyInfo></Signature></asmv1:assembly>
