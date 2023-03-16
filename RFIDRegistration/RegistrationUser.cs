@@ -8,19 +8,22 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SqlClient;
+using RFIDRegistration.Models;
 
 namespace RFIDRegistration
 {
     public partial class RegistrationUser : Form
     {
         string RequestFillInTheBlank = "Please Do Not Leave Blank at Column above!";
-        SqlConnection con = new SqlConnection("Data Source=MXPACALEX;Initial Catalog=Dek_MachineDB;Integrated Security=True");
+        // Address of SQL Server and Database
+        SqlConnect sqlConnect = new SqlConnect();
         public SqlCommand cmd;
         SqlDataReader dr;
 
         public RegistrationUser()
         {
             InitializeComponent();
+            sqlConnect.Connection();
         }
 
         private void RegistrationUser_Load(object sender, EventArgs e)
@@ -139,9 +142,9 @@ namespace RFIDRegistration
         public void Insert_RegistrationUser()
         {
             
-            con.Open();
+            sqlConnect.con.Open();
 
-            cmd = new SqlCommand("SELECT * FROM users_tb WHERE Username = '" + tBox_RegUser_Username + "'", con);
+            cmd = new SqlCommand("SELECT * FROM users_tb WHERE Username = '" + tBox_RegUser_Username + "'", sqlConnect.con);
             dr = cmd.ExecuteReader();
             if (dr.Read())
             {
@@ -152,9 +155,9 @@ namespace RFIDRegistration
             {
                 dr.Close();
                 
-                if(con.State == System.Data.ConnectionState.Open)
+                if(sqlConnect.con.State == System.Data.ConnectionState.Open)
                 {
-                    SqlDataAdapter dataAdapter_RegUser = new SqlDataAdapter("Insert_RegUserList", con);
+                    SqlDataAdapter dataAdapter_RegUser = new SqlDataAdapter("Insert_RegUserList", sqlConnect.con);
 
                     dataAdapter_RegUser.SelectCommand.CommandType = CommandType.StoredProcedure;
                     dataAdapter_RegUser.SelectCommand.Parameters.Add("@username", SqlDbType.VarChar).Value = tBox_RegUser_Username.Text;
@@ -179,7 +182,7 @@ namespace RFIDRegistration
 
 
             }
-            con.Close();
+            sqlConnect.con.Close();
         }
     }
 }

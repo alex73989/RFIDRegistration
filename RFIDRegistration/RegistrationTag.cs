@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SqlClient;
 using RFIDRegistration.Public;
+using RFIDRegistration.Models;
 
 namespace RFIDRegistration
 {
@@ -16,13 +17,15 @@ namespace RFIDRegistration
     {
         AutoCompleteStringCollection coll = new AutoCompleteStringCollection();
         private const string requestAttachDeviceText = "Please Connect To Device";
+
         // Address of SQL Server and Database
-        SqlConnection con = new SqlConnection("Data Source=MXPACALEX;Initial Catalog=Dek_MachineDB;Integrated Security=True;MultipleActiveResultSets=true");
+        SqlConnect sqlConnect = new SqlConnect();
 
         public RegistrationTag()
         {
             InitializeComponent();
             SetComboBoxValueEmpName();
+            sqlConnect.Connection();
         }
 
         public void TagTextRefresh()
@@ -38,10 +41,10 @@ namespace RFIDRegistration
 
         public void SetComboBoxValueEmpName()
         {
-            con.Open();
-            if (con.State == System.Data.ConnectionState.Open)
+            sqlConnect.con.Open();
+            if (sqlConnect.con.State == System.Data.ConnectionState.Open)
             {
-                SqlCommand sqlCommand = new SqlCommand("Select_UsersTB", con)
+                SqlCommand sqlCommand = new SqlCommand("Select_UsersTB", sqlConnect.con)
                 {
                     CommandType = CommandType.StoredProcedure
                 };
@@ -60,12 +63,12 @@ namespace RFIDRegistration
                     cBox_Tag_EmpName.Items.Add(ds.Tables[0].Rows[i][6].ToString());
                 }
             }
-            con.Close();
+            sqlConnect.con.Close();
         }
 
         public void AutoCompletePartNo()
         {
-            SqlCommand sqlCommand = new SqlCommand("Select_RegTagList", con)
+            SqlCommand sqlCommand = new SqlCommand("Select_RegTagList", sqlConnect.con)
             {
                 CommandType = CommandType.StoredProcedure
             };
@@ -123,11 +126,11 @@ namespace RFIDRegistration
                 else
                 {
                     // Open Connection
-                    con.Open();
+                    sqlConnect.con.Open();
 
-                    if (con.State == System.Data.ConnectionState.Open)
+                    if (sqlConnect.con.State == System.Data.ConnectionState.Open)
                     {
-                        SqlCommand sqlCommand = new SqlCommand("Insert_RegisterTagList", con)
+                        SqlCommand sqlCommand = new SqlCommand("Insert_RegisterTagList", sqlConnect.con)
                         {
                             CommandType = CommandType.StoredProcedure
                         };
@@ -186,7 +189,7 @@ namespace RFIDRegistration
                     }
 
                     // Close Connection
-                    con.Close();
+                    sqlConnect.con.Close();
                 }
             }
             else
@@ -229,10 +232,10 @@ namespace RFIDRegistration
 
         public void PopulateComboBox()
         {
-            con.Open();
-            if (con.State == System.Data.ConnectionState.Open)
+            sqlConnect.con.Open();
+            if (sqlConnect.con.State == System.Data.ConnectionState.Open)
             {
-                SqlCommand sqlCommand = new SqlCommand("Select_RegTagList", con)
+                SqlCommand sqlCommand = new SqlCommand("Select_RegTagList", sqlConnect.con)
                 {
                     CommandType = CommandType.StoredProcedure
                 };
@@ -251,7 +254,7 @@ namespace RFIDRegistration
                     cBox_Tag_SerialNo.Items.Add(ds.Tables[0].Rows[i]["Serial_No"].ToString());
                 }
             }
-            con.Close();
+            sqlConnect.con.Close();
         }
 
         private void tBox_Tag_PartNo_TextChanged(object sender, EventArgs e)

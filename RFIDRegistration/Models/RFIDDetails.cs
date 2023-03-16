@@ -5,43 +5,59 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 
 namespace RFIDRegistration.Models
 {
     public class RFIDDetails
     {
-        public string rfid_device_id { get; set; }
-        public string rfid_pkt_no { get; set; }
-        public string rfid_connection { get; set; }
-        public string rfid_ip_address { get; set; }
-        public string rfid_connection_type { get; set; }
-        public string rfid_ssid { get; set; }
-        public string rfid_fwid { get; set; }
-        public string rfid_date_code { get; set; }
-        public string rfid_model { get; set; }
-        public string rfid_device_name { get; set; }
-        public string rfid_device_desc { get; set; }
-        public string rfid_epochvalid { get; set; }
-        public string rfid_channel_no { get; set; }
-        public string rfid_power_max { get; set; }
-        public string rfid_power_min { get; set; }
-        public string rfid_cachespace_max { get; set; }
-        public string rfid_rfid_mode { get; set; }
-        public string rfid_q { get; set; }
-        public string rfid_auto { get; set; }
-        public string rfid_period { get; set; }
-        public string rfid_rfid_current_power { get; set; }
-        public string rfid_cache_period { get; set; }
-        public string rfid_cache_size { get; set; }
-        public string rfid_se_mdoe { get; set; }
-        public string rfid_epc_extended { get; set; }
-        public string rfid_ant_ch { get; set; }
-        public string rfid_force_update { get; set; }
-        public string rfid_demo_mode { get; set; }
+
     }
 
     public class RFID_detail_Json_Attr
     {
+        public RFID_detail_Json_Attr() 
+        {
+            Epoch_Valid = "";
+            Rpc_Busy = "";
+            Epoch_Sec = "";
+            Rate_Control = "";
+            Rate_Control_Period = "";
+            Channel_No = "";
+            Power_Max = "";
+            Power_Min = "";
+            CacheSpace_Max = "";
+            RFID_Temp = "";
+            RFID_Firmware_ID = "";
+            Read_Period = "";
+            Auto = "";
+            Period = "";
+            Cache_Tag_Remove = "";
+            Cache_Period = "";
+            Tag_Remove_Upd = "";
+            Anthenna_Channel_Upd = "";
+            EnbForce_Upd = "";
+            Force_Update_Period = "";
+            Self_Filter_Option = "";
+            Self_Filter_Addr = "";
+            Self_Filter_Len_Bit = "";
+            Self_Filter_Data = "";
+            Self_Filter_Invert = "";
+            Enb_Tag_Data = "";
+            Tag_Data_Mem_Bank = "";
+            Tag_Data_Reader_Addr = "";
+            Tag_Data_Word_Count = "";
+            EnbTagPass = "";
+            Tag_Pass = "";
+            Dynamic_Q = "";
+            Q = "";
+            Se_Mode = "";
+            Target = "";
+            EPC_Extended = "";
+            Demo_Mode = "";
+
+        }
+
         /* ---------- Device System Attribute ---------- */
 
         [JsonProperty("deviceid")]
@@ -49,10 +65,6 @@ namespace RFIDRegistration.Models
 
         [JsonProperty("pktno")]
         public string Pktno { get; set; }
-
-        // Current Epoch Times in second
-        [JsonProperty("sec")]
-        public string Epoch_Times { get; set; }
 
         // Device Wi-Fi Received Signal Strength
         [JsonProperty("rssi")]
@@ -99,6 +111,7 @@ namespace RFIDRegistration.Models
 
         /* ---------- Share Attribute ---------- */
 
+        // Current Epoch Times in second
         [JsonProperty("s.sys.epochsec")]
         public string Epoch_Sec { get; set; }
 
@@ -212,7 +225,7 @@ namespace RFIDRegistration.Models
         public string Tag_Data_Word_Count { get; set; }
 
         [JsonProperty("s.uhfrfid.enbtagpass")]
-        public string EngTagPass { get; set; }
+        public string EnbTagPass { get; set; }
 
         [JsonProperty("s.uhfrfid.tagpass")]
         public string Tag_Pass { get; set; }
@@ -276,8 +289,8 @@ namespace RFIDRegistration.Models
         [JsonProperty("s.envsensor.ratectrlperiod")]
         public string Rate_Control_Period { get; set; }
 
-        [JsonProperty("t.envsensor.param")]
-        public List<EvnSensorParam> Sensor_Data { get; set; }
+        /*[JsonProperty("t.envsensor.param")]
+        public List<EvnSensorParam> Sensor_Data { get; set; }*/
     }
 
     public class Peripharal
@@ -326,15 +339,144 @@ namespace RFIDRegistration.Models
         public string Debounce { get; set; }
     }
 
-    public class EvnSensorParam
+    public class RFID_Tag_Json
+    {
+        public RFID_Tag_Json()
+        {
+            Sec = "";
+        }
+
+        [JsonProperty("deviceid")]
+        public string Device_ID { get; set; }
+
+        [JsonProperty("rssi")]
+        public string RSSI { get; set; }
+
+        [JsonProperty("pktno")]
+        public string Pkt_No { get; set; }
+
+        [JsonProperty("sec")]
+        public string Sec { get; set; }
+
+        [JsonProperty("t.uhfrfid.temp")]
+        public string Device_Temp { get; set; }
+
+        [JsonProperty("r.sysconfig.result")]
+        public string ConfigResult { get; set; }
+
+        [JsonProperty("t.uhfrfid.param")]
+        public List<Telematic_Scan> Telematics_Data { get; set; }
+
+        [JsonProperty("t.envsensor.param")]
+        public Telematic_EnvSensor Telematics_SensorData { get; set; }
+
+        [JsonProperty("r.sysconfig.get")]
+        public RPC_Config RPC_ConfigData { get; set; }
+
+    }
+
+    public class Telematic_Scan
+    {
+        [JsonProperty("ts")]
+        public string Time_Stamp { get; set; }
+
+        [JsonProperty("state")]
+        public string State { get; set; }
+
+        [JsonProperty("ch")]
+        public string Channel { get; set; }
+
+        [JsonProperty("rssi")]
+        public string RSSI { get; set; }
+
+        [JsonProperty("tag")]
+        public string Tag_ID { get; set; }
+    }
+
+    public class Telematic_EnvSensor
     {
         [JsonProperty("sht4x_temp")]
-        public string Detect_Temp { get; set; }
+        public string Temperature { get; set; }
 
         [JsonProperty("sht4x_hum")]
-        public string Detect_Humidity { get; set; }
+        public string Humidity { get; set; }
 
         [JsonProperty("bmp280a_pressure")]
-        public string Detect_Room_Pressure { get; set; }
+        public string Pressure { get; set; }
+    }
+
+    public class RPC_Config
+    {
+        [JsonProperty("wifi")]
+        public Wifi WifiObj { get; set; }
+
+        [JsonProperty("staticip")]
+        public StaticIP StaticIPObj { get; set; }
+
+        [JsonProperty("sntp")]
+        public SNTP SNTPObj { get; set; }
+
+        [JsonProperty("mqtt")]
+        public MQTT MQTTObj { get; set; }
+    }
+
+    public class Wifi
+    {
+        [JsonProperty("wificonntype")]
+        public string Wifi_Connection_Type { get; set; }
+
+        [JsonProperty("ssid")]
+        public string SSID { get; set; }
+
+        [JsonProperty("password")]
+        public string Password { get; set; }
+
+        [JsonProperty("bssid")]
+        public string BSSID { get; set; }
+    }
+
+    public class StaticIP
+    {
+        [JsonProperty("enable")]
+        public string Enable { get; set; }
+    }
+
+    public class SNTP
+    {
+        [JsonProperty("enable")]
+        public string Enable { get; set; }
+    }
+
+    public class MQTT
+    {
+        [JsonProperty("enable")]
+        public string Enable { get; set; }
+
+        [JsonProperty("addr")]
+        public string Address { get; set; }
+
+        [JsonProperty("port")]
+        public string Port { get; set; }
+
+        [JsonProperty("conntype")]
+        public string Connection_Type { get; set; }
+
+        [JsonProperty("anonylogin")]
+        public string Anony_Login { get; set; }
+
+        [JsonProperty("username")]
+        public string Username { get; set; }
+
+        [JsonProperty("password")]
+        public string Password { get; set; }
+
+        [JsonProperty("qos")]
+        public string QOS { get; set; }
+
+        [JsonProperty("keepalive")]
+        public string Keep_Alive { get; set; }
+
+        [JsonProperty("topictype")]
+        public string TopicType { get; set; }
     }
 }

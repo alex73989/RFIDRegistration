@@ -640,7 +640,6 @@ namespace RFIDRegistration
             this.tBoxDataIn.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.tBoxDataIn.Size = new System.Drawing.Size(965, 522);
             this.tBoxDataIn.TabIndex = 0;
-            this.tBoxDataIn.TextChanged += new System.EventHandler(this.tBoxDataIn_TextChanged);
             // 
             // btnClearDataIn
             // 
@@ -1524,7 +1523,6 @@ namespace RFIDRegistration
             this.tBoxReceiverOutput_01.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.tBoxReceiverOutput_01.Size = new System.Drawing.Size(411, 285);
             this.tBoxReceiverOutput_01.TabIndex = 0;
-            this.tBoxReceiverOutput_01.TextChanged += new System.EventHandler(this.tBoxReceiverOutput_01_TextChanged);
             // 
             // btnClearReceiverTxt_01
             // 
@@ -1605,7 +1603,6 @@ namespace RFIDRegistration
             this.tBoxOverallReceiver.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.tBoxOverallReceiver.Size = new System.Drawing.Size(1238, 622);
             this.tBoxOverallReceiver.TabIndex = 2;
-            this.tBoxOverallReceiver.TextChanged += new System.EventHandler(this.tBoxOverallReceiver_TextChanged);
             // 
             // serialPort1
             // 
@@ -1619,7 +1616,7 @@ namespace RFIDRegistration
             this.Controls.Add(this.tabControl1);
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "IndicatorForm";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Indicator Battery";
             this.Load += new System.EventHandler(this.IndicatorForm_Load);
             this.tabControl1.ResumeLayout(false);

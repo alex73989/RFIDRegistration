@@ -8,24 +8,26 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SqlClient;
+using RFIDRegistration.Models;
 
 namespace RFIDRegistration
 {
     public partial class AddPartNo : Form
     {
-        SqlConnection con = new SqlConnection("Data Source=MXPACALEX;Initial Catalog=Dek_MachineDB;Integrated Security=True;MultipleActiveResultSets=true");
+        public SqlConnect sqlConnect = new SqlConnect();
 
         public AddPartNo()
         {
             InitializeComponent();
+            sqlConnect.Connection();
         }
 
         private void btn_AddPart_Add_Click(object sender, EventArgs e)
         {
             if (tBox_AddPart_PartNo.Text != "")
             {
-                con.Open();
-                SqlCommand cmd = new SqlCommand("Select_RegTagList", con)
+                sqlConnect.con.Open();
+                SqlCommand cmd = new SqlCommand("Select_RegTagList", sqlConnect.con)
                 {
                     CommandType = CommandType.StoredProcedure
                 };
@@ -74,7 +76,7 @@ namespace RFIDRegistration
                     ClearTxt();
                 }
 
-                con.Close();
+                sqlConnect.con.Close();
             }
             else if (tBox_AddPart_PartNo.Text == "")
             {

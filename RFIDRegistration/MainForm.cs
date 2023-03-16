@@ -12,6 +12,7 @@ using System.Threading;
 using System.IO;
 using Microsoft.Win32;
 using System.Data.SqlClient;
+using RFIDRegistration.Models;
 
 namespace RFIDRegistration
 {
@@ -25,12 +26,12 @@ namespace RFIDRegistration
         //private const string requestInputUIIText = "Please input UII (Hex)";
 
         // Address of SQL Server and Database
-        SqlConnection con = new SqlConnection("Data Source=localhost;Initial Catalog=Dek_MachineDB;Integrated Security=True;MultipleActiveResultSets=true");
-
+        SqlConnect sqlConnect = new SqlConnect();
+        
         public MainForm()
         {
             InitializeComponent();
-
+            sqlConnect.Connection();
             DemoPublic.number = 1;
         }
 
@@ -280,10 +281,10 @@ namespace RFIDRegistration
         // Get Tag List from Database
         public void GetTagList()
         {
-            con.Open();
-            if (con.State == System.Data.ConnectionState.Open)
+            sqlConnect.con.Open();
+            if (sqlConnect.con.State == System.Data.ConnectionState.Open)
             {
-                SqlCommand sqlCommand = new SqlCommand("Select_RegTagList", con)
+                SqlCommand sqlCommand = new SqlCommand("Select_RegTagList", sqlConnect.con)
                 {
                     CommandType = CommandType.StoredProcedure
                 };
@@ -297,15 +298,15 @@ namespace RFIDRegistration
                 dataAdapter_GetTagList.Fill(dt);
                 dataGridView_TagList.DataSource = dt;
             }
-            con.Close();
+            sqlConnect.con.Close();
         }
 
         public void GetDeviceList()
         {
-            con.Open();
-            if (con.State == System.Data.ConnectionState.Open)
+            sqlConnect.con.Open();
+            if (sqlConnect.con.State == System.Data.ConnectionState.Open)
             {
-                SqlCommand sqlCommand = new SqlCommand("Select_RegDeviceList", con)
+                SqlCommand sqlCommand = new SqlCommand("Select_RegDeviceList", sqlConnect.con)
                 {
                     CommandType = CommandType.StoredProcedure
                 };
@@ -319,15 +320,15 @@ namespace RFIDRegistration
                 dataAdapter_GetDeviceList.Fill(dt2);
                 dataGridView_DevList.DataSource = dt2;
             }
-            con.Close();
+            sqlConnect.con.Close();
         }
 
         public void GetUserList()
         {
-            con.Open();
-            if (con.State == System.Data.ConnectionState.Open)
+            sqlConnect.con.Open();
+            if (sqlConnect.con.State == System.Data.ConnectionState.Open)
             {
-                SqlCommand sqlCommand = new SqlCommand("Select_UsersTB", con)
+                SqlCommand sqlCommand = new SqlCommand("Select_UsersTB", sqlConnect.con)
                 {
                     CommandType = CommandType.StoredProcedure
                 };
@@ -343,7 +344,7 @@ namespace RFIDRegistration
                 dataAdapter_GetUserList.Fill(dt2);
                 dataGridView_UserList.DataSource = dt2;
             }
-            con.Close();
+            sqlConnect.con.Close();
         }
 
 
@@ -373,7 +374,7 @@ namespace RFIDRegistration
         private void btn_ModTag_UpdateRecords_Click(object sender, EventArgs e)
         {
             // Update Tag Records
-            con.Open();
+            sqlConnect.con.Open();
 
             string SerialNo, PartNo, EPCTagNo;
 
@@ -421,11 +422,11 @@ namespace RFIDRegistration
                "'" + SerialNo + "'," +
                "'" + PartNo + "'," +
                "'" + EPCTagNo + "'," +
-               "'" + tBox_ModTag_OldEPCNo.Text + "'", con);
+               "'" + tBox_ModTag_OldEPCNo.Text + "'", sqlConnect.con);
 
                 SqlCommand c2 = new SqlCommand("exec Insert_MaintenanceTagList '" + tBox_ModTag_UserReg.Text + "', '" + tBox_ModTag_EmpName.Text + "'," +
                     " '" + tBox_ModTag_OldSN.Text + "', '" + tBox_ModTag_NewSN.Text + "', '" + tBox_ModTag_OldPN.Text + "', '" + tBox_ModTag_NewPN.Text + "'," +
-                    " '" + tBox_ModTag_OldEPCNo.Text + "', '" + tBox_ModTag_NewEPCNo.Text + "', '" + tBox_ModTag_MoreDesc.Text + "' ", con);
+                    " '" + tBox_ModTag_OldEPCNo.Text + "', '" + tBox_ModTag_NewEPCNo.Text + "', '" + tBox_ModTag_MoreDesc.Text + "' ", sqlConnect.con);
 
                 c.ExecuteNonQuery();
                 c2.ExecuteNonQuery();
@@ -434,7 +435,7 @@ namespace RFIDRegistration
                 GetTagList();
             }
             ModifyTagTextRefresh();
-            con.Close();
+            sqlConnect.con.Close();
         }
 
         private void btn_ModTag_DeleteRecords_Click(object sender, EventArgs e)
@@ -442,24 +443,23 @@ namespace RFIDRegistration
             // Delete
             if (MessageBox.Show("Are you sure to delete?", "Delete Document", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                con.Open();
-                SqlCommand c = new SqlCommand("exec Delete_TagList '" + tBox_ModTag_OldEPCNo.Text + "'", con);
+                sqlConnect.con.Open();
+                SqlCommand c = new SqlCommand("exec Delete_TagList '" + tBox_ModTag_OldEPCNo.Text + "'", sqlConnect.con);
                 c.ExecuteNonQuery();
                 AddToShowModifyTag("Tag Successfully Deleted!");
                 GetTagList();
-                con.Close();
+                sqlConnect.con.Close();
             }
         }
 
         public void btn_ModTag_Search_Click(object sender, EventArgs e)
         {
             // Search
-            con.Open();
+            sqlConnect.con.Open();
 
             if (tBox_ModTag_SearchEPCNo.Text != "")
-            {
-
-                SqlCommand cmd = new SqlCommand("Select_RegTagList", con)
+            { 
+                SqlCommand cmd = new SqlCommand("Select_RegTagList", sqlConnect.con)
                 {
                     CommandType = CommandType.StoredProcedure
                 };
@@ -477,7 +477,7 @@ namespace RFIDRegistration
             }
             else if (tBox_ModTag_SearchEPCNo.Text == "")
             {
-                SqlCommand cmd = new SqlCommand("Select_RegTagList", con)
+                SqlCommand cmd = new SqlCommand("Select_RegTagList", sqlConnect.con)
                 {
                     CommandType = CommandType.StoredProcedure
                 };
@@ -702,7 +702,7 @@ namespace RFIDRegistration
             */
 
 
-            con.Close();
+            sqlConnect.con.Close();
         }
 
         private void btn_ModTag_Refresh_Click(object sender, EventArgs e)
@@ -713,13 +713,13 @@ namespace RFIDRegistration
 
         private void tBox_ModTag_Search_TextChanged(object sender, EventArgs e)
         {
-            con.Open();
+            sqlConnect.con.Open();
             if (tBox_ModTag_SearchEPCNo.Text != "")
             {
                 /*SqlCommand cmd = new SqlCommand("SELECT * FROM registration_tag_tb WHERE tag_epc_no = @tag_epc_no", con);
                 cmd.Parameters.AddWithValue("@tag_epc_no", tBox_ModTag_SearchEPCNo.Text);
                 SqlDataReader da = cmd.ExecuteReader();*/
-                SqlCommand cmd = new SqlCommand("Select_RegTagList", con);
+                SqlCommand cmd = new SqlCommand("Select_RegTagList", sqlConnect.con);
                 cmd.CommandType = CommandType.StoredProcedure;
 
                 cmd.Parameters.AddWithValue("@Option", "GetListTagEPC");
@@ -736,7 +736,7 @@ namespace RFIDRegistration
                     tBox_ModTag_OldEPCNo.Text = da.GetValue(4).ToString();
                 }
             }
-            con.Close();
+            sqlConnect.con.Close();
         }
 
         private void btn_ModTag_ScanSearchTag_Click(object sender, EventArgs e)
@@ -802,7 +802,7 @@ namespace RFIDRegistration
         private void btn_ModDev_UpdateRecords_Click(object sender, EventArgs e)
         {
             // Update Tag Records
-            con.Open();
+            sqlConnect.con.Open();
 
             string DeviceID, ModelName, ProductName, CommType, DeviceIPAddr;
 
@@ -870,12 +870,12 @@ namespace RFIDRegistration
                "'" + ProductName + "'," +
                "'" + CommType + "'," +
                "'" + DeviceIPAddr + "'," +
-               "'" + tBox_ModDev_OldDevID.Text + "'", con);
+               "'" + tBox_ModDev_OldDevID.Text + "'", sqlConnect.con);
 
                 SqlCommand c2 = new SqlCommand("exec Insert_MaintenanceDevList '" + tBox_ModDev_UserReg.Text + "', '" + tBox_ModDev_EmpName.Text + "'," +
                     " '" + tBox_ModDev_OldDevID.Text + "', '" + tBox_ModDev_NewDevID.Text + "', '" + tBox_ModDev_OldModel.Text + "', '" + tBox_ModDev_NewModel.Text + "'," +
                     " '" + tBox_ModDev_OldProductName.Text + "', '" + tBox_ModDev_NewProductName.Text + "', '" + tBox_ModDev_OldCommType.Text + "', '" + cBox_ModDev_NewCommType.Text + "'," +
-                    " '" + tBox_ModDev_OldDevIP.Text + "', '" + tBox_ModDev_NewDevIP.Text + "', '" + tBox_ModDev_MoreDesc.Text + "' ", con);
+                    " '" + tBox_ModDev_OldDevIP.Text + "', '" + tBox_ModDev_NewDevIP.Text + "', '" + tBox_ModDev_MoreDesc.Text + "' ", sqlConnect.con);
 
                 c.ExecuteNonQuery();
                 c2.ExecuteNonQuery();
@@ -884,7 +884,7 @@ namespace RFIDRegistration
                 GetDeviceList();
             }
             ModifyDevTextRefresh();
-            con.Close();
+            sqlConnect.con.Close();
         }
 
         private void tBox_ModUser_Search_KeyDown(object sender, KeyEventArgs e)
@@ -944,12 +944,12 @@ namespace RFIDRegistration
             // Delete
             if (MessageBox.Show("Are you sure to delete?", "Delete Document", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                con.Open();
-                SqlCommand c = new SqlCommand("exec Delete_DevList '" + tBox_ModDev_OldDevID.Text + "'", con);
+                sqlConnect.con.Open();
+                SqlCommand c = new SqlCommand("exec Delete_DevList '" + tBox_ModDev_OldDevID.Text + "'", sqlConnect.con);
                 c.ExecuteNonQuery();
                 AddToShowModifyDev("Device Successfully Deleted!");
                 GetDeviceList();
-                con.Close();
+                sqlConnect.con.Close();
             }
         }
 
@@ -968,12 +968,12 @@ namespace RFIDRegistration
         private void btn_ModDev_SearchDev_Click(object sender, EventArgs e)
         {
             // Search
-            con.Open();
+            sqlConnect.con.Open();
 
             if (tBox_ModDev_SearchDevID.Text != "")
             {
 
-                SqlCommand cmd = new SqlCommand("Select_RegDeviceList", con)
+                SqlCommand cmd = new SqlCommand("Select_RegDeviceList", sqlConnect.con)
                 {
                     CommandType = CommandType.StoredProcedure
                 };
@@ -991,7 +991,7 @@ namespace RFIDRegistration
             }
             else if (tBox_ModDev_SearchDevID.Text == "")
             {
-                SqlCommand cmd = new SqlCommand("Select_RegDeviceList", con)
+                SqlCommand cmd = new SqlCommand("Select_RegDeviceList", sqlConnect.con)
                 {
                     CommandType = CommandType.StoredProcedure
                 };
@@ -1244,7 +1244,7 @@ namespace RFIDRegistration
                 AddToShowModifyDev("Unable to run Search without check any of the box!");
             }*/
 
-            con.Close();
+            sqlConnect.con.Close();
         }
 
         private void dataGridView_DevList_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -1294,12 +1294,12 @@ namespace RFIDRegistration
 
         private void btn_ModUser_Search_Click(object sender, EventArgs e)
         {
-            con.Open();
+            sqlConnect.con.Open();
 
             if (tBox_ModUser_Search.Text != "")
             {
 
-                SqlCommand cmd = new SqlCommand("Select_UsersTB", con)
+                SqlCommand cmd = new SqlCommand("Select_UsersTB", sqlConnect.con)
                 {
                     CommandType = CommandType.StoredProcedure
                 };
@@ -1318,7 +1318,7 @@ namespace RFIDRegistration
             }
             else if (tBox_ModUser_Search.Text == "")
             {
-                SqlCommand cmd = new SqlCommand("Select_UsersTB", con)
+                SqlCommand cmd = new SqlCommand("Select_UsersTB", sqlConnect.con)
                 {
                     CommandType = CommandType.StoredProcedure
                 };
@@ -1336,7 +1336,7 @@ namespace RFIDRegistration
                 dataGridView_UserList.DataSource = dt;
             }
 
-            con.Close();
+            sqlConnect.con.Close();
         }
 
         private void btn_ModUser_Update_Click(object sender, EventArgs e)

@@ -91,6 +91,7 @@
     <Compile Include="Models\Battery.cs" />
     <Compile Include="Models\RFIDDetails.cs" />
     <Compile Include="Models\RPCGet.cs" />
+    <Compile Include="Models\SqlConnect.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Public\DemoPublic.cs" />

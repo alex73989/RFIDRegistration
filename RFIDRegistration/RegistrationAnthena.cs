@@ -8,17 +8,21 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SqlClient;
+using RFIDRegistration.Models;
 
 namespace RFIDRegistration
 {
     public partial class RegistrationAnthena : Form
     {
         AutoCompleteStringCollection coll = new AutoCompleteStringCollection();
-        SqlConnection con = new SqlConnection("Data Source=MXPACALEX;Initial Catalog=Dek_MachineDB;Integrated Security=True;MultipleActiveResultSets=true");
+
+        // Address of SQL Server and Database
+        SqlConnect sqlConnect = new SqlConnect();
 
         public RegistrationAnthena()
         {
             InitializeComponent();
+            sqlConnect.Connection();
         }
 
         private void btn_CancelAnthena_Click(object sender, EventArgs e)
@@ -30,9 +34,9 @@ namespace RFIDRegistration
         {
             if (tBox_RegAnthena_DevID.Text != "" && tBox_RegAnthena_AntType.Text != "" && cBox_RegAnthena_ChnNo.Text != "" && tBox_RegAnthena_AntLocation.Text != "")
             {
-                con.Open();
+                sqlConnect.con.Open();
 
-                SqlCommand cmd = new SqlCommand("Select_RegAntList", con)
+                SqlCommand cmd = new SqlCommand("Select_RegAntList", sqlConnect.con)
                 {
                     CommandType = CommandType.StoredProcedure
                 };
@@ -84,7 +88,7 @@ namespace RFIDRegistration
                 
 
                 
-                con.Close();
+                sqlConnect.con.Close();
             }
             else
             {
@@ -152,7 +156,7 @@ namespace RFIDRegistration
 
         public void AutoCompleteTxtBox()
         {
-            SqlCommand sqlCommand = new SqlCommand("Select_RegDeviceList", con)
+            SqlCommand sqlCommand = new SqlCommand("Select_RegDeviceList", sqlConnect.con)
             {
                 CommandType = CommandType.StoredProcedure
             };

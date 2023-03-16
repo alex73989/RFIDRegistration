@@ -8,22 +8,24 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SqlClient;
+using RFIDRegistration.Models;
 
 namespace RFIDRegistration
 {
     public partial class AddSerialNo : Form
     {
         AutoCompleteStringCollection coll = new AutoCompleteStringCollection();
-        SqlConnection con = new SqlConnection("Data Source=MXPACALEX;Initial Catalog=Dek_MachineDB;Integrated Security=True;MultipleActiveResultSets=true");
-
+        public SqlConnect sqlConnect = new SqlConnect();
+        
         public AddSerialNo()
         {
             InitializeComponent();
+            sqlConnect.Connection();
         }
 
         public void AutoCompleteTxtBox()
         {
-            SqlCommand sqlCommand = new SqlCommand("Select_RegTagList", con)
+            SqlCommand sqlCommand = new SqlCommand("Select_RegTagList", sqlConnect.con)
             {
                 CommandType = CommandType.StoredProcedure
             };
@@ -92,8 +94,8 @@ namespace RFIDRegistration
         {
             if (tBox_AddSN_PartNo.Text != "" && tBox_AddSN_SerialNo.Text != "")
             {
-                con.Open();
-                SqlCommand cmd = new SqlCommand("Select_RegTagList", con)
+                sqlConnect.con.Open();
+                SqlCommand cmd = new SqlCommand("Select_RegTagList", sqlConnect.con)
                 {
                     CommandType = CommandType.StoredProcedure
                 };
@@ -142,7 +144,7 @@ namespace RFIDRegistration
                     ClearTxt();
                 }
 
-                con.Close();
+                sqlConnect.con.Close();
             }
             else if (tBox_AddSN_PartNo.Text == "" || tBox_AddSN_SerialNo.Text == "")
             {

@@ -9,17 +9,19 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SqlClient;
 using RFIDRegistration.Public;
+using RFIDRegistration.Models;
 
 namespace RFIDRegistration
 {
     public partial class RegistrationDevice : Form
     {
         // Address of SQL Server and Database
-        SqlConnection con = new SqlConnection("Data Source=MXPACALEX;Initial Catalog=Dek_MachineDB;Integrated Security=True;MultipleActiveResultSets=true");
+        SqlConnect sqlConnect = new SqlConnect();
 
         public RegistrationDevice()
         {
             InitializeComponent();
+            sqlConnect.Connection();
         }
 
         public void DeviceTextRefresh()
@@ -35,10 +37,10 @@ namespace RFIDRegistration
 
         public void SetComboBoxValueEmpName()
         {
-            con.Open();
-            if (con.State == System.Data.ConnectionState.Open)
+            sqlConnect.con.Open();
+            if (sqlConnect.con.State == System.Data.ConnectionState.Open)
             {
-                SqlCommand sqlCommand = new SqlCommand("Select_UsersTB", con)
+                SqlCommand sqlCommand = new SqlCommand("Select_UsersTB", sqlConnect.con)
                 {
                     CommandType = CommandType.StoredProcedure
                 };
@@ -57,7 +59,7 @@ namespace RFIDRegistration
                     cBox_Dev_EmpName.Items.Add(ds.Tables[0].Rows[i][6].ToString());
                 }
             }
-            con.Close();
+            sqlConnect.con.Close();
         }
 
         private void btnDev_SaveRecords_Click(object sender, EventArgs e)
@@ -87,9 +89,9 @@ namespace RFIDRegistration
                 }
                 else
                 {
-                    con.Open();
+                    sqlConnect.con.Open();
 
-                    SqlCommand sqlCommand = new SqlCommand("Select_UsersTB", con)
+                    SqlCommand sqlCommand = new SqlCommand("Select_UsersTB", sqlConnect.con)
                     {
                         CommandType = CommandType.StoredProcedure
                     };
@@ -107,9 +109,9 @@ namespace RFIDRegistration
                         UserIdRead = reader.GetValue(0).ToString();
                     }
 
-                    if (con.State == System.Data.ConnectionState.Open)
+                    if (sqlConnect.con.State == System.Data.ConnectionState.Open)
                     {
-                        SqlDataAdapter dataAdapter_RegDev = new SqlDataAdapter("Insert_RegisterDeviceList", con);
+                        SqlDataAdapter dataAdapter_RegDev = new SqlDataAdapter("Insert_RegisterDeviceList", sqlConnect.con);
 
                         dataAdapter_RegDev.SelectCommand.CommandType = CommandType.StoredProcedure;
                         dataAdapter_RegDev.SelectCommand.Parameters.Add("@Device_ID", SqlDbType.VarChar).Value = tBox_Dev_ID.Text;
@@ -127,13 +129,13 @@ namespace RFIDRegistration
                         {
                             //AddToShow("Device Data Insert Successfully!");
                             MessageBox.Show("Device Data Insert Successfully!");
-                            con.Close();
+                            sqlConnect.con.Close();
                             DeviceTextRefresh();
                         }
                     }
                     else
                     {
-                        con.Close();
+                        sqlConnect.con.Close();
                         //AddToShow("Connection Failure To Database, Please Try Again.");
                         MessageBox.Show("Connection Failure To Database, Please Try Again.");
                     }

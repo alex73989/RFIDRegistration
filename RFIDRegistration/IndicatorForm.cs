@@ -17,6 +17,7 @@ using uPLibrary.Networking.M2Mqtt;
 using uPLibrary.Networking.M2Mqtt.Messages;
 using System.Net.Http;
 using RFIDRegistration.Models;
+using System.Data.SqlClient;
 
 namespace RFIDRegistration
 {
@@ -24,8 +25,8 @@ namespace RFIDRegistration
     {
         /* ========== Global Variable ========== */
 
-        //string deviecID_test = "WIRIO3_943CC64D77F0";
-        //WIRIO3_244CAB055818
+        //WIRIO3_68B6B329AB94
+        //WIRIO3_58BF25A84F04
 
         /* ========== COM Port Comm ========== */
         public bool indicatorChoosen = false;
@@ -65,8 +66,13 @@ namespace RFIDRegistration
         public TagConfig tagConfig = new TagConfig();
         public TextBox TagConfigTxt;
 
+        // Address of SQL Server and Database
+        SqlConnect sqlConnect = new SqlConnect();
+
         private void IndicatorForm_Load(object sender, EventArgs e)
         {
+            sqlConnect.Connection();
+
             if (lblStatusCom.Text == "Disconnected")
             {
                 string[] ports = SerialPort.GetPortNames();
@@ -200,12 +206,6 @@ namespace RFIDRegistration
             }
         }
 
-        private void tBoxDataIn_TextChanged(object sender, EventArgs e)
-        {
-            tBoxDataIn.SelectionStart = tBoxDataIn.Text.Length;
-            tBoxDataIn.ScrollToCaret();
-        }
-
         private void serialPort1_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             DataIn = serialPort1.ReadExisting();
@@ -252,12 +252,12 @@ namespace RFIDRegistration
             else
             {
 
-                tBoxDataIn.Text += Environment.NewLine
+                tBoxDataIn.Text = tBoxDataIn.Text.Insert(0, Environment.NewLine
                         + "-----------------------------------------" + Environment.NewLine
                         + "===== Received Message =====" + Environment.NewLine
                         + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
                         + "Message: " + s + Environment.NewLine
-                        + "-----------------------------------------" + Environment.NewLine;
+                        + "-----------------------------------------" + Environment.NewLine);
             }
 
             if (indicatorChoosen == false)
@@ -853,13 +853,13 @@ namespace RFIDRegistration
                     clientID_One = Guid.NewGuid().ToString();
                     // Use Unique ID as Client ID, each time we start the application.
                     client.Connect(clientID_One);
-                    tBoxDataIn.Text += Environment.NewLine
+                    tBoxDataIn.Text = tBoxDataIn.Text.Insert(0, Environment.NewLine
                         + "-----------------------------------------" + Environment.NewLine
                         + "Client Connected to MQTT" + Environment.NewLine
                         + "Client ID: " + clientID_One + Environment.NewLine
                         + "Broker Address: " + tBoxIPAddress.Text.ToString() + Environment.NewLine
                         + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
-                        + "-----------------------------------------";
+                        + "-----------------------------------------");
 
 
                     // Register a callback-function for implementation
@@ -906,12 +906,12 @@ namespace RFIDRegistration
             try
             {
                 client.Disconnect();
-                tBoxDataIn.Text += Environment.NewLine
+                tBoxDataIn.Text = tBoxDataIn.Text.Insert(0, Environment.NewLine
                     + "-----------------------------------------" + Environment.NewLine
                     + "Client ID: " + clientID_One + Environment.NewLine
                     + "Client Disconnected To MQTT" + Environment.NewLine
                     + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
-                    + "-----------------------------------------";
+                    + "-----------------------------------------");
 
                 ConnectionStatus = false;
 
@@ -940,12 +940,12 @@ namespace RFIDRegistration
 
                 ConnectionStatus = true;
 
-                tBoxDataIn.Text += Environment.NewLine
+                tBoxDataIn.Text = tBoxDataIn.Text.Insert(0, Environment.NewLine
                     + "-----------------------------------------" + Environment.NewLine
                     + "Client ID: " + clientID_One + Environment.NewLine
                     + "Client Unable Disconnected!" + Environment.NewLine
                     + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
-                    + "-----------------------------------------";
+                    + "-----------------------------------------");
                 //MessageBox.Show(ex.ToString());
                 MessageBox.Show("Disconnect unsuccessful, please try again..", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
@@ -978,13 +978,13 @@ namespace RFIDRegistration
                             MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE
                         });
 
-                    tBoxDataIn.Text += Environment.NewLine
+                    tBoxDataIn.Text = tBoxDataIn.Text.Insert(0, Environment.NewLine
                     + "-----------------------------------------" + Environment.NewLine
                     + "Device ID: " + tBoxDeviceID.Text + Environment.NewLine
                     + "Client ID: " + clientID_One + Environment.NewLine
                     + "Subscribe All Topic Successfully!" + Environment.NewLine
                     + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
-                    + "-----------------------------------------";
+                    + "-----------------------------------------");
 
                     // TabPages
                     tabPage1.Text = tBoxDeviceID.Text;
@@ -1660,24 +1660,24 @@ namespace RFIDRegistration
                 {
                     tBoxDataIn.Invoke((MethodInvoker)delegate
                     {
-                        tBoxDataIn.Text += Environment.NewLine
+                        tBoxDataIn.Text = tBoxDataIn.Text.Insert(0, Environment.NewLine
                         + "-----------------------------------------" + Environment.NewLine
                         + "===== Received Message =====" + Environment.NewLine
                         + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
                         + "Topic:" + e.Topic + Environment.NewLine
                         + "Message: " + ReceivedMessage + Environment.NewLine
-                        + "-----------------------------------------";
+                        + "-----------------------------------------");
                     });
                 }
                 else
                 {
-                    tBoxDataIn.Text += Environment.NewLine
+                    tBoxDataIn.Text = tBoxDataIn.Text.Insert(0, Environment.NewLine
                     + "-----------------------------------------" + Environment.NewLine
                     + "===== Received Message =====" + Environment.NewLine
                     + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
                     + "Topic:" + e.Topic + Environment.NewLine
                     + "Message: " + ReceivedMessage + Environment.NewLine
-                    + "-----------------------------------------";
+                    + "-----------------------------------------");
                 }
 
                 if (indicatorChoosen == false)
@@ -1700,7 +1700,7 @@ namespace RFIDRegistration
                                 battery_level = battery_1.Enow_List[0].Battery_level,
                                 battery_status = battery_1.Enow_List[0].Battery_Status,
                             };
-                            HttpClientConnection(battery_);
+                            //HttpClientConnection(battery_);
                         }
                     }
 
@@ -1718,7 +1718,7 @@ namespace RFIDRegistration
                                 battery_level = battery_1.Enow_Button[0].Battery_level,
                                 battery_status = battery_1.Enow_Button[0].Battery_Status,
                             };
-                            HttpClientConnection(battery_);
+                            //HttpClientConnection(battery_);
                         }
                         else if (ReceivedMessage.Contains("t.enow.battstate"))
                         {
@@ -1732,7 +1732,7 @@ namespace RFIDRegistration
                                 battery_level = battery_1.Enow_BattState[0].Battery_level,
                                 battery_status = battery_1.Enow_BattState[0].Battery_Status,
                             };
-                            HttpClientConnection(battery_);
+                            //HttpClientConnection(battery_);
                         }
                         else if (ReceivedMessage.Contains("t.enow.disconnected"))
                         {
@@ -1746,7 +1746,7 @@ namespace RFIDRegistration
                                 battery_level = battery_1.Enow_Disconnected[0].Battery_level,
                                 battery_status = battery_1.Enow_Disconnected[0].Battery_Status,
                             };
-                            HttpClientConnection(battery_);
+                            //HttpClientConnection(battery_);
                         }
                         else if (ReceivedMessage.Contains("t.enow.connected"))
                         {
@@ -1760,7 +1760,7 @@ namespace RFIDRegistration
                                 battery_level = battery_1.Enow_Connected[0].Battery_level,
                                 battery_status = battery_1.Enow_Connected[0].Battery_Status,
                             };
-                            HttpClientConnection(battery_);
+                            //HttpClientConnection(battery_);
                         }
                         else if (ReceivedMessage.Contains("t.enow.indicator"))
                         {
@@ -1779,7 +1779,7 @@ namespace RFIDRegistration
                                 indicator_buzz_mode = battery_1.Enow_Indicator[0].Buz_Mode,
                                 period = battery_1.Enow_Indicator[0].Period,
                             };
-                            HttpClientConnection(battery_);
+                            //HttpClientConnection(battery_);
                         }
                     }
                 }
@@ -1802,13 +1802,13 @@ namespace RFIDRegistration
                     clientID_One_03 = Guid.NewGuid().ToString();
                     // Use Unique ID as Client ID, each time we start the application.
                     client_03.Connect(clientID_One_03);
-                    tBoxLog_03.Text += Environment.NewLine
+                    tBoxLog_03.Text = tBoxLog_03.Text.Insert(0, Environment.NewLine
                         + "-----------------------------------------" + Environment.NewLine
                         + "Client Connected to MQTT" + Environment.NewLine
                         + "Client ID: " + clientID_One_03 + Environment.NewLine
                         + "Broker Address: " + tBoxIPAddress_03.Text.ToString() + Environment.NewLine
                         + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
-                        + "-----------------------------------------";
+                        + "-----------------------------------------");
 
                     btnConnectMQTT_03.Enabled = false;
 
@@ -1824,12 +1824,12 @@ namespace RFIDRegistration
                     ConnectionStatus_03 = false;
                     btnConnectMQTT_03.Enabled = true;
 
-                    tBoxLog_03.Text += Environment.NewLine
+                    tBoxLog_03.Text = tBoxLog_03.Text.Insert(0, Environment.NewLine
                         + "-----------------------------------------" + Environment.NewLine
                         + "Client Connection Failed" + Environment.NewLine
                         + "Broker Address: " + tBoxIPAddress_03.Text + Environment.NewLine
                         + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
-                        + "-----------------------------------------";
+                        + "-----------------------------------------");
                     //MessageBox.Show(ex.ToString());
                     MessageBox.Show("Please try again, Connection failure.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
@@ -1846,12 +1846,12 @@ namespace RFIDRegistration
             try
             {
                 client_03.Disconnect();
-                tBoxLog_03.Text += Environment.NewLine
+                tBoxLog_03.Text = tBoxLog_03.Text.Insert(0, Environment.NewLine
                     + "-----------------------------------------" + Environment.NewLine
                     + "Client ID: " + clientID_One_03 + Environment.NewLine
                     + "Client Successfully Disconnected To MQTT" + Environment.NewLine
                     + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
-                    + "-----------------------------------------";
+                    + "-----------------------------------------");
 
                 ConnectionStatus_03 = false;
 
@@ -1863,12 +1863,12 @@ namespace RFIDRegistration
             {
                 ConnectionStatus_03 = true;
 
-                tBoxLog_03.Text += Environment.NewLine
+                tBoxLog_03.Text = tBoxLog_03.Text.Insert(0, Environment.NewLine
                     + "-----------------------------------------" + Environment.NewLine
                     + "Client ID: " + clientID_One_03 + Environment.NewLine
                     + "Client Unable Disconnected!" + Environment.NewLine
                     + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
-                    + "-----------------------------------------";
+                    + "-----------------------------------------");
                 //MessageBox.Show(ex.ToString());
                 MessageBox.Show("Disconnect unsuccessful, please try again..", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
@@ -1916,13 +1916,13 @@ namespace RFIDRegistration
 
                         listView_MQTTList.Items.Add(listViewItem);
 
-                        tBoxLog_03.Text += Environment.NewLine
+                        tBoxLog_03.Text = tBoxLog_03.Text.Insert(0, Environment.NewLine
                         + "-----------------------------------------" + Environment.NewLine
                         + "Device ID: " + tBoxDeviceID_03.Text + Environment.NewLine
                         + "Client ID: " + clientID_One_03 + Environment.NewLine
                         + "Subscribe All Topic Successfully!" + Environment.NewLine
                         + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
-                        + "-----------------------------------------";
+                        + "-----------------------------------------");
 
                         tBoxDeviceID_03.Enabled = true;
                         tBoxIPAddress_03.Enabled = true;
@@ -2042,11 +2042,11 @@ namespace RFIDRegistration
                             RC_1 = true;
                             btnReceiverConnect_01.Text = "Disconnect";
 
-                            tBoxLog_03.Text += Environment.NewLine
+                            tBoxLog_03.Text = tBoxLog_03.Text.Insert(0, Environment.NewLine
                             + "-----------------------------------------" + Environment.NewLine
                             + tBoxDeviceID_03.Text + " Successfully Connect to Receiver Control!" + Environment.NewLine
                             + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
-                            + "-----------------------------------------";
+                            + "-----------------------------------------");
                         }
                         else
                         {
@@ -2056,11 +2056,11 @@ namespace RFIDRegistration
                     }
                     else if (btnReceiverConnect_01.Text == "Disconnect")
                     {
-                        tBoxLog_03.Text += Environment.NewLine
+                        tBoxLog_03.Text = tBoxLog_03.Text.Insert(0, Environment.NewLine
                         + "-----------------------------------------" + Environment.NewLine
                         + gBoxReceiverControl_01.Text + " Successfully Disconnect to Receiver Control!" + Environment.NewLine
                         + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
-                        + "-----------------------------------------";
+                        + "-----------------------------------------");
 
                         gBoxReceiverControl_01.Text = "Receiver Control (Unused)";
                         RC_1 = false;
@@ -2095,11 +2095,11 @@ namespace RFIDRegistration
                             RC_2 = true;
                             btnReceiverConnect_02.Text = "Disconnect";
 
-                            tBoxLog_03.Text += Environment.NewLine
+                            tBoxLog_03.Text = tBoxLog_03.Text.Insert(0, Environment.NewLine
                             + "-----------------------------------------" + Environment.NewLine
                             + tBoxDeviceID_03.Text + " Successfully Connect to Receiver Control!" + Environment.NewLine
                             + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
-                            + "-----------------------------------------";
+                            + "-----------------------------------------");
                         }
                         else
                         {
@@ -2109,11 +2109,11 @@ namespace RFIDRegistration
                     }
                     else if (btnReceiverConnect_02.Text == "Disconnect")
                     {
-                        tBoxLog_03.Text += Environment.NewLine
+                        tBoxLog_03.Text = tBoxLog_03.Text.Insert(0, Environment.NewLine
                         + "-----------------------------------------" + Environment.NewLine
                         + gBoxReceiverControl_02.Text + " Successfully Disconnect to Receiver Control!" + Environment.NewLine
                         + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
-                        + "-----------------------------------------";
+                        + "-----------------------------------------");
 
                         gBoxReceiverControl_02.Text = "Receiver Control (Unused)";
                         RC_2 = false;
@@ -2148,11 +2148,11 @@ namespace RFIDRegistration
                             RC_3 = true;
                             btnReceiverConnect_03.Text = "Disconnect";
 
-                            tBoxLog_03.Text += Environment.NewLine
+                            tBoxLog_03.Text = tBoxLog_03.Text.Insert(0, Environment.NewLine
                             + "-----------------------------------------" + Environment.NewLine
                             + tBoxDeviceID_03.Text + " Successfully Connect to Receiver Control!" + Environment.NewLine
                             + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
-                            + "-----------------------------------------";
+                            + "-----------------------------------------");
                         }
                         else
                         {
@@ -2162,11 +2162,11 @@ namespace RFIDRegistration
                     }
                     else if (btnReceiverConnect_03.Text == "Disconnect")
                     {
-                        tBoxLog_03.Text += Environment.NewLine
+                        tBoxLog_03.Text = tBoxLog_03.Text.Insert(0, Environment.NewLine
                         + "-----------------------------------------" + Environment.NewLine
                         + gBoxReceiverControl_03.Text + " Successfully Disconnect to Receiver Control!" + Environment.NewLine
                         + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
-                        + "-----------------------------------------";
+                        + "-----------------------------------------");
 
                         gBoxReceiverControl_03.Text = "Receiver Control (Unused)";
                         RC_3 = false;
@@ -2201,11 +2201,11 @@ namespace RFIDRegistration
                             RC_4 = true;
                             btnReceiverConnect_04.Text = "Disconnect";
 
-                            tBoxLog_03.Text += Environment.NewLine
+                            tBoxLog_03.Text = tBoxLog_03.Text.Insert(0, Environment.NewLine
                             + "-----------------------------------------" + Environment.NewLine
                             + tBoxDeviceID_03.Text + " Successfully Connect to Receiver Control!" + Environment.NewLine
                             + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
-                            + "-----------------------------------------";
+                            + "-----------------------------------------");
                         }
                         else
                         {
@@ -2214,11 +2214,11 @@ namespace RFIDRegistration
                     }
                     else if (btnReceiverConnect_04.Text == "Disconnect")
                     {
-                        tBoxLog_03.Text += Environment.NewLine
+                        tBoxLog_03.Text = tBoxLog_03.Text.Insert(0, Environment.NewLine
                         + "-----------------------------------------" + Environment.NewLine
                         + gBoxReceiverControl_04.Text + " Successfully Disconnect to Receiver Control!" + Environment.NewLine
                         + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
-                        + "-----------------------------------------";
+                        + "-----------------------------------------");
 
                         gBoxReceiverControl_04.Text = "Receiver Control (Unused)";
                         RC_4 = false;
@@ -2253,11 +2253,11 @@ namespace RFIDRegistration
                             RC_5 = true;
                             btnReceiverConnect_05.Text = "Disconnect";
 
-                            tBoxLog_03.Text += Environment.NewLine
+                            tBoxLog_03.Text = tBoxLog_03.Text.Insert(0, Environment.NewLine
                             + "-----------------------------------------" + Environment.NewLine
                             + tBoxDeviceID_03.Text + " Successfully Connect to Receiver Control!" + Environment.NewLine
                             + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
-                            + "-----------------------------------------";
+                            + "-----------------------------------------");
                         }
                         else
                         {
@@ -2267,11 +2267,11 @@ namespace RFIDRegistration
                     }
                     else if (btnReceiverConnect_05.Text == "Disconnect")
                     {
-                        tBoxLog_03.Text += Environment.NewLine
+                        tBoxLog_03.Text = tBoxLog_03.Text.Insert(0, Environment.NewLine
                         + "-----------------------------------------" + Environment.NewLine
                         + gBoxReceiverControl_05.Text + " Successfully Disconnect to Receiver Control!" + Environment.NewLine
                         + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
-                        + "-----------------------------------------";
+                        + "-----------------------------------------");
 
                         gBoxReceiverControl_05.Text = "Receiver Control (Unused)";
                         RC_5 = false;
@@ -2306,11 +2306,11 @@ namespace RFIDRegistration
                             RC_6 = true;
                             btnReceiverConnect_06.Text = "Disconnect";
 
-                            tBoxLog_03.Text += Environment.NewLine
+                            tBoxLog_03.Text = tBoxLog_03.Text.Insert(0, Environment.NewLine
                             + "-----------------------------------------" + Environment.NewLine
                             + tBoxDeviceID_03.Text + " Successfully Connect to Receiver Control!" + Environment.NewLine
                             + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
-                            + "-----------------------------------------";
+                            + "-----------------------------------------");
                         }
                         else
                         {
@@ -2319,11 +2319,11 @@ namespace RFIDRegistration
                     }
                     else if (btnReceiverConnect_06.Text == "Disconnect")
                     {
-                        tBoxLog_03.Text += Environment.NewLine
+                        tBoxLog_03.Text = tBoxLog_03.Text.Insert(0, Environment.NewLine
                         + "-----------------------------------------" + Environment.NewLine
                         + gBoxReceiverControl_06.Text + " Successfully Disconnect to Receiver Control!" + Environment.NewLine
                         + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
-                        + "-----------------------------------------";
+                        + "-----------------------------------------");
 
                         gBoxReceiverControl_06.Text = "Receiver Control (Unused)";
                         RC_6 = false;
@@ -2416,14 +2416,14 @@ namespace RFIDRegistration
                     btnPubRPCReq_03.Enabled = false;
                     break;
 
-                case "RFID Attb: Cache Remove Tag, Cache Period 1500ms":
-                    tBoxPublish_03.Text = "{\"s.uhfrfid.cachetagremove\":1,\"s.uhfrfid.cacheperiod\":1500}";
+                case "RFID Attb: Cache Remove Tag, Cache period 2000ms":
+                    tBoxPublish_03.Text = "{\"s.uhfrfid.cachetagremove\":1,\"s.uhfrfid.cacheperiod\":2000}";
                     btnPubDevUpAttb_03.Enabled = true;
                     btnPubRPCReq_03.Enabled = false;
                     break;
 
                 case "RFID Attb: Cache Remove Tag, Cache Period 4000ms":
-                    tBoxPublish_03.Text = "{\"s.uhfrfid.cachetagremove\":1,\"s.uhfrfid.cacheperiod\":5000}";
+                    tBoxPublish_03.Text = "{\"s.uhfrfid.cachetagremove\":1,\"s.uhfrfid.cacheperiod\":4000}";
                     btnPubDevUpAttb_03.Enabled = true;
                     btnPubRPCReq_03.Enabled = false;
                     break;
@@ -3156,8 +3156,8 @@ namespace RFIDRegistration
                         "RFID Attb: Disable Auto Mode, Menu Mode Period 10 second",
                         "RFID Attb: Cache Remove Tag, Cache period 800ms",
                         "RFID Attb: Cache Remove Tag, Cache period 1100ms",
-                        "RFID Attb: Cache Remove Tag, Cache period 1500ms",
-                        "RFID Attb: Cache Remove Tag, Cache period 4000ms",
+                        "RFID Attb: Cache Remove Tag, Cache period 2000ms",
+                        "RFID Attb: Cache Remove Tag, Cache Period 4000ms",
                         "RFID Attb: Cache Remove Tag, Cache period 10000ms",
                         "RFID Attb: Cache do not remove tag",
                         "RFID Attb: Enable Tag Remove Update",
@@ -3424,11 +3424,6 @@ namespace RFIDRegistration
             }
         }
 
-        private void tBoxReceiverOutput_01_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
         private void btnPubDevUpAttb_04_Click(object sender, EventArgs e)
         {
             if (ConnectionStatus_03)
@@ -3462,6 +3457,8 @@ namespace RFIDRegistration
 
         private void EventPublished_03(object sender, MqttMsgPublishEventArgs e)
         {
+            sqlConnect.con.Open();
+            
             try
             {
                 string ReceivedMessage = Encoding.UTF8.GetString(e.Message);
@@ -3472,24 +3469,24 @@ namespace RFIDRegistration
                     {
                         tBoxReceiverOutput_01.Invoke((MethodInvoker)delegate
                         {
-                            tBoxReceiverOutput_01.Text += Environment.NewLine
+                            tBoxReceiverOutput_01.Text = tBoxReceiverOutput_01.Text.Insert(0, Environment.NewLine
                                 + "-----------------------------------------" + Environment.NewLine
                                 + "===== Received Message =====" + Environment.NewLine
                                 + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
                                 + "Topic:" + e.Topic + Environment.NewLine
                                 + "Message: " + ReceivedMessage + Environment.NewLine
-                                + "-----------------------------------------";
+                                + "-----------------------------------------");
                         });
                     }
                     else
                     {
-                        tBoxReceiverOutput_01.Text += Environment.NewLine
+                        tBoxReceiverOutput_01.Text = tBoxReceiverOutput_01.Text.Insert(0, Environment.NewLine
                                 + "-----------------------------------------" + Environment.NewLine
                                 + "===== Received Message =====" + Environment.NewLine
                                 + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
                                 + "Topic:" + e.Topic + Environment.NewLine
                                 + "Message: " + ReceivedMessage + Environment.NewLine
-                                + "-----------------------------------------";
+                                + "-----------------------------------------");
                     }
 
                 }
@@ -3499,24 +3496,24 @@ namespace RFIDRegistration
                     {
                         tBoxReceiverOutput_02.Invoke((MethodInvoker)delegate
                         {
-                            tBoxReceiverOutput_02.Text += Environment.NewLine
+                            tBoxReceiverOutput_02.Text = tBoxReceiverOutput_02.Text.Insert(0, Environment.NewLine
                                 + "-----------------------------------------" + Environment.NewLine
                                 + "===== Received Message =====" + Environment.NewLine
                                 + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
                                 + "Topic:" + e.Topic + Environment.NewLine
                                 + "Message: " + ReceivedMessage + Environment.NewLine
-                                + "-----------------------------------------";
+                                + "-----------------------------------------");
                         });
                     }
                     else
                     {
-                        tBoxReceiverOutput_02.Text += Environment.NewLine
+                        tBoxReceiverOutput_02.Text = tBoxReceiverOutput_02.Text.Insert(0, Environment.NewLine
                             + "-----------------------------------------" + Environment.NewLine
                             + "===== Received Message =====" + Environment.NewLine
                             + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
                             + "Topic:" + e.Topic + Environment.NewLine
                             + "Message: " + ReceivedMessage + Environment.NewLine
-                            + "-----------------------------------------";
+                            + "-----------------------------------------");
                     }
                 }
                 else if (RC_3 && e.Topic.Contains(gBoxReceiverControl_03.Text))
@@ -3525,24 +3522,24 @@ namespace RFIDRegistration
                     {
                         tBoxReceiverOutput_03.Invoke((MethodInvoker)delegate
                         {
-                            tBoxReceiverOutput_03.Text += Environment.NewLine
+                            tBoxReceiverOutput_03.Text = tBoxReceiverOutput_03.Text.Insert(0, Environment.NewLine
                                 + "-----------------------------------------" + Environment.NewLine
                                 + "===== Received Message =====" + Environment.NewLine
                                 + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
                                 + "Topic:" + e.Topic + Environment.NewLine
                                 + "Message: " + ReceivedMessage + Environment.NewLine
-                                + "-----------------------------------------";
+                                + "-----------------------------------------");
                         });
                     }
                     else
                     {
-                        tBoxReceiverOutput_03.Text += Environment.NewLine
+                        tBoxReceiverOutput_03.Text = tBoxReceiverOutput_03.Text.Insert(0, Environment.NewLine
                             + "-----------------------------------------" + Environment.NewLine
                             + "===== Received Message =====" + Environment.NewLine
                             + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
                             + "Topic:" + e.Topic + Environment.NewLine
                             + "Message: " + ReceivedMessage + Environment.NewLine
-                            + "-----------------------------------------";
+                            + "-----------------------------------------");
                     }
                 }
                 else if (RC_4 && e.Topic.Contains(gBoxReceiverControl_04.Text))
@@ -3551,24 +3548,24 @@ namespace RFIDRegistration
                     {
                         tBoxReceiverOutput_04.Invoke((MethodInvoker)delegate
                         {
-                            tBoxReceiverOutput_04.Text += Environment.NewLine
+                            tBoxReceiverOutput_04.Text = tBoxReceiverOutput_04.Text.Insert(0, Environment.NewLine
                                 + "-----------------------------------------" + Environment.NewLine
                                 + "===== Received Message =====" + Environment.NewLine
                                 + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
                                 + "Topic:" + e.Topic + Environment.NewLine
                                 + "Message: " + ReceivedMessage + Environment.NewLine
-                                + "-----------------------------------------";
+                                + "-----------------------------------------");
                         });
                     }
                     else
                     {
-                        tBoxReceiverOutput_04.Text += Environment.NewLine
+                        tBoxReceiverOutput_04.Text = tBoxReceiverOutput_04.Text.Insert(0, Environment.NewLine
                             + "-----------------------------------------" + Environment.NewLine
                             + "===== Received Message =====" + Environment.NewLine
                             + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
                             + "Topic:" + e.Topic + Environment.NewLine
                             + "Message: " + ReceivedMessage + Environment.NewLine
-                            + "-----------------------------------------";
+                            + "-----------------------------------------");
                     }
                 }
                 else if (RC_5 && e.Topic.Contains(gBoxReceiverControl_05.Text))
@@ -3577,24 +3574,24 @@ namespace RFIDRegistration
                     {
                         tBoxReceiverOutput_05.Invoke((MethodInvoker)delegate
                         {
-                            tBoxReceiverOutput_05.Text += Environment.NewLine
+                            tBoxReceiverOutput_05.Text = tBoxReceiverOutput_05.Text.Insert(0, Environment.NewLine
                                 + "-----------------------------------------" + Environment.NewLine
                                 + "===== Received Message =====" + Environment.NewLine
                                 + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
                                 + "Topic:" + e.Topic + Environment.NewLine
                                 + "Message: " + ReceivedMessage + Environment.NewLine
-                                + "-----------------------------------------";
+                                + "-----------------------------------------");
                         });
                     }
                     else
                     {
-                        tBoxReceiverOutput_05.Text += Environment.NewLine
+                        tBoxReceiverOutput_05.Text = tBoxReceiverOutput_05.Text.Insert(0, Environment.NewLine
                             + "-----------------------------------------" + Environment.NewLine
                             + "===== Received Message =====" + Environment.NewLine
                             + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
                             + "Topic:" + e.Topic + Environment.NewLine
                             + "Message: " + ReceivedMessage + Environment.NewLine
-                            + "-----------------------------------------";
+                            + "-----------------------------------------");
                     }
                 }
                 else if (RC_6 && e.Topic.Contains(gBoxReceiverControl_06.Text))
@@ -3603,24 +3600,24 @@ namespace RFIDRegistration
                     {
                         tBoxReceiverOutput_06.Invoke((MethodInvoker)delegate
                         {
-                            tBoxReceiverOutput_06.Text += Environment.NewLine
+                            tBoxReceiverOutput_06.Text = tBoxReceiverOutput_06.Text.Insert(0, Environment.NewLine
                                 + "-----------------------------------------" + Environment.NewLine
                                 + "===== Received Message =====" + Environment.NewLine
                                 + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
                                 + "Topic:" + e.Topic + Environment.NewLine
                                 + "Message: " + ReceivedMessage + Environment.NewLine
-                                + "-----------------------------------------";
+                                + "-----------------------------------------");
                         });
                     }
                     else
                     {
-                        tBoxReceiverOutput_06.Text += Environment.NewLine
+                        tBoxReceiverOutput_06.Text = tBoxReceiverOutput_06.Text.Insert(0, Environment.NewLine
                             + "-----------------------------------------" + Environment.NewLine
                             + "===== Received Message =====" + Environment.NewLine
                             + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
                             + "Topic:" + e.Topic + Environment.NewLine
                             + "Message: " + ReceivedMessage + Environment.NewLine
-                            + "-----------------------------------------";
+                            + "-----------------------------------------");
                     }
                 }
 
@@ -3628,13 +3625,16 @@ namespace RFIDRegistration
                 {
                     tBoxOverallReceiver.Invoke((MethodInvoker)delegate
                     {
-                        tBoxOverallReceiver.Text += Environment.NewLine
+                        tBoxOverallReceiver.Text = tBoxOverallReceiver.Text.Insert(0,
+                            Environment.NewLine
                             + "-----------------------------------------" + Environment.NewLine
                             + "===== Received Message =====" + Environment.NewLine
                             + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
                             + "Topic:" + e.Topic + Environment.NewLine
                             + "Message: " + ReceivedMessage + Environment.NewLine
-                            + "-----------------------------------------";
+                            + "-----------------------------------------"
+                            );
+
                         if (indicatorChoosen == false)
                         {
                             // RFID Reader Tag :
@@ -3643,38 +3643,6 @@ namespace RFIDRegistration
                             if (RFID_Details_Inv.Device_ID != null && ReceivedMessage.Contains(RFID_Details_Inv.Device_ID))
                             {
                                 ListViewItem item = listView_MQTTList.FindItemWithText(RFID_Details_Inv.Device_ID);
-
-                                /*RFIDDetails rFID_Detail_ = new RFIDDetails
-                                {
-                                    rfid_device_id = RFID_Details_Inv.Device_ID,
-                                    rfid_pkt_no = RFID_Details_Inv.Pktno,
-                                    rfid_connection = RFID_Details_Inv.Connection,
-                                    rfid_ip_address = RFID_Details_Inv.IP_Address,
-                                    rfid_connection_type = RFID_Details_Inv.Connection_Type,
-                                    rfid_ssid = RFID_Details_Inv.SSID,
-                                    rfid_fwid = RFID_Details_Inv.FWID,
-                                    rfid_date_code = RFID_Details_Inv.Date_Code,
-                                    rfid_model = RFID_Details_Inv.Model,
-                                    rfid_device_name = RFID_Details_Inv.Device_Name,
-                                    rfid_device_desc = RFID_Details_Inv.Device_Desc,
-                                    rfid_epochvalid = RFID_Details_Inv.Epoch_Valid,
-                                    rfid_channel_no = RFID_Details_Inv.Channel_No,
-                                    rfid_power_max = RFID_Details_Inv.Power_Max,
-                                    rfid_power_min = RFID_Details_Inv.Power_Min,
-                                    rfid_cachespace_max = RFID_Details_Inv.CacheSpace_Max,
-                                    rfid_rfid_mode = RFID_Details_Inv.RFID_Mode,
-                                    rfid_q = RFID_Details_Inv.Q,
-                                    rfid_auto = RFID_Details_Inv.Auto,
-                                    rfid_period = RFID_Details_Inv.Period,
-                                    rfid_rfid_current_power = RFID_Details_Inv.RFID_Current_Power,
-                                    rfid_cache_period = RFID_Details_Inv.Cache_Period,
-                                    rfid_cache_size = RFID_Details_Inv.Cache_Size,
-                                    rfid_se_mdoe = RFID_Details_Inv.Se_Mode,
-                                    rfid_epc_extended = RFID_Details_Inv.EPC_Extended,
-                                    rfid_ant_ch = RFID_Details_Inv.Ant_CH,
-                                    rfid_force_update = RFID_Details_Inv.Force_Update,
-                                    rfid_demo_mode = RFID_Details_Inv.Demo_Mode,
-                                };*/
 
                                 if (item.SubItems[1].Text.Equals(RFID_Details_Inv.Device_ID))
                                 {
@@ -3690,211 +3658,552 @@ namespace RFIDRegistration
                                     }
                                 }
 
-                                //HttpClientConnection(rFID_Detail_);
-                            }
-                        }
-                        else
-                        {
-                            // Indicator Battery :
-                            Battery_detail_Json battery_1 = JsonConvert.DeserializeObject<Battery_detail_Json>(ReceivedMessage);
-
-                            if (battery_1.Device_ID != null && ReceivedMessage.Contains(battery_1.Device_ID))
-                            {
-                                ListViewItem item = listView_MQTTList.FindItemWithText(battery_1.Device_ID);
-
-                                if (e.Topic.Contains("/rpc/response/"))
+                                if (e.Topic.Contains("/attributes"))
                                 {
-                                    if (ReceivedMessage.Contains("r.enow.list"))
+                                    if (ReceivedMessage.Contains("d.sys.addr") && ReceivedMessage.Contains("d.sys.fwid"))
                                     {
-                                        Battery battery_ = new Battery
+                                        if (sqlConnect.con.State == System.Data.ConnectionState.Open)
                                         {
-                                            device_id = battery_1.Device_ID,
-                                            pkt_no = battery_1.Pkt_No,
-                                            battery_name = battery_1.Enow_List[0].Node_ID,
-                                            battery_level = battery_1.Enow_List[0].Battery_level,
-                                            battery_status = battery_1.Enow_List[0].Battery_Status,
-                                        };
+                                            SqlDataAdapter DA_1 = new SqlDataAdapter("Insert_DetailList", sqlConnect.con);
+                                            DA_1.SelectCommand.CommandType = CommandType.StoredProcedure;
 
-                                        if (item.SubItems[1].Text.Equals(battery_1.Device_ID))
-                                        {
-                                            if (battery_1.Enow_List[0].Battery_Status == "0")
+                                            SqlDataAdapter DA_2 = new SqlDataAdapter("Insert_RFID_Attributes", sqlConnect.con);
+                                            DA_2.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+                                            DA_1.SelectCommand.Parameters.Add("@device_id", SqlDbType.VarChar).Value = RFID_Details_Inv.Device_ID;
+                                            DA_1.SelectCommand.Parameters.Add("@pkt_no", SqlDbType.VarChar).Value = RFID_Details_Inv.Pktno;
+                                            DA_1.SelectCommand.Parameters.Add("@rssi", SqlDbType.VarChar).Value = RFID_Details_Inv.Wifi_Received_Signal_Strength;
+                                            DA_1.SelectCommand.Parameters.Add("@ip_address", SqlDbType.VarChar).Value = RFID_Details_Inv.IP_Address;
+                                            DA_1.SelectCommand.Parameters.Add("@connection", SqlDbType.VarChar).Value = RFID_Details_Inv.Connection;
+                                            DA_1.SelectCommand.Parameters.Add("@connection_type", SqlDbType.VarChar).Value = RFID_Details_Inv.Connection_Type;
+                                            DA_1.SelectCommand.Parameters.Add("@ssid", SqlDbType.VarChar).Value = RFID_Details_Inv.SSID;
+                                            DA_1.SelectCommand.Parameters.Add("@fwid", SqlDbType.VarChar).Value = RFID_Details_Inv.FWID;
+                                            DA_1.SelectCommand.Parameters.Add("@date_code", SqlDbType.VarChar).Value = RFID_Details_Inv.Date_Code;
+
+                                            // Device Desc ::
+                                            DA_1.SelectCommand.Parameters.Add("@device_model", SqlDbType.VarChar).Value = RFID_Details_Inv.Model;
+                                            DA_1.SelectCommand.Parameters.Add("@device_name", SqlDbType.VarChar).Value = RFID_Details_Inv.Device_Name;
+                                            DA_1.SelectCommand.Parameters.Add("@device_desc", SqlDbType.VarChar).Value = RFID_Details_Inv.Device_Desc;
+
+                                            // Epoch ::
+                                            DA_1.SelectCommand.Parameters.Add("@epoch_valid", SqlDbType.VarChar).Value = RFID_Details_Inv.Epoch_Valid;
+                                            DA_1.SelectCommand.Parameters.Add("@epoch_sec", SqlDbType.VarChar).Value = RFID_Details_Inv.Epoch_Sec;
+
+                                            DA_1.SelectCommand.Parameters.Add("@rpc_busy", SqlDbType.VarChar).Value = RFID_Details_Inv.Rpc_Busy;
+                                            DA_1.SelectCommand.Parameters.Add("@channel_no", SqlDbType.VarChar).Value = RFID_Details_Inv.Channel_No;
+                                            DA_1.SelectCommand.Parameters.Add("@power_max", SqlDbType.VarChar).Value = RFID_Details_Inv.Power_Max;
+                                            DA_1.SelectCommand.Parameters.Add("@power_min", SqlDbType.VarChar).Value = RFID_Details_Inv.Power_Min;
+                                            DA_1.SelectCommand.Parameters.Add("@cachespace_max", SqlDbType.VarChar).Value = RFID_Details_Inv.CacheSpace_Max;
+
+                                            // Anthenna Output ::
+                                            if (ReceivedMessage.Contains("d.uhfrfid.antison"))
                                             {
-                                                item.SubItems[3].Text = "Connected";
-                                                item.SubItems[3].ForeColor = Color.Green;
+                                                DA_1.SelectCommand.Parameters.Add("@anthenna_output", SqlDbType.VarChar).Value
+                                                = RFID_Details_Inv.Anthenna_Output[0] + "," + RFID_Details_Inv.Anthenna_Output[1] + "," + RFID_Details_Inv.Anthenna_Output[2] + "," + RFID_Details_Inv.Anthenna_Output[3];
                                             }
-                                            else if (battery_1.Enow_List[0].Battery_Status == "1")
+                                            else
                                             {
-                                                item.SubItems[3].Text = "Disconnected";
-                                                item.SubItems[3].ForeColor = Color.Red;
+                                                DA_1.SelectCommand.Parameters.Add("@anthenna_output", SqlDbType.VarChar).Value = "";
                                             }
+
+                                            // RFID Mode ::
+                                            if (ReceivedMessage.Contains("d.uhfrfid.antstate"))
+                                            {
+                                                DA_1.SelectCommand.Parameters.Add("@rfid_mode", SqlDbType.VarChar).Value
+                                                = RFID_Details_Inv.RFID_Mode[0] + "," + RFID_Details_Inv.RFID_Mode[1] + "," + RFID_Details_Inv.RFID_Mode[2] + "," + RFID_Details_Inv.RFID_Mode[3];
+                                            }
+                                            else
+                                            {
+                                                DA_1.SelectCommand.Parameters.Add("@rfid_mode", SqlDbType.VarChar).Value = "";
+                                            }
+
+                                            DA_1.SelectCommand.Parameters.Add("@rfid_temp", SqlDbType.VarChar).Value = RFID_Details_Inv.RFID_Temp;
+                                            DA_1.SelectCommand.Parameters.Add("@rfid_firmware_id", SqlDbType.VarChar).Value = RFID_Details_Inv.RFID_Firmware_ID;
+                                            DA_1.SelectCommand.Parameters.Add("@read_period", SqlDbType.VarChar).Value = RFID_Details_Inv.Read_Period;
+                                            DA_1.SelectCommand.Parameters.Add("@auto", SqlDbType.VarChar).Value = RFID_Details_Inv.Auto;
+                                            DA_1.SelectCommand.Parameters.Add("@period", SqlDbType.VarChar).Value = RFID_Details_Inv.Period;
+
+                                            // Input Trigger ::
+                                            if (ReceivedMessage.Contains("s.uhfrfid.inptrig"))
+                                            {
+                                                DA_1.SelectCommand.Parameters.Add("@input_trigger", SqlDbType.VarChar).Value = RFID_Details_Inv.Input_Trigger[0] + "," + RFID_Details_Inv.Input_Trigger[1];
+                                            }
+                                            else
+                                            {
+                                                DA_1.SelectCommand.Parameters.Add("@input_trigger", SqlDbType.VarChar).Value = "";
+                                            }
+
+                                            DA_1.SelectCommand.Parameters.Add("@cache_tag_remove", SqlDbType.VarChar).Value = RFID_Details_Inv.Cache_Tag_Remove;
+                                            DA_1.SelectCommand.Parameters.Add("@cache_period", SqlDbType.VarChar).Value = RFID_Details_Inv.Cache_Period;
+                                            DA_1.SelectCommand.Parameters.Add("@tag_remove_upd", SqlDbType.VarChar).Value = RFID_Details_Inv.Tag_Remove_Upd;
+                                            DA_1.SelectCommand.Parameters.Add("@anthenna_channel_upd", SqlDbType.VarChar).Value = RFID_Details_Inv.Anthenna_Channel_Upd;
+                                            DA_1.SelectCommand.Parameters.Add("@enbforce_upd", SqlDbType.VarChar).Value = RFID_Details_Inv.EnbForce_Upd;
+                                            DA_1.SelectCommand.Parameters.Add("@force_update_period", SqlDbType.VarChar).Value = RFID_Details_Inv.Force_Update_Period;
+
+                                            // Filter Options ::
+                                            DA_1.SelectCommand.Parameters.Add("@self_filter_option", SqlDbType.VarChar).Value = RFID_Details_Inv.Self_Filter_Option;
+                                            DA_1.SelectCommand.Parameters.Add("@self_filter_addr", SqlDbType.VarChar).Value = RFID_Details_Inv.Self_Filter_Addr;
+                                            DA_1.SelectCommand.Parameters.Add("@self_filter_len_bit", SqlDbType.VarChar).Value = RFID_Details_Inv.Self_Filter_Len_Bit;
+                                            DA_1.SelectCommand.Parameters.Add("@self_filter_data", SqlDbType.VarChar).Value = RFID_Details_Inv.Self_Filter_Data;
+                                            DA_1.SelectCommand.Parameters.Add("@self_filter_invert", SqlDbType.VarChar).Value = RFID_Details_Inv.Self_Filter_Invert;
+
+                                            // Tag Data ::
+                                            DA_1.SelectCommand.Parameters.Add("@enb_tag_data", SqlDbType.VarChar).Value = RFID_Details_Inv.Enb_Tag_Data;
+                                            DA_1.SelectCommand.Parameters.Add("@tag_data_mem_bank", SqlDbType.VarChar).Value = RFID_Details_Inv.Tag_Data_Mem_Bank;
+                                            DA_1.SelectCommand.Parameters.Add("@tag_data_reader_addr", SqlDbType.VarChar).Value = RFID_Details_Inv.Tag_Data_Reader_Addr;
+                                            DA_1.SelectCommand.Parameters.Add("@tag_data_word_count", SqlDbType.VarChar).Value = RFID_Details_Inv.Tag_Data_Word_Count;
+                                            DA_1.SelectCommand.Parameters.Add("@enbtagpass", SqlDbType.VarChar).Value = RFID_Details_Inv.EnbTagPass;
+                                            DA_1.SelectCommand.Parameters.Add("@tag_pass", SqlDbType.VarChar).Value = RFID_Details_Inv.Tag_Pass;
+
+                                            DA_1.SelectCommand.Parameters.Add("@dynamic_q", SqlDbType.VarChar).Value = RFID_Details_Inv.Dynamic_Q;
+                                            DA_1.SelectCommand.Parameters.Add("@q", SqlDbType.VarChar).Value = RFID_Details_Inv.Q;
+                                            DA_1.SelectCommand.Parameters.Add("@se_mode", SqlDbType.VarChar).Value = RFID_Details_Inv.Se_Mode;
+                                            DA_1.SelectCommand.Parameters.Add("@target", SqlDbType.VarChar).Value = RFID_Details_Inv.Target;
+                                            DA_1.SelectCommand.Parameters.Add("@epc_extended", SqlDbType.VarChar).Value = RFID_Details_Inv.EPC_Extended;
+
+                                            // Anthenna Mode ::
+                                            if (ReceivedMessage.Contains("s.uhfrfid.antenb"))
+                                            {
+                                                DA_1.SelectCommand.Parameters.Add("@anthenna_mode", SqlDbType.VarChar).Value
+                                                = RFID_Details_Inv.Anthenna_Mode[0] + "," + RFID_Details_Inv.Anthenna_Mode[1] + "," + RFID_Details_Inv.Anthenna_Mode[2] + "," + RFID_Details_Inv.Anthenna_Mode[3];
+                                            }
+                                            else
+                                            {
+                                                DA_1.SelectCommand.Parameters.Add("@anthenna_mode", SqlDbType.VarChar).Value = "";
+                                            }
+
+                                            // Current Power ::
+                                            if (ReceivedMessage.Contains("s.uhfrfid.power"))
+                                            {
+                                                DA_1.SelectCommand.Parameters.Add("@rfid_current_power", SqlDbType.VarChar).Value
+                                                = RFID_Details_Inv.RFID_Current_Power[0] + "," + RFID_Details_Inv.RFID_Current_Power[1] + "," + RFID_Details_Inv.RFID_Current_Power[2] + "," + RFID_Details_Inv.RFID_Current_Power[3];
+                                            }
+                                            else
+                                            {
+                                                DA_1.SelectCommand.Parameters.Add("@rfid_current_power", SqlDbType.VarChar).Value = "";
+                                            }
+
+                                            DA_1.SelectCommand.Parameters.Add("@demo_mode", SqlDbType.VarChar).Value = RFID_Details_Inv.Demo_Mode;
+                                            // Temp Sensor ::
+                                            DA_1.SelectCommand.Parameters.Add("@rate_control", SqlDbType.VarChar).Value = RFID_Details_Inv.Rate_Control;
+                                            DA_1.SelectCommand.Parameters.Add("@rate_control_period", SqlDbType.VarChar).Value = RFID_Details_Inv.Rate_Control_Period;
+
+                                            DA_1.SelectCommand.ExecuteNonQuery();
+
+                                            for (int x = 0; x < RFID_Details_Inv.Perip_Items.Count; x++)
+                                            {
+                                                DA_2.SelectCommand.Parameters.Clear();
+                                                DA_2.SelectCommand.Parameters.Add("@Option", SqlDbType.VarChar).Value = "Insert_PeripharalItems";
+                                                DA_2.SelectCommand.Parameters.Add("@cmdkey", SqlDbType.VarChar).Value = RFID_Details_Inv.Perip_Items[x].Cmd_Key;
+                                                DA_2.SelectCommand.Parameters.Add("@feature", SqlDbType.VarChar).Value = RFID_Details_Inv.Perip_Items[x].Feature;
+                                                DA_2.SelectCommand.Parameters.Add("@ipp_ch", SqlDbType.VarChar).Value = "";
+                                                DA_2.SelectCommand.Parameters.Add("@ipp_onishigh", SqlDbType.VarChar).Value = "";
+                                                DA_2.SelectCommand.Parameters.Add("@ipp_mode", SqlDbType.VarChar).Value = "";
+                                                DA_2.SelectCommand.Parameters.Add("@ipp_debounce", SqlDbType.VarChar).Value = "";
+                                                DA_2.SelectCommand.Parameters.Add("@opp_ch", SqlDbType.VarChar).Value = "";
+                                                DA_2.SelectCommand.Parameters.Add("@opp_onishigh", SqlDbType.VarChar).Value = "";
+                                                DA_2.SelectCommand.Parameters.Add("@opp_mode", SqlDbType.VarChar).Value = "";
+                                                DA_2.SelectCommand.Parameters.Add("@opp_fperiodon", SqlDbType.VarChar).Value = "";
+                                                DA_2.SelectCommand.Parameters.Add("@opp_fperiodoff", SqlDbType.VarChar).Value = "";
+                                                DA_2.SelectCommand.Parameters.Add("@opp_pulsecnt", SqlDbType.VarChar).Value = "";
+                                                DA_2.SelectCommand.ExecuteNonQuery();
+                                            }
+
+                                            if (ReceivedMessage.Contains("s.outputport.setup"))
+                                            {
+                                                for (int y = 0; y < RFID_Details_Inv.OutputSetup.Count; y++)
+                                                {
+                                                    DA_2.SelectCommand.Parameters.Clear();
+                                                    DA_2.SelectCommand.Parameters.Add("@Option", SqlDbType.VarChar).Value = "Insert_OutputConfig";
+                                                    DA_2.SelectCommand.Parameters.Add("@cmdkey", SqlDbType.VarChar).Value = "";
+                                                    DA_2.SelectCommand.Parameters.Add("@feature", SqlDbType.VarChar).Value = "";
+                                                    DA_2.SelectCommand.Parameters.Add("@ipp_ch", SqlDbType.VarChar).Value = "";
+                                                    DA_2.SelectCommand.Parameters.Add("@ipp_onishigh", SqlDbType.VarChar).Value = "";
+                                                    DA_2.SelectCommand.Parameters.Add("@ipp_mode", SqlDbType.VarChar).Value = "";
+                                                    DA_2.SelectCommand.Parameters.Add("@ipp_debounce", SqlDbType.VarChar).Value = "";
+                                                    DA_2.SelectCommand.Parameters.Add("@opp_ch", SqlDbType.VarChar).Value = RFID_Details_Inv.OutputSetup[y].Channel;
+                                                    DA_2.SelectCommand.Parameters.Add("@opp_onishigh", SqlDbType.VarChar).Value = RFID_Details_Inv.OutputSetup[y].On_isHigh;
+                                                    DA_2.SelectCommand.Parameters.Add("@opp_mode", SqlDbType.VarChar).Value = RFID_Details_Inv.OutputSetup[y].Mode_Output;
+                                                    DA_2.SelectCommand.Parameters.Add("@opp_fperiodon", SqlDbType.VarChar).Value = RFID_Details_Inv.OutputSetup[y].F_Period_On;
+                                                    DA_2.SelectCommand.Parameters.Add("@opp_fperiodoff", SqlDbType.VarChar).Value = RFID_Details_Inv.OutputSetup[y].F_Period_Off;
+                                                    DA_2.SelectCommand.Parameters.Add("@opp_pulsecnt", SqlDbType.VarChar).Value = RFID_Details_Inv.OutputSetup[y].Pulse_Cnt;
+                                                    DA_2.SelectCommand.ExecuteNonQuery();
+                                                }
+                                            }
+
+                                            if (ReceivedMessage.Contains("s.inputport.setup"))
+                                            {
+                                                for (int z = 0; z < RFID_Details_Inv.InputSetup.Count; z++)
+                                                {
+                                                    DA_2.SelectCommand.Parameters.Clear();
+                                                    DA_2.SelectCommand.Parameters.Add("@Option", SqlDbType.VarChar).Value = "Insert_InputConfig";
+                                                    DA_2.SelectCommand.Parameters.Add("@cmdkey", SqlDbType.VarChar).Value = "";
+                                                    DA_2.SelectCommand.Parameters.Add("@feature", SqlDbType.VarChar).Value = "";
+                                                    DA_2.SelectCommand.Parameters.Add("@ipp_ch", SqlDbType.VarChar).Value = RFID_Details_Inv.InputSetup[z].Channel;
+                                                    DA_2.SelectCommand.Parameters.Add("@ipp_onishigh", SqlDbType.VarChar).Value = RFID_Details_Inv.InputSetup[z].On_isHigh;
+                                                    DA_2.SelectCommand.Parameters.Add("@ipp_mode", SqlDbType.VarChar).Value = RFID_Details_Inv.InputSetup[z].Mode_Output;
+                                                    DA_2.SelectCommand.Parameters.Add("@ipp_debounce", SqlDbType.VarChar).Value = RFID_Details_Inv.InputSetup[z].Debounce;
+                                                    DA_2.SelectCommand.Parameters.Add("@opp_ch", SqlDbType.VarChar).Value = "";
+                                                    DA_2.SelectCommand.Parameters.Add("@opp_onishigh", SqlDbType.VarChar).Value = "";
+                                                    DA_2.SelectCommand.Parameters.Add("@opp_mode", SqlDbType.VarChar).Value = "";
+                                                    DA_2.SelectCommand.Parameters.Add("@opp_fperiodon", SqlDbType.VarChar).Value = "";
+                                                    DA_2.SelectCommand.Parameters.Add("@opp_fperiodoff", SqlDbType.VarChar).Value = "";
+                                                    DA_2.SelectCommand.Parameters.Add("@opp_pulsecnt", SqlDbType.VarChar).Value = "";
+                                                    DA_2.SelectCommand.ExecuteNonQuery();
+                                                }
+                                            }
+
                                         }
-
-                                        //HttpClientConnection(battery_);
+                                        else
+                                        {
+                                            tBoxLog_03.Text = tBoxLog_03.Text.Insert(0, Environment.NewLine
+                                                    + "-----------------------------------------" + Environment.NewLine
+                                                    + "SQL Connection is Failure, Please Try Again!!"
+                                                    + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
+                                                    + "-----------------------------------------");
+                                        }
                                     }
+                                    
                                 }
-
                                 else if (e.Topic.Contains("/telemetry"))
                                 {
-                                    if (ReceivedMessage.Contains("t.enow.button"))
+                                    if (ReceivedMessage.Contains("t.uhfrfid.temp"))
                                     {
-                                        Battery battery_ = new Battery
+                                        RFID_Tag_Json TagJson = JsonConvert.DeserializeObject<RFID_Tag_Json>(ReceivedMessage);
+
+                                        if (sqlConnect.con.State == System.Data.ConnectionState.Open)
                                         {
-                                            device_id = battery_1.Device_ID,
-                                            pkt_no = battery_1.Pkt_No,
-                                            battery_name = battery_1.Enow_Button[0].Node_ID,
-                                            battery_level = battery_1.Enow_Button[0].Battery_level,
-                                            battery_status = battery_1.Enow_Button[0].Battery_Status,
-                                        };
-                                        //HttpClientConnection(battery_);
+                                            SqlDataAdapter DA = new SqlDataAdapter("Insert_RFID_Temp", sqlConnect.con);
+                                            DA.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+                                            DA.SelectCommand.Parameters.Add("@device_id", SqlDbType.VarChar).Value = TagJson.Device_ID;
+                                            DA.SelectCommand.Parameters.Add("@rssi", SqlDbType.VarChar).Value = TagJson.RSSI;
+                                            DA.SelectCommand.Parameters.Add("@pkt_no", SqlDbType.VarChar).Value = TagJson.Pkt_No;
+                                            DA.SelectCommand.Parameters.Add("@device_temp", SqlDbType.VarChar).Value = TagJson.Device_Temp;
+
+                                            DA.SelectCommand.ExecuteNonQuery();
+                                        }
+                                        else
+                                        {
+                                            tBoxLog_03.Text = tBoxLog_03.Text.Insert(0, Environment.NewLine
+                                                + "-----------------------------------------" + Environment.NewLine
+                                                + "SQL Connection is Failure, Please Try Again!!"
+                                                + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
+                                                + "-----------------------------------------");
+                                        }
                                     }
-                                    else if (ReceivedMessage.Contains("t.enow.battstate"))
+                                    else if (ReceivedMessage.Contains("t.uhfrfid.param"))
                                     {
-                                        Battery battery_ = new Battery
+                                        RFID_Tag_Json TagJson = JsonConvert.DeserializeObject<RFID_Tag_Json>(ReceivedMessage);
+
+                                        if (sqlConnect.con.State == System.Data.ConnectionState.Open)
                                         {
-                                            device_id = battery_1.Device_ID,
-                                            pkt_no = battery_1.Pkt_No,
-                                            battery_name = battery_1.Enow_BattState[0].Node_ID,
-                                            battery_level = battery_1.Enow_BattState[0].Battery_level,
-                                            battery_status = battery_1.Enow_BattState[0].Battery_Status,
-                                        };
-                                        //HttpClientConnection(battery_);
+                                            if (TagJson.Telematics_Data.Count > 0)
+                                            {
+                                                for (int countTeleData = 0; countTeleData < TagJson.Telematics_Data.Count(); countTeleData++)
+                                                {
+                                                    SqlDataAdapter DA = new SqlDataAdapter("Insert_ScanResult", sqlConnect.con);
+                                                    DA.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+                                                    DA.SelectCommand.Parameters.Add("@device_id", SqlDbType.VarChar).Value = TagJson.Device_ID;
+                                                    DA.SelectCommand.Parameters.Add("@tag_rssi", SqlDbType.VarChar).Value = TagJson.RSSI;
+                                                    DA.SelectCommand.Parameters.Add("@pkt_no", SqlDbType.VarChar).Value = TagJson.Pkt_No;
+
+                                                    DA.SelectCommand.Parameters.Add("@time_stamp", SqlDbType.VarChar).Value = TagJson.Telematics_Data[countTeleData].Time_Stamp;
+                                                    DA.SelectCommand.Parameters.Add("@state", SqlDbType.VarChar).Value = TagJson.Telematics_Data[countTeleData].State;
+                                                    DA.SelectCommand.Parameters.Add("@channel", SqlDbType.VarChar).Value = TagJson.Telematics_Data[countTeleData].Channel;
+                                                    DA.SelectCommand.Parameters.Add("@tele_rssi", SqlDbType.VarChar).Value = TagJson.Telematics_Data[countTeleData].RSSI;
+                                                    DA.SelectCommand.Parameters.Add("@tag_id", SqlDbType.VarChar).Value = TagJson.Telematics_Data[countTeleData].Tag_ID;
+
+                                                    DA.SelectCommand.ExecuteNonQuery();
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            tBoxLog_03.Text = tBoxLog_03.Text.Insert(0, Environment.NewLine
+                                                + "-----------------------------------------" + Environment.NewLine
+                                                + "SQL Connection is Failure, Please Try Again!!"
+                                                + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
+                                                + "-----------------------------------------");
+                                        }
                                     }
-                                    else if (ReceivedMessage.Contains("t.enow.disconnected"))
+                                    else if (ReceivedMessage.Contains("t.envsensor.param"))
                                     {
-                                        Battery battery_ = new Battery
+                                        RFID_Tag_Json TagJson = JsonConvert.DeserializeObject<RFID_Tag_Json>(ReceivedMessage);
+
+                                        if (sqlConnect.con.State == System.Data.ConnectionState.Open)
                                         {
-                                            device_id = battery_1.Device_ID,
-                                            pkt_no = battery_1.Pkt_No,
-                                            battery_name = battery_1.Enow_Disconnected[0].Node_ID,
-                                            battery_level = battery_1.Enow_Disconnected[0].Battery_level,
-                                            battery_status = battery_1.Enow_Disconnected[0].Battery_Status,
-                                        };
-                                        //HttpClientConnection(battery_);
+                                            SqlDataAdapter DA = new SqlDataAdapter("Insert_SensorResult", sqlConnect.con);
+                                            DA.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+                                            DA.SelectCommand.Parameters.Add("@device_id", SqlDbType.VarChar).Value = TagJson.Device_ID;
+                                            DA.SelectCommand.Parameters.Add("@rssi", SqlDbType.VarChar).Value = TagJson.RSSI;
+                                            DA.SelectCommand.Parameters.Add("@pkt_no", SqlDbType.VarChar).Value = TagJson.Pkt_No;
+                                            DA.SelectCommand.Parameters.Add("@sec", SqlDbType.VarChar).Value = TagJson.Sec;
+                                            DA.SelectCommand.Parameters.Add("@temperature", SqlDbType.VarChar).Value = TagJson.Telematics_SensorData.Temperature;
+                                            DA.SelectCommand.Parameters.Add("@humidity", SqlDbType.VarChar).Value = TagJson.Telematics_SensorData.Humidity;
+                                            DA.SelectCommand.Parameters.Add("@pressure", SqlDbType.VarChar).Value = TagJson.Telematics_SensorData.Pressure;
+
+                                            DA.SelectCommand.ExecuteNonQuery();
+                                        }
+                                        else
+                                        {
+                                            tBoxLog_03.Text = tBoxLog_03.Text.Insert(0, Environment.NewLine
+                                                + "-----------------------------------------" + Environment.NewLine
+                                                + "SQL Connection is Failure, Please Try Again!!"
+                                                + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
+                                                + "-----------------------------------------");
+                                        }
+
                                     }
-                                    else if (ReceivedMessage.Contains("t.enow.connected"))
+                                }
+                                else if (e.Topic.Contains("/rpc/response/"))
+                                {
+                                    if (ReceivedMessage.Contains("r.sysconfig.get") && ReceivedMessage.Contains("r.sysconfig.result\":true"))
                                     {
-                                        Battery battery_ = new Battery
+                                        RFID_Tag_Json TagJson = JsonConvert.DeserializeObject<RFID_Tag_Json>(ReceivedMessage);
+
+                                        if (sqlConnect.con.State == System.Data.ConnectionState.Open)
                                         {
-                                            device_id = battery_1.Device_ID,
-                                            pkt_no = battery_1.Pkt_No,
-                                            battery_name = battery_1.Enow_Connected[0].Node_ID,
-                                            battery_level = battery_1.Enow_Connected[0].Battery_level,
-                                            battery_status = battery_1.Enow_Connected[0].Battery_Status,
-                                        };
-                                        //HttpClientConnection(battery_);
+                                            SqlDataAdapter DA = new SqlDataAdapter("Insert_RPCConfig", sqlConnect.con);
+                                            DA.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+                                            DA.SelectCommand.Parameters.Add("@device_id", SqlDbType.VarChar).Value = TagJson.Device_ID;
+                                            DA.SelectCommand.Parameters.Add("@rssi", SqlDbType.VarChar).Value = TagJson.RSSI;
+                                            DA.SelectCommand.Parameters.Add("@pkt_no", SqlDbType.VarChar).Value = TagJson.Pkt_No;
+                                            DA.SelectCommand.Parameters.Add("@wifi_conn_type", SqlDbType.VarChar).Value = TagJson.RPC_ConfigData.WifiObj.Wifi_Connection_Type;
+                                            DA.SelectCommand.Parameters.Add("@wifi_ssid", SqlDbType.VarChar).Value = TagJson.RPC_ConfigData.WifiObj.SSID;
+                                            DA.SelectCommand.Parameters.Add("@wifi_password", SqlDbType.VarChar).Value = TagJson.RPC_ConfigData.WifiObj.Password;
+                                            DA.SelectCommand.Parameters.Add("@wifi_bssid", SqlDbType.VarChar).Value = TagJson.RPC_ConfigData.WifiObj.BSSID;
+                                            DA.SelectCommand.Parameters.Add("@staticip_enable", SqlDbType.VarChar).Value = TagJson.RPC_ConfigData.StaticIPObj.Enable;
+                                            DA.SelectCommand.Parameters.Add("@sntp_enable", SqlDbType.VarChar).Value = TagJson.RPC_ConfigData.SNTPObj.Enable;
+                                            DA.SelectCommand.Parameters.Add("@mqtt_enable", SqlDbType.VarChar).Value = TagJson.RPC_ConfigData.MQTTObj.Enable;
+                                            DA.SelectCommand.Parameters.Add("@mqtt_addr", SqlDbType.VarChar).Value = TagJson.RPC_ConfigData.MQTTObj.Address;
+                                            DA.SelectCommand.Parameters.Add("@mqtt_port", SqlDbType.VarChar).Value = TagJson.RPC_ConfigData.MQTTObj.Port;
+                                            DA.SelectCommand.Parameters.Add("@mqtt_conntype", SqlDbType.VarChar).Value = TagJson.RPC_ConfigData.MQTTObj.Connection_Type;
+                                            DA.SelectCommand.Parameters.Add("@mqtt_anonylogin", SqlDbType.VarChar).Value = TagJson.RPC_ConfigData.MQTTObj.Anony_Login;
+                                            DA.SelectCommand.Parameters.Add("@mqtt_username", SqlDbType.VarChar).Value = TagJson.RPC_ConfigData.MQTTObj.Username;
+                                            DA.SelectCommand.Parameters.Add("@mqtt_password", SqlDbType.VarChar).Value = TagJson.RPC_ConfigData.MQTTObj.Password;
+                                            DA.SelectCommand.Parameters.Add("@mqtt_qos", SqlDbType.VarChar).Value = TagJson.RPC_ConfigData.MQTTObj.QOS;
+                                            DA.SelectCommand.Parameters.Add("@mqtt_keepalive", SqlDbType.VarChar).Value = TagJson.RPC_ConfigData.MQTTObj.Keep_Alive;
+                                            DA.SelectCommand.Parameters.Add("@mqtt_topictype", SqlDbType.VarChar).Value = TagJson.RPC_ConfigData.MQTTObj.TopicType;
+                                            DA.SelectCommand.Parameters.Add("@result", SqlDbType.VarChar).Value = TagJson.ConfigResult;
+
+                                            DA.SelectCommand.ExecuteNonQuery();
+                                        }
+                                        else
+                                        {
+                                            tBoxLog_03.Text = tBoxLog_03.Text.Insert(0, Environment.NewLine
+                                                + "-----------------------------------------" + Environment.NewLine
+                                                + "SQL Connection is Failure, Please Try Again!!"
+                                                + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
+                                                + "-----------------------------------------");
+                                        }
                                     }
-                                    else if (ReceivedMessage.Contains("t.enow.indicator"))
+                                }
+
+                            }
+                            else
+                            {
+                                // Indicator Battery :
+                                Battery_detail_Json battery_1 = JsonConvert.DeserializeObject<Battery_detail_Json>(ReceivedMessage);
+
+                                if (battery_1.Device_ID != null && ReceivedMessage.Contains(battery_1.Device_ID))
+                                {
+                                    ListViewItem item = listView_MQTTList.FindItemWithText(battery_1.Device_ID);
+
+                                    if (e.Topic.Contains("/rpc/response/"))
                                     {
-                                        Battery battery_ = new Battery
+                                        if (ReceivedMessage.Contains("r.enow.list"))
                                         {
-                                            device_id = battery_1.Device_ID,
-                                            pkt_no = battery_1.Pkt_No,
-                                            battery_name = battery_1.Enow_Indicator[0].Node_ID,
-                                            battery_level = battery_1.Enow_Indicator[0].Battery_level,
-                                            battery_status = battery_1.Enow_Indicator[0].Battery_Status,
-                                            indicator_color = battery_1.Enow_Indicator[0].RGB_Color[0].ToString() + "," + battery_1.Enow_Indicator[0].RGB_Color[1].ToString() + "," + battery_1.Enow_Indicator[0].RGB_Color[2].ToString(),
-                                            rgb_mode = battery_1.Enow_Indicator[0].RGB_Mode,
-                                            indicator_buzz_mode = battery_1.Enow_Indicator[0].Buz_Mode,
-                                            period = battery_1.Enow_Indicator[0].Period,
-                                        };
-                                        //HttpClientConnection(battery_);
+                                            Battery battery_ = new Battery
+                                            {
+                                                device_id = battery_1.Device_ID,
+                                                pkt_no = battery_1.Pkt_No,
+                                                battery_name = battery_1.Enow_List[0].Node_ID,
+                                                battery_level = battery_1.Enow_List[0].Battery_level,
+                                                battery_status = battery_1.Enow_List[0].Battery_Status,
+                                            };
+
+                                            if (item.SubItems[1].Text.Equals(battery_1.Device_ID))
+                                            {
+                                                if (battery_1.Enow_List[0].Battery_Status == "0")
+                                                {
+                                                    item.SubItems[3].Text = "Connected";
+                                                    item.SubItems[3].ForeColor = Color.Green;
+                                                }
+                                                else if (battery_1.Enow_List[0].Battery_Status == "1")
+                                                {
+                                                    item.SubItems[3].Text = "Disconnected";
+                                                    item.SubItems[3].ForeColor = Color.Red;
+                                                }
+                                            }
+
+                                            //HttpClientConnection(battery_);
+                                        }
+                                    }
+
+                                    else if (e.Topic.Contains("/telemetry"))
+                                    {
+                                        if (ReceivedMessage.Contains("t.enow.button"))
+                                        {
+                                            Battery battery_ = new Battery
+                                            {
+                                                device_id = battery_1.Device_ID,
+                                                pkt_no = battery_1.Pkt_No,
+                                                battery_name = battery_1.Enow_Button[0].Node_ID,
+                                                battery_level = battery_1.Enow_Button[0].Battery_level,
+                                                battery_status = battery_1.Enow_Button[0].Battery_Status,
+                                            };
+                                            //HttpClientConnection(battery_);
+                                        }
+                                        else if (ReceivedMessage.Contains("t.enow.battstate"))
+                                        {
+                                            Battery battery_ = new Battery
+                                            {
+                                                device_id = battery_1.Device_ID,
+                                                pkt_no = battery_1.Pkt_No,
+                                                battery_name = battery_1.Enow_BattState[0].Node_ID,
+                                                battery_level = battery_1.Enow_BattState[0].Battery_level,
+                                                battery_status = battery_1.Enow_BattState[0].Battery_Status,
+                                            };
+                                            //HttpClientConnection(battery_);
+                                        }
+                                        else if (ReceivedMessage.Contains("t.enow.disconnected"))
+                                        {
+                                            Battery battery_ = new Battery
+                                            {
+                                                device_id = battery_1.Device_ID,
+                                                pkt_no = battery_1.Pkt_No,
+                                                battery_name = battery_1.Enow_Disconnected[0].Node_ID,
+                                                battery_level = battery_1.Enow_Disconnected[0].Battery_level,
+                                                battery_status = battery_1.Enow_Disconnected[0].Battery_Status,
+                                            };
+                                            //HttpClientConnection(battery_);
+                                        }
+                                        else if (ReceivedMessage.Contains("t.enow.connected"))
+                                        {
+                                            Battery battery_ = new Battery
+                                            {
+                                                device_id = battery_1.Device_ID,
+                                                pkt_no = battery_1.Pkt_No,
+                                                battery_name = battery_1.Enow_Connected[0].Node_ID,
+                                                battery_level = battery_1.Enow_Connected[0].Battery_level,
+                                                battery_status = battery_1.Enow_Connected[0].Battery_Status,
+                                            };
+                                            //HttpClientConnection(battery_);
+                                        }
+                                        else if (ReceivedMessage.Contains("t.enow.indicator"))
+                                        {
+                                            Battery battery_ = new Battery
+                                            {
+                                                device_id = battery_1.Device_ID,
+                                                pkt_no = battery_1.Pkt_No,
+                                                battery_name = battery_1.Enow_Indicator[0].Node_ID,
+                                                battery_level = battery_1.Enow_Indicator[0].Battery_level,
+                                                battery_status = battery_1.Enow_Indicator[0].Battery_Status,
+                                                indicator_color = battery_1.Enow_Indicator[0].RGB_Color[0].ToString() + "," + battery_1.Enow_Indicator[0].RGB_Color[1].ToString() + "," + battery_1.Enow_Indicator[0].RGB_Color[2].ToString(),
+                                                rgb_mode = battery_1.Enow_Indicator[0].RGB_Mode,
+                                                indicator_buzz_mode = battery_1.Enow_Indicator[0].Buz_Mode,
+                                                period = battery_1.Enow_Indicator[0].Period,
+                                            };
+                                            //HttpClientConnection(battery_);
+                                        }
                                     }
                                 }
                             }
+
                         }
                     });
                 }
                 else
                 {
-                    tBoxOverallReceiver.Text += Environment.NewLine
+                    tBoxOverallReceiver.Text = tBoxOverallReceiver.Text.Insert(0, Environment.NewLine
                             + "-----------------------------------------" + Environment.NewLine
                             + "===== Received Message =====" + Environment.NewLine
                             + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
                             + "Topic:" + e.Topic + Environment.NewLine
                             + "Message: " + ReceivedMessage + Environment.NewLine
-                            + "-----------------------------------------";
+                            + "-----------------------------------------");
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.ToString());
             }
+
+            sqlConnect.con.Close();
         }
 
         private void btnClearReceiverTxt_01_Click(object sender, EventArgs e)
         {
             tBoxReceiverOutput_01.Text = string.Empty;
-            tBoxLog_03.Text += Environment.NewLine
+            tBoxLog_03.Text = tBoxLog_03.Text.Insert(0,Environment.NewLine
                         + "-----------------------------------------" + Environment.NewLine
                         + gBoxReceiverControl_01.Text + " Text Clear Successfully!" + Environment.NewLine
                         + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
-                        + "-----------------------------------------";
+                        + "-----------------------------------------");
         }
 
         private void btnClearReceiverTxt_02_Click(object sender, EventArgs e)
         {
             tBoxReceiverOutput_02.Text = string.Empty;
-            tBoxLog_03.Text += Environment.NewLine
+            tBoxLog_03.Text = tBoxLog_03.Text.Insert(0, Environment.NewLine
                         + "-----------------------------------------" + Environment.NewLine
                         + gBoxReceiverControl_02.Text + " Text Clear Successfully!" + Environment.NewLine
                         + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
-                        + "-----------------------------------------";
+                        + "-----------------------------------------");
         }
 
         private void btnClearReceiverTxt_03_Click(object sender, EventArgs e)
         {
             tBoxReceiverOutput_03.Text = string.Empty;
-            tBoxLog_03.Text += Environment.NewLine
+            tBoxLog_03.Text += tBoxLog_03.Text.Insert(0, Environment.NewLine
                         + "-----------------------------------------" + Environment.NewLine
                         + gBoxReceiverControl_03.Text + " Text Clear Successfully!" + Environment.NewLine
                         + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
-                        + "-----------------------------------------";
+                        + "-----------------------------------------");
         }
 
         private void btnClearReceiverTxt_04_Click(object sender, EventArgs e)
         {
             tBoxReceiverOutput_04.Text = string.Empty;
-            tBoxLog_03.Text += Environment.NewLine
+            tBoxLog_03.Text = tBoxLog_03.Text.Insert(0, Environment.NewLine
                         + "-----------------------------------------" + Environment.NewLine
                         + gBoxReceiverControl_04.Text + " Text Clear Successfully!" + Environment.NewLine
                         + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
-                        + "-----------------------------------------";
+                        + "-----------------------------------------");
         }
 
         private void btnClearReceiverTxt_05_Click(object sender, EventArgs e)
         {
             tBoxReceiverOutput_05.Text = string.Empty;
-            tBoxLog_03.Text += Environment.NewLine
+            tBoxLog_03.Text += tBoxLog_03.Text.Insert(0, Environment.NewLine
                         + "-----------------------------------------" + Environment.NewLine
                         + gBoxReceiverControl_05.Text + " Text Clear Successfully!" + Environment.NewLine
                         + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
-                        + "-----------------------------------------";
+                        + "-----------------------------------------");
         }
 
         private void btnClearReceiverTxt_06_Click(object sender, EventArgs e)
         {
             tBoxReceiverOutput_06.Text = string.Empty;
-            tBoxLog_03.Text += Environment.NewLine
+            tBoxLog_03.Text += tBoxLog_03.Text.Insert(0, Environment.NewLine
                         + "-----------------------------------------" + Environment.NewLine
                         + gBoxReceiverControl_06.Text + " Text Clear Successfully!" + Environment.NewLine
                         + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
-                        + "-----------------------------------------";
+                        + "-----------------------------------------");
         }
 
         private void btnClearOverallReceiver_Click(object sender, EventArgs e)
         {
             tBoxOverallReceiver.Text = string.Empty;
-            tBoxLog_03.Text += Environment.NewLine
+            tBoxLog_03.Text = tBoxLog_03.Text.Insert(0, Environment.NewLine
                         + "-----------------------------------------" + Environment.NewLine
                         + " Text Clear Successfully!" + Environment.NewLine
                         + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
-                        + "-----------------------------------------";
-        }
-
-        private void tBoxOverallReceiver_TextChanged(object sender, EventArgs e)
-        {
-            tBoxOverallReceiver.SelectionStart = tBoxOverallReceiver.Text.Length;
-            tBoxOverallReceiver.ScrollToCaret();
+                        + "-----------------------------------------");
         }
 
         /* ========== MQTT Functions ========== */

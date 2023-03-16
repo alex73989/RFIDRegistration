@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SqlClient;
+using RFIDRegistration.Models;
 
 namespace RFIDRegistration
 {
@@ -15,13 +16,15 @@ namespace RFIDRegistration
     {
         string RequestFillInTheBlank = "Please Do Not Leave Blank at Column above!";
 
-        SqlConnection con;
+        // Address of SQL Server and Database
+        SqlConnect sqlConnect = new SqlConnect();
         public SqlCommand cmd;
         SqlDataReader dr;
 
         public Login()
         {
             InitializeComponent();
+            sqlConnect.Connection();
         }
 
         private void Login_Load(object sender, EventArgs e)
@@ -37,10 +40,10 @@ namespace RFIDRegistration
             {
                 if (tBox_Login_Password.Text != "")
                 {
-                    con = new SqlConnection("Data Source=MXPACALEX;Initial Catalog=Dek_MachineDB;Integrated Security=True");
-                    con.Open();
+                    sqlConnect.con = new SqlConnection("Data Source=MXPACALEX;Initial Catalog=Dek_MachineDB;Integrated Security=True");
+                    sqlConnect.con.Open();
 
-                    cmd = new SqlCommand("SELECT * FROM users_tb WHERE Username = '" + tBox_Login_Username.Text + "' AND Password = '" + tBox_Login_Password.Text + "' ", con);
+                    cmd = new SqlCommand("SELECT * FROM users_tb WHERE Username = '" + tBox_Login_Username.Text + "' AND Password = '" + tBox_Login_Password.Text + "' ", sqlConnect.con);
                     dr = cmd.ExecuteReader();
                     if (dr.HasRows)
                     {
@@ -73,7 +76,7 @@ namespace RFIDRegistration
                             return;
                         }
                     }
-                    con.Close();
+                    sqlConnect.con.Close();
                 }
                 else if (tBox_Login_Password.Text == "")
                 {
