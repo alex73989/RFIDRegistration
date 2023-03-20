@@ -1845,19 +1845,59 @@ namespace RFIDRegistration
         {
             try
             {
-                client_03.Disconnect();
-                tBoxLog_03.Text = tBoxLog_03.Text.Insert(0, Environment.NewLine
-                    + "-----------------------------------------" + Environment.NewLine
-                    + "Client ID: " + clientID_One_03 + Environment.NewLine
-                    + "Client Successfully Disconnected To MQTT" + Environment.NewLine
-                    + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
-                    + "-----------------------------------------");
+                if (tBoxDeviceID_03.Text != null)
+                {
+                    ListViewItem item = listView_MQTTList.FindItemWithText(tBoxDeviceID_03.Text);
+                    if (item != null)
+                    {
+                        for (int i = 0; i < listView_MQTTList.Items.Count; i++)
+                        {
+                            if (listView_MQTTList.Items[i].Selected)
+                            {
+                                listView_MQTTList.Items[i].Remove();
+                                i--;
+                            }
+                        }
 
-                ConnectionStatus_03 = false;
+                        tBoxLog_03.Text = tBoxLog_03.Text.Insert(0, Environment.NewLine
+                        + "-----------------------------------------" + Environment.NewLine
+                        + "Client ID: " + clientID_One_03 + Environment.NewLine
+                        + "Topic Successfully Unsubscribed To MQTT" + Environment.NewLine
+                        + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
+                        + "-----------------------------------------");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Please Select a valid Device ID!");
+                    }
 
-                tBoxDeviceID_03.Text = "";
-                tBoxIPAddress_03.Text = "";
-                listView_MQTTList.Items.Clear();
+                    string TopicName_1st = "W3/" + tBoxDeviceID_03.Text + "/telemetry";
+                    string TopicName_2nd = "W3/" + tBoxDeviceID_03.Text + "/attributes";
+                    string TopicName_3rd = "W3/" + tBoxDeviceID_03.Text + "/rpc/response/+";
+
+                    client_03.Unsubscribe(new string[] { TopicName_1st, TopicName_2nd, TopicName_3rd });
+
+                    if (listView_MQTTList.Items.Count == 1)
+                    {
+                        client_03.Disconnect();
+
+                        tBoxLog_03.Text = tBoxLog_03.Text.Insert(0, Environment.NewLine
+                        + "-----------------------------------------" + Environment.NewLine
+                        + "Client ID: " + clientID_One_03 + Environment.NewLine
+                        + "Client Successfully Disconnect To MQTT" + Environment.NewLine
+                        + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
+                        + "-----------------------------------------");
+                    }
+                    
+                    ConnectionStatus_03 = false;
+                    tBoxDeviceID_03.Text = "";
+                    tBoxIPAddress_03.Text = "";
+                }
+                else
+                {
+                    MessageBox.Show("Please Select a valid Device ID!");
+                }
+
             }
             catch (Exception ex)
             {
