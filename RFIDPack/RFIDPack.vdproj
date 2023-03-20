@@ -51,6 +51,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_92B86B12B20143269775D8116AA27DEA"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_B6756D63A2498A044E387DD29AF9448F"
         "OwnerKey" = "8:_62545857A8424294A4E9141B95DA67D3"
         "MsmSig" = "8:_UNDEFINED"
@@ -83,12 +89,6 @@
         {
         "MsmKey" = "8:_E364A20C55558F665941A13AA274DBDA"
         "OwnerKey" = "8:_B6756D63A2498A044E387DD29AF9448F"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_2964F29A66607087351BDF546BD832A4"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -127,6 +127,12 @@
         "OwnerKey" = "8:_27CFB603AD09BA3BD5779AC289C96194"
         "MsmSig" = "8:_UNDEFINED"
         }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_2964F29A66607087351BDF546BD832A4"
+        "MsmSig" = "8:_UNDEFINED"
+        }
     }
     "Configurations"
     {
@@ -145,6 +151,22 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.7.2"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.7.2 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.7.2"
+                    }
+                }
+            }
         }
         "Release"
         {
@@ -161,6 +183,14 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+            }
         }
     }
     "Deployable"
@@ -301,6 +331,26 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_92B86B12B20143269775D8116AA27DEA"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\Pictures\\Mxpac\\CompanyLogo\\hnet.com-image.ico"
+            "TargetName" = "8:hnet.com-image.ico"
+            "Tag" = "8:"
+            "Folder" = "8:_C798F40FEA66440F99DCB2BBC5D852C1"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_B6756D63A2498A044E387DD29AF9448F"
@@ -453,7 +503,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:RFIDPack"
         "ProductCode" = "8:{A8B68F76-72D8-4673-B9B0-3C48FE5F8F45}"
-        "PackageCode" = "8:{76CE0A2B-0816-4646-810D-FD886531068F}"
+        "PackageCode" = "8:{BAEBF4A8-DD3D-49E8-8948-32D512C223A7}"
         "UpgradeCode" = "8:{65B2F0C5-37B5-49ED-8D75-7DAFBA1FD22F}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -461,7 +511,7 @@
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
         "ProductVersion" = "8:1.0.0"
-        "Manufacturer" = "8:Alex"
+        "Manufacturer" = "8:MXPac"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
         "Title" = "8:RFIDPack"
@@ -584,7 +634,7 @@
             "Target" = "8:_62545857A8424294A4E9141B95DA67D3"
             "Folder" = "8:_96A973C3A32D401491B19D877A17FA11"
             "WorkingFolder" = "8:_C798F40FEA66440F99DCB2BBC5D852C1"
-            "Icon" = "8:"
+            "Icon" = "8:_92B86B12B20143269775D8116AA27DEA"
             "Feature" = "8:"
             }
         }

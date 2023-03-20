@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TagConfig));
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.tBox_log = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -122,13 +123,13 @@
             this.label43 = new System.Windows.Forms.Label();
             this.btn_TW_Proceed = new System.Windows.Forms.Button();
             this.tabPage_TempSensor = new System.Windows.Forms.TabPage();
+            this.btn_TS_Clear = new System.Windows.Forms.Button();
+            this.btn_TS_Proceed = new System.Windows.Forms.Button();
+            this.tBox_TS_RatePeriod = new System.Windows.Forms.TextBox();
+            this.label18 = new System.Windows.Forms.Label();
             this.chBox_TS_Disable = new System.Windows.Forms.CheckBox();
             this.chBox_TS_Enable = new System.Windows.Forms.CheckBox();
             this.label14 = new System.Windows.Forms.Label();
-            this.tBox_TS_RatePeriod = new System.Windows.Forms.TextBox();
-            this.label18 = new System.Windows.Forms.Label();
-            this.btn_TS_Clear = new System.Windows.Forms.Button();
-            this.btn_TS_Proceed = new System.Windows.Forms.Button();
             this.groupBox4.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.tab_ConfigurationSection.SuspendLayout();
@@ -1167,6 +1168,48 @@
             this.tabPage_TempSensor.Text = "Temp Sensor";
             this.tabPage_TempSensor.UseVisualStyleBackColor = true;
             // 
+            // btn_TS_Clear
+            // 
+            this.btn_TS_Clear.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_TS_Clear.ForeColor = System.Drawing.Color.Red;
+            this.btn_TS_Clear.Location = new System.Drawing.Point(413, 395);
+            this.btn_TS_Clear.Name = "btn_TS_Clear";
+            this.btn_TS_Clear.Size = new System.Drawing.Size(153, 40);
+            this.btn_TS_Clear.TabIndex = 117;
+            this.btn_TS_Clear.Text = "Clear";
+            this.btn_TS_Clear.UseVisualStyleBackColor = true;
+            this.btn_TS_Clear.Click += new System.EventHandler(this.btn_TS_Clear_Click);
+            // 
+            // btn_TS_Proceed
+            // 
+            this.btn_TS_Proceed.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_TS_Proceed.ForeColor = System.Drawing.Color.Green;
+            this.btn_TS_Proceed.Location = new System.Drawing.Point(572, 395);
+            this.btn_TS_Proceed.Name = "btn_TS_Proceed";
+            this.btn_TS_Proceed.Size = new System.Drawing.Size(153, 40);
+            this.btn_TS_Proceed.TabIndex = 116;
+            this.btn_TS_Proceed.Text = "Proceed";
+            this.btn_TS_Proceed.UseVisualStyleBackColor = true;
+            this.btn_TS_Proceed.Click += new System.EventHandler(this.btn_TS_Proceed_Click);
+            // 
+            // tBox_TS_RatePeriod
+            // 
+            this.tBox_TS_RatePeriod.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tBox_TS_RatePeriod.Location = new System.Drawing.Point(365, 135);
+            this.tBox_TS_RatePeriod.Name = "tBox_TS_RatePeriod";
+            this.tBox_TS_RatePeriod.Size = new System.Drawing.Size(234, 26);
+            this.tBox_TS_RatePeriod.TabIndex = 99;
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label18.Location = new System.Drawing.Point(173, 138);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(105, 20);
+            this.label18.TabIndex = 98;
+            this.label18.Text = "Rate Period : ";
+            // 
             // chBox_TS_Disable
             // 
             this.chBox_TS_Disable.AutoSize = true;
@@ -1201,48 +1244,6 @@
             this.label14.TabIndex = 95;
             this.label14.Text = "Enable Rate Control : ";
             // 
-            // tBox_TS_RatePeriod
-            // 
-            this.tBox_TS_RatePeriod.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tBox_TS_RatePeriod.Location = new System.Drawing.Point(365, 135);
-            this.tBox_TS_RatePeriod.Name = "tBox_TS_RatePeriod";
-            this.tBox_TS_RatePeriod.Size = new System.Drawing.Size(234, 26);
-            this.tBox_TS_RatePeriod.TabIndex = 99;
-            // 
-            // label18
-            // 
-            this.label18.AutoSize = true;
-            this.label18.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label18.Location = new System.Drawing.Point(173, 138);
-            this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(105, 20);
-            this.label18.TabIndex = 98;
-            this.label18.Text = "Rate Period : ";
-            // 
-            // btn_TS_Clear
-            // 
-            this.btn_TS_Clear.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_TS_Clear.ForeColor = System.Drawing.Color.Red;
-            this.btn_TS_Clear.Location = new System.Drawing.Point(413, 395);
-            this.btn_TS_Clear.Name = "btn_TS_Clear";
-            this.btn_TS_Clear.Size = new System.Drawing.Size(153, 40);
-            this.btn_TS_Clear.TabIndex = 117;
-            this.btn_TS_Clear.Text = "Clear";
-            this.btn_TS_Clear.UseVisualStyleBackColor = true;
-            this.btn_TS_Clear.Click += new System.EventHandler(this.btn_TS_Clear_Click);
-            // 
-            // btn_TS_Proceed
-            // 
-            this.btn_TS_Proceed.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_TS_Proceed.ForeColor = System.Drawing.Color.Green;
-            this.btn_TS_Proceed.Location = new System.Drawing.Point(572, 395);
-            this.btn_TS_Proceed.Name = "btn_TS_Proceed";
-            this.btn_TS_Proceed.Size = new System.Drawing.Size(153, 40);
-            this.btn_TS_Proceed.TabIndex = 116;
-            this.btn_TS_Proceed.Text = "Proceed";
-            this.btn_TS_Proceed.UseVisualStyleBackColor = true;
-            this.btn_TS_Proceed.Click += new System.EventHandler(this.btn_TS_Proceed_Click);
-            // 
             // TagConfig
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1250,6 +1251,7 @@
             this.ClientSize = new System.Drawing.Size(1146, 761);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "TagConfig";
             this.Text = "TagConfig";
             this.groupBox4.ResumeLayout(false);

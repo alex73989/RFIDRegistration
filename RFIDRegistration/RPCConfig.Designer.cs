@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RPCConfig));
             this.tab_ConfigurationSection = new System.Windows.Forms.TabControl();
             this.tabPage_WifiPersonal = new System.Windows.Forms.TabPage();
             this.btn_wp_clear = new System.Windows.Forms.Button();
@@ -1815,6 +1816,7 @@
             this.ClientSize = new System.Drawing.Size(1146, 761);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "RPCConfig";
             this.Text = "RPC Configuration";
             this.tab_ConfigurationSection.ResumeLayout(false);
