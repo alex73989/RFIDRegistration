@@ -17,8 +17,9 @@ namespace RFIDRegistration
     {
         // WIRIO3_58BF25A85088
         // WIRIO3_68B6B329DEAC
-        public string GetData, GetIPAddress, GetWirioID;
+        public string GetIPAddress, GetWirioID;
         public static RPCConfig instance;
+        public bool USBC = false;
 
         public RPCConfig()
         {
@@ -752,10 +753,19 @@ namespace RFIDRegistration
 
         private void btn_Submit_Click(object sender, EventArgs e)
         {
-            IndicatorForm.instance.RPCTxt.Text = tBox_commanddelivered.Text.ToString();
-            IndicatorForm.instance.PubAttb.Enabled = false;
-            IndicatorForm.instance.PubRPCReq.Enabled = true;
-            SetLogText("Successfully Submit RPC Reply!");
+            if (USBC == true)
+            {
+                IndicatorForm.instance.tBoxDataOut.Text = "{\"rpcreq\":" + tBox_commanddelivered.Text.ToString() + "}";
+                SetLogText("Successfully Submit RPC Reply!");
+            }
+            else
+            {
+                IndicatorForm.instance.RPCTxt.Text = tBox_commanddelivered.Text.ToString();
+                IndicatorForm.instance.PubAttb.Enabled = false;
+                IndicatorForm.instance.PubRPCReq.Enabled = true;
+                SetLogText("Successfully Submit RPC Reply!");
+            }
+            
         }
 
         private void cBox_mqtt_topictype_SelectedIndexChanged(object sender, EventArgs e)

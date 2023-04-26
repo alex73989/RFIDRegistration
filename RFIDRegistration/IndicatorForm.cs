@@ -57,7 +57,6 @@ namespace RFIDRegistration
         /* ========== MQTT ========== */
 
         // RPC Config
-        public RPCConfig rpcConfig = new RPCConfig();
         public static IndicatorForm instance;
         public TextBox RPCTxt;
         public Button PubAttb, PubRPCReq;
@@ -72,6 +71,7 @@ namespace RFIDRegistration
         private void IndicatorForm_Load(object sender, EventArgs e)
         {
             sqlConnect.Connection();
+            sqlConnect.con.Close();
 
             if (lblStatusCom.Text == "Disconnected")
             {
@@ -92,27 +92,26 @@ namespace RFIDRegistration
             /* ========== COM Port Comm Initialize ========== */
 
             // -- DTR CheckBox --
-            chBoxDtrEnable.Checked = false;
+            chBoxDtrEnable.Checked = true;
             serialPort1.DtrEnable = false;
 
             // -- RTS CheckBox --
-            chBoxRTSEnable.Checked = false;
+            chBoxRTSEnable.Checked = true;
             serialPort1.RtsEnable = false;
 
             // -- Button --
             btnOpen.Enabled = true;
             btnClose.Enabled = false;
-            btnConnectMQTT.Enabled = true;
-            btnDisconnectMQTT.Enabled = false;
-            btnPubDevUpAttb.Enabled = false;
-            btnPubRPCReq.Enabled = false;
-            btnSubTele.Enabled = false;
-            tBoxPublish.Enabled = false;
-            cBoxSelectionMQTT.Enabled = false;
             btnSendData.Enabled = false;
             btnClearDataOut.Enabled = false;
             cBoxSelectionCommand.Enabled = false;
             btnClearDataIn.Enabled = false;
+            btnRPCConfig_USB.Enabled = false;
+
+            cBoxBaudRate.SelectedIndex = 8;
+            cBoxDataBits.SelectedIndex = 2;
+            cBoxStopBits.SelectedIndex = 0;
+            cBoxParityBits.SelectedIndex = 0;
 
             /* ========== COM Port Comm Initialize ========== */
 
@@ -206,6 +205,8 @@ namespace RFIDRegistration
             }
         }
 
+        /* ========== COM Port Functions ========== */
+
         private void serialPort1_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             DataIn = serialPort1.ReadExisting();
@@ -243,11 +244,477 @@ namespace RFIDRegistration
 
         private void Eval_String(string s)
         {
-
+            if (sqlConnect.con.State == ConnectionState.Closed)
+            {
+                sqlConnect.con.Open();
+            }
+            
             if (this.tBoxDataIn.InvokeRequired)
             {
                 SetTextCallBack d = new SetTextCallBack(Eval_String);
                 this.Invoke(d, new object[] { s });
+
+                if (indicatorChoosen == false)
+                {
+                    // RFID Reader Tag :
+                    RFID_detail_Json_Attr RFID_Details_Inv = JsonConvert.DeserializeObject<RFID_detail_Json_Attr>(s);
+
+                    if (RFID_Details_Inv.Device_ID != null)
+                    {
+                        if (s.Contains("attributes"))
+                        {
+                            if (s.Contains("d.sys.addr") && s.Contains("d.sys.fwid"))
+                            {
+                                if (sqlConnect.con.State == System.Data.ConnectionState.Open)
+                                {
+                                    SqlDataAdapter DA_1 = new SqlDataAdapter("Insert_DetailList", sqlConnect.con);
+                                    DA_1.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+                                    SqlDataAdapter DA_2 = new SqlDataAdapter("Insert_RFID_Attributes", sqlConnect.con);
+                                    DA_2.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+                                    DA_1.SelectCommand.Parameters.Add("@device_id", SqlDbType.VarChar).Value = RFID_Details_Inv.Device_ID;
+                                    DA_1.SelectCommand.Parameters.Add("@pkt_no", SqlDbType.VarChar).Value = RFID_Details_Inv.Pktno;
+                                    DA_1.SelectCommand.Parameters.Add("@rssi", SqlDbType.VarChar).Value = RFID_Details_Inv.Wifi_Received_Signal_Strength;
+                                    DA_1.SelectCommand.Parameters.Add("@ip_address", SqlDbType.VarChar).Value = RFID_Details_Inv.IP_Address;
+                                    DA_1.SelectCommand.Parameters.Add("@connection", SqlDbType.VarChar).Value = RFID_Details_Inv.Connection;
+                                    DA_1.SelectCommand.Parameters.Add("@connection_type", SqlDbType.VarChar).Value = RFID_Details_Inv.Connection_Type;
+                                    DA_1.SelectCommand.Parameters.Add("@ssid", SqlDbType.VarChar).Value = RFID_Details_Inv.SSID;
+                                    DA_1.SelectCommand.Parameters.Add("@fwid", SqlDbType.VarChar).Value = RFID_Details_Inv.FWID;
+                                    DA_1.SelectCommand.Parameters.Add("@date_code", SqlDbType.VarChar).Value = RFID_Details_Inv.Date_Code;
+
+                                    // Device Desc ::
+                                    DA_1.SelectCommand.Parameters.Add("@device_model", SqlDbType.VarChar).Value = RFID_Details_Inv.Model;
+                                    DA_1.SelectCommand.Parameters.Add("@device_name", SqlDbType.VarChar).Value = RFID_Details_Inv.Device_Name;
+                                    DA_1.SelectCommand.Parameters.Add("@device_desc", SqlDbType.VarChar).Value = RFID_Details_Inv.Device_Desc;
+
+                                    // Epoch ::
+                                    DA_1.SelectCommand.Parameters.Add("@epoch_valid", SqlDbType.VarChar).Value = RFID_Details_Inv.Epoch_Valid;
+                                    DA_1.SelectCommand.Parameters.Add("@epoch_sec", SqlDbType.VarChar).Value = RFID_Details_Inv.Epoch_Sec;
+
+                                    DA_1.SelectCommand.Parameters.Add("@rpc_busy", SqlDbType.VarChar).Value = RFID_Details_Inv.Rpc_Busy;
+                                    DA_1.SelectCommand.Parameters.Add("@channel_no", SqlDbType.VarChar).Value = RFID_Details_Inv.Channel_No;
+                                    DA_1.SelectCommand.Parameters.Add("@power_max", SqlDbType.VarChar).Value = RFID_Details_Inv.Power_Max;
+                                    DA_1.SelectCommand.Parameters.Add("@power_min", SqlDbType.VarChar).Value = RFID_Details_Inv.Power_Min;
+                                    DA_1.SelectCommand.Parameters.Add("@cachespace_max", SqlDbType.VarChar).Value = RFID_Details_Inv.CacheSpace_Max;
+
+                                    // Anthenna Output ::
+                                    if (s.Contains("d.uhfrfid.antison"))
+                                    {
+                                        DA_1.SelectCommand.Parameters.Add("@anthenna_output", SqlDbType.VarChar).Value
+                                        = RFID_Details_Inv.Anthenna_Output[0] + "," + RFID_Details_Inv.Anthenna_Output[1] + "," + RFID_Details_Inv.Anthenna_Output[2] + "," + RFID_Details_Inv.Anthenna_Output[3];
+                                    }
+                                    else
+                                    {
+                                        DA_1.SelectCommand.Parameters.Add("@anthenna_output", SqlDbType.VarChar).Value = "";
+                                    }
+
+                                    // RFID Mode ::
+                                    if (s.Contains("d.uhfrfid.antstate"))
+                                    {
+                                        DA_1.SelectCommand.Parameters.Add("@rfid_mode", SqlDbType.VarChar).Value
+                                        = RFID_Details_Inv.RFID_Mode[0] + "," + RFID_Details_Inv.RFID_Mode[1] + "," + RFID_Details_Inv.RFID_Mode[2] + "," + RFID_Details_Inv.RFID_Mode[3];
+                                    }
+                                    else
+                                    {
+                                        DA_1.SelectCommand.Parameters.Add("@rfid_mode", SqlDbType.VarChar).Value = "";
+                                    }
+
+                                    DA_1.SelectCommand.Parameters.Add("@rfid_temp", SqlDbType.VarChar).Value = RFID_Details_Inv.RFID_Temp;
+                                    DA_1.SelectCommand.Parameters.Add("@rfid_firmware_id", SqlDbType.VarChar).Value = RFID_Details_Inv.RFID_Firmware_ID;
+                                    DA_1.SelectCommand.Parameters.Add("@read_period", SqlDbType.VarChar).Value = RFID_Details_Inv.Read_Period;
+                                    DA_1.SelectCommand.Parameters.Add("@auto", SqlDbType.VarChar).Value = RFID_Details_Inv.Auto;
+                                    DA_1.SelectCommand.Parameters.Add("@period", SqlDbType.VarChar).Value = RFID_Details_Inv.Period;
+
+                                    // Input Trigger ::
+                                    if (s.Contains("s.uhfrfid.inptrig"))
+                                    {
+                                        DA_1.SelectCommand.Parameters.Add("@input_trigger", SqlDbType.VarChar).Value = RFID_Details_Inv.Input_Trigger[0] + "," + RFID_Details_Inv.Input_Trigger[1];
+                                    }
+                                    else
+                                    {
+                                        DA_1.SelectCommand.Parameters.Add("@input_trigger", SqlDbType.VarChar).Value = "";
+                                    }
+
+                                    DA_1.SelectCommand.Parameters.Add("@cache_tag_remove", SqlDbType.VarChar).Value = RFID_Details_Inv.Cache_Tag_Remove;
+                                    DA_1.SelectCommand.Parameters.Add("@cache_period", SqlDbType.VarChar).Value = RFID_Details_Inv.Cache_Period;
+                                    DA_1.SelectCommand.Parameters.Add("@tag_remove_upd", SqlDbType.VarChar).Value = RFID_Details_Inv.Tag_Remove_Upd;
+                                    DA_1.SelectCommand.Parameters.Add("@anthenna_channel_upd", SqlDbType.VarChar).Value = RFID_Details_Inv.Anthenna_Channel_Upd;
+                                    DA_1.SelectCommand.Parameters.Add("@enbforce_upd", SqlDbType.VarChar).Value = RFID_Details_Inv.EnbForce_Upd;
+                                    DA_1.SelectCommand.Parameters.Add("@force_update_period", SqlDbType.VarChar).Value = RFID_Details_Inv.Force_Update_Period;
+
+                                    // Filter Options ::
+                                    DA_1.SelectCommand.Parameters.Add("@self_filter_option", SqlDbType.VarChar).Value = RFID_Details_Inv.Self_Filter_Option;
+                                    DA_1.SelectCommand.Parameters.Add("@self_filter_addr", SqlDbType.VarChar).Value = RFID_Details_Inv.Self_Filter_Addr;
+                                    DA_1.SelectCommand.Parameters.Add("@self_filter_len_bit", SqlDbType.VarChar).Value = RFID_Details_Inv.Self_Filter_Len_Bit;
+                                    DA_1.SelectCommand.Parameters.Add("@self_filter_data", SqlDbType.VarChar).Value = RFID_Details_Inv.Self_Filter_Data;
+                                    DA_1.SelectCommand.Parameters.Add("@self_filter_invert", SqlDbType.VarChar).Value = RFID_Details_Inv.Self_Filter_Invert;
+
+                                    // Tag Data ::
+                                    DA_1.SelectCommand.Parameters.Add("@enb_tag_data", SqlDbType.VarChar).Value = RFID_Details_Inv.Enb_Tag_Data;
+                                    DA_1.SelectCommand.Parameters.Add("@tag_data_mem_bank", SqlDbType.VarChar).Value = RFID_Details_Inv.Tag_Data_Mem_Bank;
+                                    DA_1.SelectCommand.Parameters.Add("@tag_data_reader_addr", SqlDbType.VarChar).Value = RFID_Details_Inv.Tag_Data_Reader_Addr;
+                                    DA_1.SelectCommand.Parameters.Add("@tag_data_word_count", SqlDbType.VarChar).Value = RFID_Details_Inv.Tag_Data_Word_Count;
+                                    DA_1.SelectCommand.Parameters.Add("@enbtagpass", SqlDbType.VarChar).Value = RFID_Details_Inv.EnbTagPass;
+                                    DA_1.SelectCommand.Parameters.Add("@tag_pass", SqlDbType.VarChar).Value = RFID_Details_Inv.Tag_Pass;
+
+                                    DA_1.SelectCommand.Parameters.Add("@dynamic_q", SqlDbType.VarChar).Value = RFID_Details_Inv.Dynamic_Q;
+                                    DA_1.SelectCommand.Parameters.Add("@q", SqlDbType.VarChar).Value = RFID_Details_Inv.Q;
+                                    DA_1.SelectCommand.Parameters.Add("@se_mode", SqlDbType.VarChar).Value = RFID_Details_Inv.Se_Mode;
+                                    DA_1.SelectCommand.Parameters.Add("@target", SqlDbType.VarChar).Value = RFID_Details_Inv.Target;
+                                    DA_1.SelectCommand.Parameters.Add("@epc_extended", SqlDbType.VarChar).Value = RFID_Details_Inv.EPC_Extended;
+
+                                    // Anthenna Mode ::
+                                    if (s.Contains("s.uhfrfid.antenb"))
+                                    {
+                                        DA_1.SelectCommand.Parameters.Add("@anthenna_mode", SqlDbType.VarChar).Value
+                                        = RFID_Details_Inv.Anthenna_Mode[0] + "," + RFID_Details_Inv.Anthenna_Mode[1] + "," + RFID_Details_Inv.Anthenna_Mode[2] + "," + RFID_Details_Inv.Anthenna_Mode[3];
+                                    }
+                                    else
+                                    {
+                                        DA_1.SelectCommand.Parameters.Add("@anthenna_mode", SqlDbType.VarChar).Value = "";
+                                    }
+
+                                    // Current Power ::
+                                    if (s.Contains("s.uhfrfid.power"))
+                                    {
+                                        DA_1.SelectCommand.Parameters.Add("@rfid_current_power", SqlDbType.VarChar).Value
+                                        = RFID_Details_Inv.RFID_Current_Power[0] + "," + RFID_Details_Inv.RFID_Current_Power[1] + "," + RFID_Details_Inv.RFID_Current_Power[2] + "," + RFID_Details_Inv.RFID_Current_Power[3];
+                                    }
+                                    else
+                                    {
+                                        DA_1.SelectCommand.Parameters.Add("@rfid_current_power", SqlDbType.VarChar).Value = "";
+                                    }
+
+                                    DA_1.SelectCommand.Parameters.Add("@demo_mode", SqlDbType.VarChar).Value = RFID_Details_Inv.Demo_Mode;
+                                    // Temp Sensor ::
+                                    DA_1.SelectCommand.Parameters.Add("@rate_control", SqlDbType.VarChar).Value = RFID_Details_Inv.Rate_Control;
+                                    DA_1.SelectCommand.Parameters.Add("@rate_control_period", SqlDbType.VarChar).Value = RFID_Details_Inv.Rate_Control_Period;
+
+                                    DA_1.SelectCommand.ExecuteNonQuery();
+
+                                    for (int x = 0; x < RFID_Details_Inv.Perip_Items.Count; x++)
+                                    {
+                                        DA_2.SelectCommand.Parameters.Clear();
+                                        DA_2.SelectCommand.Parameters.Add("@Option", SqlDbType.VarChar).Value = "Insert_PeripharalItems";
+                                        DA_2.SelectCommand.Parameters.Add("@cmdkey", SqlDbType.VarChar).Value = RFID_Details_Inv.Perip_Items[x].Cmd_Key;
+                                        DA_2.SelectCommand.Parameters.Add("@feature", SqlDbType.VarChar).Value = RFID_Details_Inv.Perip_Items[x].Feature;
+                                        DA_2.SelectCommand.Parameters.Add("@ipp_ch", SqlDbType.VarChar).Value = "";
+                                        DA_2.SelectCommand.Parameters.Add("@ipp_onishigh", SqlDbType.VarChar).Value = "";
+                                        DA_2.SelectCommand.Parameters.Add("@ipp_mode", SqlDbType.VarChar).Value = "";
+                                        DA_2.SelectCommand.Parameters.Add("@ipp_debounce", SqlDbType.VarChar).Value = "";
+                                        DA_2.SelectCommand.Parameters.Add("@opp_ch", SqlDbType.VarChar).Value = "";
+                                        DA_2.SelectCommand.Parameters.Add("@opp_onishigh", SqlDbType.VarChar).Value = "";
+                                        DA_2.SelectCommand.Parameters.Add("@opp_mode", SqlDbType.VarChar).Value = "";
+                                        DA_2.SelectCommand.Parameters.Add("@opp_fperiodon", SqlDbType.VarChar).Value = "";
+                                        DA_2.SelectCommand.Parameters.Add("@opp_fperiodoff", SqlDbType.VarChar).Value = "";
+                                        DA_2.SelectCommand.Parameters.Add("@opp_pulsecnt", SqlDbType.VarChar).Value = "";
+                                        DA_2.SelectCommand.ExecuteNonQuery();
+                                    }
+
+                                    if (s.Contains("s.outputport.setup"))
+                                    {
+                                        for (int y = 0; y < RFID_Details_Inv.OutputSetup.Count; y++)
+                                        {
+                                            DA_2.SelectCommand.Parameters.Clear();
+                                            DA_2.SelectCommand.Parameters.Add("@Option", SqlDbType.VarChar).Value = "Insert_OutputConfig";
+                                            DA_2.SelectCommand.Parameters.Add("@cmdkey", SqlDbType.VarChar).Value = "";
+                                            DA_2.SelectCommand.Parameters.Add("@feature", SqlDbType.VarChar).Value = "";
+                                            DA_2.SelectCommand.Parameters.Add("@ipp_ch", SqlDbType.VarChar).Value = "";
+                                            DA_2.SelectCommand.Parameters.Add("@ipp_onishigh", SqlDbType.VarChar).Value = "";
+                                            DA_2.SelectCommand.Parameters.Add("@ipp_mode", SqlDbType.VarChar).Value = "";
+                                            DA_2.SelectCommand.Parameters.Add("@ipp_debounce", SqlDbType.VarChar).Value = "";
+                                            DA_2.SelectCommand.Parameters.Add("@opp_ch", SqlDbType.VarChar).Value = RFID_Details_Inv.OutputSetup[y].Channel;
+                                            DA_2.SelectCommand.Parameters.Add("@opp_onishigh", SqlDbType.VarChar).Value = RFID_Details_Inv.OutputSetup[y].On_isHigh;
+                                            DA_2.SelectCommand.Parameters.Add("@opp_mode", SqlDbType.VarChar).Value = RFID_Details_Inv.OutputSetup[y].Mode_Output;
+                                            DA_2.SelectCommand.Parameters.Add("@opp_fperiodon", SqlDbType.VarChar).Value = RFID_Details_Inv.OutputSetup[y].F_Period_On;
+                                            DA_2.SelectCommand.Parameters.Add("@opp_fperiodoff", SqlDbType.VarChar).Value = RFID_Details_Inv.OutputSetup[y].F_Period_Off;
+                                            DA_2.SelectCommand.Parameters.Add("@opp_pulsecnt", SqlDbType.VarChar).Value = RFID_Details_Inv.OutputSetup[y].Pulse_Cnt;
+                                            DA_2.SelectCommand.ExecuteNonQuery();
+                                        }
+                                    }
+
+                                    if (s.Contains("s.inputport.setup"))
+                                    {
+                                        for (int z = 0; z < RFID_Details_Inv.InputSetup.Count; z++)
+                                        {
+                                            DA_2.SelectCommand.Parameters.Clear();
+                                            DA_2.SelectCommand.Parameters.Add("@Option", SqlDbType.VarChar).Value = "Insert_InputConfig";
+                                            DA_2.SelectCommand.Parameters.Add("@cmdkey", SqlDbType.VarChar).Value = "";
+                                            DA_2.SelectCommand.Parameters.Add("@feature", SqlDbType.VarChar).Value = "";
+                                            DA_2.SelectCommand.Parameters.Add("@ipp_ch", SqlDbType.VarChar).Value = RFID_Details_Inv.InputSetup[z].Channel;
+                                            DA_2.SelectCommand.Parameters.Add("@ipp_onishigh", SqlDbType.VarChar).Value = RFID_Details_Inv.InputSetup[z].On_isHigh;
+                                            DA_2.SelectCommand.Parameters.Add("@ipp_mode", SqlDbType.VarChar).Value = RFID_Details_Inv.InputSetup[z].Mode_Output;
+                                            DA_2.SelectCommand.Parameters.Add("@ipp_debounce", SqlDbType.VarChar).Value = RFID_Details_Inv.InputSetup[z].Debounce;
+                                            DA_2.SelectCommand.Parameters.Add("@opp_ch", SqlDbType.VarChar).Value = "";
+                                            DA_2.SelectCommand.Parameters.Add("@opp_onishigh", SqlDbType.VarChar).Value = "";
+                                            DA_2.SelectCommand.Parameters.Add("@opp_mode", SqlDbType.VarChar).Value = "";
+                                            DA_2.SelectCommand.Parameters.Add("@opp_fperiodon", SqlDbType.VarChar).Value = "";
+                                            DA_2.SelectCommand.Parameters.Add("@opp_fperiodoff", SqlDbType.VarChar).Value = "";
+                                            DA_2.SelectCommand.Parameters.Add("@opp_pulsecnt", SqlDbType.VarChar).Value = "";
+                                            DA_2.SelectCommand.ExecuteNonQuery();
+                                        }
+                                    }
+
+                                }
+                                else
+                                {
+                                    tBoxLog_03.Text = tBoxLog_03.Text.Insert(0, Environment.NewLine
+                                            + "-----------------------------------------" + Environment.NewLine
+                                            + "SQL Connection is Failure, Please Try Again!!"
+                                            + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
+                                            + "-----------------------------------------");
+                                }
+                            }
+
+                        }
+                        else if (s.Contains("telematics"))
+                        {
+                            if (s.Contains("t.uhfrfid.temp"))
+                            {
+                                RFID_Tag_Json TagJson = JsonConvert.DeserializeObject<RFID_Tag_Json>(s);
+
+                                if (sqlConnect.con.State == System.Data.ConnectionState.Open)
+                                {
+                                    SqlDataAdapter DA = new SqlDataAdapter("Insert_RFID_Temp", sqlConnect.con);
+                                    DA.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+                                    DA.SelectCommand.Parameters.Add("@device_id", SqlDbType.VarChar).Value = TagJson.Device_ID;
+                                    DA.SelectCommand.Parameters.Add("@rssi", SqlDbType.VarChar).Value = TagJson.RSSI;
+                                    DA.SelectCommand.Parameters.Add("@pkt_no", SqlDbType.VarChar).Value = TagJson.Pkt_No;
+                                    DA.SelectCommand.Parameters.Add("@device_temp", SqlDbType.VarChar).Value = TagJson.Device_Temp;
+
+                                    DA.SelectCommand.ExecuteNonQuery();
+                                }
+                                else
+                                {
+                                    tBoxLog_03.Text = tBoxLog_03.Text.Insert(0, Environment.NewLine
+                                        + "-----------------------------------------" + Environment.NewLine
+                                        + "SQL Connection is Failure, Please Try Again!!"
+                                        + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
+                                        + "-----------------------------------------");
+                                }
+                            }
+                            else if (s.Contains("t.uhfrfid.param"))
+                            {
+                                RFID_Tag_Json TagJson = JsonConvert.DeserializeObject<RFID_Tag_Json>(s);
+
+                                if (sqlConnect.con.State == System.Data.ConnectionState.Open)
+                                {
+                                    if (TagJson.Telematics_Data.Count > 0)
+                                    {
+                                        for (int countTeleData = 0; countTeleData < TagJson.Telematics_Data.Count(); countTeleData++)
+                                        {
+                                            SqlDataAdapter DA = new SqlDataAdapter("Insert_ScanResult", sqlConnect.con);
+                                            DA.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+                                            DA.SelectCommand.Parameters.Add("@device_id", SqlDbType.VarChar).Value = TagJson.Device_ID;
+                                            DA.SelectCommand.Parameters.Add("@tag_rssi", SqlDbType.VarChar).Value = TagJson.RSSI;
+                                            DA.SelectCommand.Parameters.Add("@pkt_no", SqlDbType.VarChar).Value = TagJson.Pkt_No;
+
+                                            DA.SelectCommand.Parameters.Add("@time_stamp", SqlDbType.VarChar).Value = TagJson.Telematics_Data[countTeleData].Time_Stamp;
+                                            DA.SelectCommand.Parameters.Add("@state", SqlDbType.VarChar).Value = TagJson.Telematics_Data[countTeleData].State;
+                                            DA.SelectCommand.Parameters.Add("@channel", SqlDbType.VarChar).Value = TagJson.Telematics_Data[countTeleData].Channel;
+                                            DA.SelectCommand.Parameters.Add("@tele_rssi", SqlDbType.VarChar).Value = TagJson.Telematics_Data[countTeleData].RSSI;
+                                            DA.SelectCommand.Parameters.Add("@tag_id", SqlDbType.VarChar).Value = TagJson.Telematics_Data[countTeleData].Tag_ID;
+
+                                            DA.SelectCommand.ExecuteNonQuery();
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    tBoxLog_03.Text = tBoxLog_03.Text.Insert(0, Environment.NewLine
+                                        + "-----------------------------------------" + Environment.NewLine
+                                        + "SQL Connection is Failure, Please Try Again!!"
+                                        + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
+                                        + "-----------------------------------------");
+                                }
+                            }
+                            else if (s.Contains("t.envsensor.param"))
+                            {
+                                RFID_Tag_Json TagJson = JsonConvert.DeserializeObject<RFID_Tag_Json>(s);
+
+                                if (sqlConnect.con.State == System.Data.ConnectionState.Open)
+                                {
+                                    SqlDataAdapter DA = new SqlDataAdapter("Insert_SensorResult", sqlConnect.con);
+                                    DA.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+                                    DA.SelectCommand.Parameters.Add("@device_id", SqlDbType.VarChar).Value = TagJson.Device_ID;
+                                    DA.SelectCommand.Parameters.Add("@rssi", SqlDbType.VarChar).Value = TagJson.RSSI;
+                                    DA.SelectCommand.Parameters.Add("@pkt_no", SqlDbType.VarChar).Value = TagJson.Pkt_No;
+                                    DA.SelectCommand.Parameters.Add("@sec", SqlDbType.VarChar).Value = TagJson.Sec;
+                                    DA.SelectCommand.Parameters.Add("@temperature", SqlDbType.VarChar).Value = TagJson.Telematics_SensorData.Temperature;
+                                    DA.SelectCommand.Parameters.Add("@humidity", SqlDbType.VarChar).Value = TagJson.Telematics_SensorData.Humidity;
+                                    DA.SelectCommand.Parameters.Add("@pressure", SqlDbType.VarChar).Value = TagJson.Telematics_SensorData.Pressure;
+
+                                    DA.SelectCommand.ExecuteNonQuery();
+                                }
+                                else
+                                {
+                                    tBoxLog_03.Text = tBoxLog_03.Text.Insert(0, Environment.NewLine
+                                        + "-----------------------------------------" + Environment.NewLine
+                                        + "SQL Connection is Failure, Please Try Again!!"
+                                        + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
+                                        + "-----------------------------------------");
+                                }
+
+                            }
+                        }
+                        else if (s.Contains("rpcreply"))
+                        {
+                            if (s.Contains("r.sysconfig.get") && s.Contains("r.sysconfig.result\":true"))
+                            {
+                                RFID_Tag_Json TagJson = JsonConvert.DeserializeObject<RFID_Tag_Json>(s);
+
+                                if (sqlConnect.con.State == System.Data.ConnectionState.Open)
+                                {
+                                    SqlDataAdapter DA = new SqlDataAdapter("Insert_RPCConfig", sqlConnect.con);
+                                    DA.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+                                    DA.SelectCommand.Parameters.Add("@device_id", SqlDbType.VarChar).Value = TagJson.Device_ID;
+                                    DA.SelectCommand.Parameters.Add("@rssi", SqlDbType.VarChar).Value = TagJson.RSSI;
+                                    DA.SelectCommand.Parameters.Add("@pkt_no", SqlDbType.VarChar).Value = TagJson.Pkt_No;
+                                    DA.SelectCommand.Parameters.Add("@wifi_conn_type", SqlDbType.VarChar).Value = TagJson.RPC_ConfigData.WifiObj.Wifi_Connection_Type;
+                                    DA.SelectCommand.Parameters.Add("@wifi_ssid", SqlDbType.VarChar).Value = TagJson.RPC_ConfigData.WifiObj.SSID;
+                                    DA.SelectCommand.Parameters.Add("@wifi_password", SqlDbType.VarChar).Value = TagJson.RPC_ConfigData.WifiObj.Password;
+                                    DA.SelectCommand.Parameters.Add("@wifi_bssid", SqlDbType.VarChar).Value = TagJson.RPC_ConfigData.WifiObj.BSSID;
+                                    DA.SelectCommand.Parameters.Add("@staticip_enable", SqlDbType.VarChar).Value = TagJson.RPC_ConfigData.StaticIPObj.Enable;
+                                    DA.SelectCommand.Parameters.Add("@sntp_enable", SqlDbType.VarChar).Value = TagJson.RPC_ConfigData.SNTPObj.Enable;
+                                    DA.SelectCommand.Parameters.Add("@mqtt_enable", SqlDbType.VarChar).Value = TagJson.RPC_ConfigData.MQTTObj.Enable;
+                                    DA.SelectCommand.Parameters.Add("@mqtt_addr", SqlDbType.VarChar).Value = TagJson.RPC_ConfigData.MQTTObj.Address;
+                                    DA.SelectCommand.Parameters.Add("@mqtt_port", SqlDbType.VarChar).Value = TagJson.RPC_ConfigData.MQTTObj.Port;
+                                    DA.SelectCommand.Parameters.Add("@mqtt_conntype", SqlDbType.VarChar).Value = TagJson.RPC_ConfigData.MQTTObj.Connection_Type;
+                                    DA.SelectCommand.Parameters.Add("@mqtt_anonylogin", SqlDbType.VarChar).Value = TagJson.RPC_ConfigData.MQTTObj.Anony_Login;
+                                    DA.SelectCommand.Parameters.Add("@mqtt_username", SqlDbType.VarChar).Value = TagJson.RPC_ConfigData.MQTTObj.Username;
+                                    DA.SelectCommand.Parameters.Add("@mqtt_password", SqlDbType.VarChar).Value = TagJson.RPC_ConfigData.MQTTObj.Password;
+                                    DA.SelectCommand.Parameters.Add("@mqtt_qos", SqlDbType.VarChar).Value = TagJson.RPC_ConfigData.MQTTObj.QOS;
+                                    DA.SelectCommand.Parameters.Add("@mqtt_keepalive", SqlDbType.VarChar).Value = TagJson.RPC_ConfigData.MQTTObj.Keep_Alive;
+                                    DA.SelectCommand.Parameters.Add("@mqtt_topictype", SqlDbType.VarChar).Value = TagJson.RPC_ConfigData.MQTTObj.TopicType;
+                                    DA.SelectCommand.Parameters.Add("@result", SqlDbType.VarChar).Value = TagJson.ConfigResult;
+
+                                    DA.SelectCommand.ExecuteNonQuery();
+                                }
+                                else
+                                {
+                                    tBoxLog_03.Text = tBoxLog_03.Text.Insert(0, Environment.NewLine
+                                        + "-----------------------------------------" + Environment.NewLine
+                                        + "SQL Connection is Failure, Please Try Again!!"
+                                        + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
+                                        + "-----------------------------------------");
+                                }
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        tBoxLog_03.Text = tBoxLog_03.Text.Insert(0, Environment.NewLine
+                            + "-----------------------------------------" + Environment.NewLine
+                            + " Device Verification Failure! Please Try Again" + Environment.NewLine
+                            + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
+                            + "-----------------------------------------");
+                    }
+                }
+                else
+                {
+                    if (s.Contains("rpcreply"))
+                    {
+                        if (s.Contains("r.enow.list"))
+                        {
+                            Battery_detail_Json_Layer battery_1 = JsonConvert.DeserializeObject<Battery_detail_Json_Layer>(s);
+
+                            Battery battery_ = new Battery
+                            {
+                                device_id = battery_1.RPC_Reply.Device_ID,
+                                pkt_no = battery_1.RPC_Reply.Pkt_No,
+                                battery_name = battery_1.RPC_Reply.Enow_List[0].Node_ID,
+                                battery_level = battery_1.RPC_Reply.Enow_List[0].Battery_level,
+                                battery_status = battery_1.RPC_Reply.Enow_List[0].Battery_Status,
+                            };
+                            HttpClientConnection(battery_);
+                        }
+                    }
+
+                    else if (s.Contains("telematics"))
+                    {
+                        if (s.Contains("t.enow.button"))
+                        {
+                            Battery_detail_Json_tele battery_1 = JsonConvert.DeserializeObject<Battery_detail_Json_tele>(s);
+
+                            Battery battery_ = new Battery
+                            {
+                                device_id = battery_1.Telematics.Device_ID,
+                                pkt_no = battery_1.Telematics.Pkt_No,
+                                battery_name = battery_1.Telematics.Enow_Button[0].Node_ID,
+                                battery_level = battery_1.Telematics.Enow_Button[0].Battery_level,
+                                battery_status = battery_1.Telematics.Enow_Button[0].Battery_Status,
+                            };
+                            HttpClientConnection(battery_);
+                        }
+                        else if (s.Contains("t.enow.battstate"))
+                        {
+                            Battery_detail_Json_tele battery_1 = JsonConvert.DeserializeObject<Battery_detail_Json_tele>(s);
+
+                            Battery battery_ = new Battery
+                            {
+                                device_id = battery_1.Telematics.Device_ID,
+                                pkt_no = battery_1.Telematics.Pkt_No,
+                                battery_name = battery_1.Telematics.Enow_BattState[0].Node_ID,
+                                battery_level = battery_1.Telematics.Enow_BattState[0].Battery_level,
+                                battery_status = battery_1.Telematics.Enow_BattState[0].Battery_Status,
+                            };
+                            HttpClientConnection(battery_);
+                        }
+                        else if (s.Contains("t.enow.disconnected"))
+                        {
+                            Battery_detail_Json_tele battery_1 = JsonConvert.DeserializeObject<Battery_detail_Json_tele>(s);
+
+                            Battery battery_ = new Battery
+                            {
+                                device_id = battery_1.Telematics.Device_ID,
+                                pkt_no = battery_1.Telematics.Pkt_No,
+                                battery_name = battery_1.Telematics.Enow_Disconnected[0].Node_ID,
+                                battery_level = battery_1.Telematics.Enow_Disconnected[0].Battery_level,
+                                battery_status = battery_1.Telematics.Enow_Disconnected[0].Battery_Status,
+                            };
+                            HttpClientConnection(battery_);
+                        }
+                        else if (s.Contains("t.enow.connected"))
+                        {
+                            Battery_detail_Json_tele battery_1 = JsonConvert.DeserializeObject<Battery_detail_Json_tele>(s);
+
+                            Battery battery_ = new Battery
+                            {
+                                device_id = battery_1.Telematics.Device_ID,
+                                pkt_no = battery_1.Telematics.Pkt_No,
+                                battery_name = battery_1.Telematics.Enow_Connected[0].Node_ID,
+                                battery_level = battery_1.Telematics.Enow_Connected[0].Battery_level,
+                                battery_status = battery_1.Telematics.Enow_Connected[0].Battery_Status,
+                            };
+                            HttpClientConnection(battery_);
+                        }
+                        else if (s.Contains("t.enow.indicator"))
+                        {
+                            string newS = s.ToString();
+                            Battery_detail_Json_tele battery_1 = JsonConvert.DeserializeObject<Battery_detail_Json_tele>(newS);
+
+                            Battery battery_ = new Battery
+                            {
+                                device_id = battery_1.Telematics.Device_ID,
+                                pkt_no = battery_1.Telematics.Pkt_No,
+                                battery_name = battery_1.Telematics.Enow_Indicator[0].Node_ID,
+                                battery_level = battery_1.Telematics.Enow_Indicator[0].Battery_level,
+                                battery_status = battery_1.Telematics.Enow_Indicator[0].Battery_Status,
+                                indicator_color = battery_1.Telematics.Enow_Indicator[0].RGB_Color[0].ToString() + "," + battery_1.Telematics.Enow_Indicator[0].RGB_Color[1].ToString() + "," + battery_1.Telematics.Enow_Indicator[0].RGB_Color[2].ToString(),
+                                rgb_mode = battery_1.Telematics.Enow_Indicator[0].RGB_Mode,
+                                indicator_buzz_mode = battery_1.Telematics.Enow_Indicator[0].Buz_Mode,
+                                period = battery_1.Telematics.Enow_Indicator[0].Period,
+                            };
+                            HttpClientConnection(battery_);
+                        }
+                    }
+                }
             }
             else
             {
@@ -260,108 +727,9 @@ namespace RFIDRegistration
                         + "-----------------------------------------" + Environment.NewLine);
             }
 
-            if (indicatorChoosen == false)
+            if (sqlConnect.con.State == ConnectionState.Open)
             {
-
-            }
-            else
-            {
-                if (s.Contains("rpcreply"))
-                {
-                    if (s.Contains("r.enow.list"))
-                    {
-                        Battery_detail_Json_Layer battery_1 = JsonConvert.DeserializeObject<Battery_detail_Json_Layer>(s);
-
-                        Battery battery_ = new Battery
-                        {
-                            device_id = battery_1.RPC_Reply.Device_ID,
-                            pkt_no = battery_1.RPC_Reply.Pkt_No,
-                            battery_name = battery_1.RPC_Reply.Enow_List[0].Node_ID,
-                            battery_level = battery_1.RPC_Reply.Enow_List[0].Battery_level,
-                            battery_status = battery_1.RPC_Reply.Enow_List[0].Battery_Status,
-                        };
-                        HttpClientConnection(battery_);
-                    }
-                }
-
-                else if (s.Contains("telematics"))
-                {
-                    if (s.Contains("t.enow.button"))
-                    {
-                        Battery_detail_Json_tele battery_1 = JsonConvert.DeserializeObject<Battery_detail_Json_tele>(s);
-
-                        Battery battery_ = new Battery
-                        {
-                            device_id = battery_1.Telematics.Device_ID,
-                            pkt_no = battery_1.Telematics.Pkt_No,
-                            battery_name = battery_1.Telematics.Enow_Button[0].Node_ID,
-                            battery_level = battery_1.Telematics.Enow_Button[0].Battery_level,
-                            battery_status = battery_1.Telematics.Enow_Button[0].Battery_Status,
-                        };
-                        HttpClientConnection(battery_);
-                    }
-                    else if (s.Contains("t.enow.battstate"))
-                    {
-                        Battery_detail_Json_tele battery_1 = JsonConvert.DeserializeObject<Battery_detail_Json_tele>(s);
-
-                        Battery battery_ = new Battery
-                        {
-                            device_id = battery_1.Telematics.Device_ID,
-                            pkt_no = battery_1.Telematics.Pkt_No,
-                            battery_name = battery_1.Telematics.Enow_BattState[0].Node_ID,
-                            battery_level = battery_1.Telematics.Enow_BattState[0].Battery_level,
-                            battery_status = battery_1.Telematics.Enow_BattState[0].Battery_Status,
-                        };
-                        HttpClientConnection(battery_);
-                    }
-                    else if (s.Contains("t.enow.disconnected"))
-                    {
-                        Battery_detail_Json_tele battery_1 = JsonConvert.DeserializeObject<Battery_detail_Json_tele>(s);
-
-                        Battery battery_ = new Battery
-                        {
-                            device_id = battery_1.Telematics.Device_ID,
-                            pkt_no = battery_1.Telematics.Pkt_No,
-                            battery_name = battery_1.Telematics.Enow_Disconnected[0].Node_ID,
-                            battery_level = battery_1.Telematics.Enow_Disconnected[0].Battery_level,
-                            battery_status = battery_1.Telematics.Enow_Disconnected[0].Battery_Status,
-                        };
-                        HttpClientConnection(battery_);
-                    }
-                    else if (s.Contains("t.enow.connected"))
-                    {
-                        Battery_detail_Json_tele battery_1 = JsonConvert.DeserializeObject<Battery_detail_Json_tele>(s);
-
-                        Battery battery_ = new Battery
-                        {
-                            device_id = battery_1.Telematics.Device_ID,
-                            pkt_no = battery_1.Telematics.Pkt_No,
-                            battery_name = battery_1.Telematics.Enow_Connected[0].Node_ID,
-                            battery_level = battery_1.Telematics.Enow_Connected[0].Battery_level,
-                            battery_status = battery_1.Telematics.Enow_Connected[0].Battery_Status,
-                        };
-                        HttpClientConnection(battery_);
-                    }
-                    else if (s.Contains("t.enow.indicator"))
-                    {
-                        string newS = s.ToString();
-                        Battery_detail_Json_tele battery_1 = JsonConvert.DeserializeObject<Battery_detail_Json_tele>(newS);
-
-                        Battery battery_ = new Battery
-                        {
-                            device_id = battery_1.Telematics.Device_ID,
-                            pkt_no = battery_1.Telematics.Pkt_No,
-                            battery_name = battery_1.Telematics.Enow_Indicator[0].Node_ID,
-                            battery_level = battery_1.Telematics.Enow_Indicator[0].Battery_level,
-                            battery_status = battery_1.Telematics.Enow_Indicator[0].Battery_Status,
-                            indicator_color = battery_1.Telematics.Enow_Indicator[0].RGB_Color[0].ToString() + "," + battery_1.Telematics.Enow_Indicator[0].RGB_Color[1].ToString() + "," + battery_1.Telematics.Enow_Indicator[0].RGB_Color[2].ToString(),
-                            rgb_mode = battery_1.Telematics.Enow_Indicator[0].RGB_Mode,
-                            indicator_buzz_mode = battery_1.Telematics.Enow_Indicator[0].Buz_Mode,
-                            period = battery_1.Telematics.Enow_Indicator[0].Period,
-                        };
-                        HttpClientConnection(battery_);
-                    }
-                }
+                sqlConnect.con.Close();
             }
         }
 
@@ -387,7 +755,7 @@ namespace RFIDRegistration
                 cBoxSelectionCommand.Enabled = true;
                 btnClearDataIn.Enabled = true;
                 gBoxComPortControl.Enabled = false;
-
+                btnRPCConfig_USB.Enabled = true;
 
                 lblStatusCom.Text = "Connected";
             }
@@ -404,6 +772,7 @@ namespace RFIDRegistration
                 cBoxSelectionCommand.Enabled = false;
                 btnClearDataIn.Enabled = false;
                 gBoxComPortControl.Enabled = true;
+                btnRPCConfig_USB.Enabled = false;
 
                 lblStatusCom.Text = "Disconnected";
             }
@@ -424,6 +793,7 @@ namespace RFIDRegistration
                 cBoxSelectionCommand.Enabled = false;
                 btnClearDataIn.Enabled = false;
                 gBoxComPortControl.Enabled = true;
+                btnRPCConfig_USB.Enabled = false;
 
                 lblStatusCom.Text = "Disconnected";
             }
@@ -459,17 +829,17 @@ namespace RFIDRegistration
 
         private void btnClearDataOut_Click(object sender, EventArgs e)
         {
-            if (tBoxDataOut.Text != "")
+            if (tBoxDataOut.Text != string.Empty)
             {
-                tBoxDataOut.Text = "";
+                tBoxDataOut.Text = string.Empty;
             }
         }
 
         private void btnClearDataIn_Click(object sender, EventArgs e)
         {
-            if (tBoxDataIn.Text != "")
+            if (tBoxDataIn.Text != string.Empty)
             {
-                tBoxDataIn.Text = "";
+                tBoxDataIn.Text = string.Empty;
             }
         }
 
@@ -491,243 +861,174 @@ namespace RFIDRegistration
                 switch (DataComboBoxCommand)
                 {
                     case "None":
-                        tBoxPublish.Text = "";
-                        btnPubRPCReq.Enabled = false;
-                        btnPubDevUpAttb.Enabled = false;
+                        tBoxDataOut.Text = "";
+                        btnSendData.Enabled = false;
                         break;
 
                     case "Attb: Get All Attribute":
-                        tBoxPublish.Text = "{}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
+                        tBoxDataOut.Text = "{\"attribute\":{}}";
+                        btnSendData.Enabled = true;
                         break;
 
-                    case "RFID Attb: Set Power to 28dbm":
-                        tBoxPublish.Text = "{\"s.uhfrfid.power\":28}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
+                    case "RFID Attb: Set Internal Reading Period 500ms":
+                        tBoxDataOut.Text = "{\"attribute\":{\"s.uhfrfid.devreadperiod\":500}}";
+                        btnSendData.Enabled = true;
                         break;
 
-                    case "RFID Attb: Set Power to 20dbm":
-                        tBoxPublish.Text = "{\"s.uhfrfid.power\":20}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
+                    case "RFID Attb: Set Internal Reading Period 1000ms":
+                        tBoxDataOut.Text = "{\"attribute\":{\"s.uhfrfid.devreadperiod\":1000}}";
+                        btnSendData.Enabled = true;
                         break;
 
-                    case "RFID Attb: Enable Auto Mode":
-                        tBoxPublish.Text = "{\"s.uhfrfid.auto\":1}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
+                    case "RFID Attb: Enb. Auto Mode":
+                        tBoxDataOut.Text = "{\"attribute\":{\"s.uhfrfid.auto\":1}}";
+                        btnSendData.Enabled = true;
                         break;
 
-                    case "RFID Attb: Disable Auto Mode":
-                        tBoxPublish.Text = "{\"s.uhfrfid.auto\":0}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
+                    case "RFID Attb: Dis. Auto Mode":
+                        tBoxDataOut.Text = "{\"attribute\":{\"s.uhfrfid.auto\":0}}";
+                        btnSendData.Enabled = true;
                         break;
 
-                    case "RFID Attb: Enable EPC Extended Info":
-                        tBoxPublish.Text = "{\"s.uhfrfid.epcextended\":1}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
+                    case "RFID Attb: Menu Mode Period 5 second":
+                        tBoxDataOut.Text = "{\"attribute\":{\"s.uhfrfid.auto\":0,\"s.uhfrfid.period\":5}}";
+                        btnSendData.Enabled = true;
                         break;
 
-                    case "RFID Attb: Disable EPC Extended Info":
-                        tBoxPublish.Text = "{\"s.uhfrfid.epcextended\":0}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
+                    case "RFID Attb: Menu Mode Period 10 second":
+                        tBoxDataOut.Text = "{\"attribute\":{\"s.uhfrfid.auto\":0,\"s.uhfrfid.period\":10}}";
+                        btnSendData.Enabled = true;
                         break;
 
-                    case "RFID Attb: Enable Antenna Channel Update":
-                        tBoxPublish.Text = "{\"s.uhfrfid.antchgupd\":1}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
+                    case "RFID Attb: Cache period 800ms":
+                        tBoxDataOut.Text = "{\"attribute\":{\"s.uhfrfid.cachetagremove\":1,\"s.uhfrfid.cacheperiod\":800}}";
+                        btnSendData.Enabled = true;
                         break;
 
-                    case "RFID Attb: Disable Antenna Channel Update":
-                        tBoxPublish.Text = "{\"s.uhfrfid.antchgupd\":0}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
+                    case "RFID Attb: Cache period 1100ms":
+                        tBoxDataOut.Text = "{\"attribute\":{\"s.uhfrfid.cachetagremove\":1,\"s.uhfrfid.cacheperiod\":1100}}";
+                        btnSendData.Enabled = true;
                         break;
 
-                    case "RFID Attb: Enable Force Update 2 Sec":
-                        tBoxPublish.Text = "{\"s.uhfrfid.forceupdate\":2}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
+                    case "RFID Attb: Cache period 1500ms":
+                        tBoxDataOut.Text = "{\"attribute\":{\"s.uhfrfid.cachetagremove\":1,\"s.uhfrfid.cacheperiod\":1500}}";
+                        btnSendData.Enabled = true;
                         break;
 
-                    case "RFID Attb: Disable Force Update":
-                        tBoxPublish.Text = "{\"s.uhfrfid.forceupdate\":0}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "RFID Attb: Cache do not remove tag":
-                        tBoxPublish.Text = "{\"s.uhfrfid.cacheperiod\":0}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
+                    case "RFID Attb: Cache period 4000ms":
+                        tBoxDataOut.Text = "{\"attribute\":{\"s.uhfrfid.cachetagremove\":1,\"s.uhfrfid.cacheperiod\":4000}}";
+                        btnSendData.Enabled = true;
                         break;
 
                     case "RFID Attb: Cache period 10000ms":
-                        tBoxPublish.Text = "{\"s.uhfrfid.cacheperiod\":10000}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
+                        tBoxDataOut.Text = "{\"attribute\":{\"s.uhfrfid.cachetagremove\":1,\"s.uhfrfid.cacheperiod\":10000}}";
+                        btnSendData.Enabled = true;
                         break;
 
-                    case "RFID Attb: Cache Period 5000ms":
-                        tBoxPublish.Text = "{\"s.uhfrfid.cacheperiod\":5000}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
+                    case "RFID Attb: Cache do not remove tag":
+                        tBoxDataOut.Text = "{\"attribute\":{\"s.uhfrfid.cachetagremove\":0}}";
+                        btnSendData.Enabled = true;
                         break;
 
-                    case "RFID Attb: Cache Period 1500ms":
-                        tBoxPublish.Text = "{\"s.uhfrfid.cacheperiod\":1500}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
+                    case "RFID Attb: Enb Tag remove update":
+                        tBoxDataOut.Text = "{\"attribute\":{\"s.uhfrfid.tagremoveupd\":1}}";
+                        btnSendData.Enabled = true;
                         break;
 
-                    case "RFID Attb: Set Q Value 8":
-                        tBoxPublish.Text = "{\"s.uhfrfid.q\":8}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
+                    case "RFID Attb: Dis Tag remove update":
+                        tBoxDataOut.Text = "{\"attribute\":{\"s.uhfrfid.tagremoveupd\":0}}";
+                        btnSendData.Enabled = true;
+                        break;
+
+                    case "RFID Attb: Enb. Ant Ch Update":
+                        tBoxDataOut.Text = "{\"attribute\":{\"s.uhfrfid.antchangeupd\":1}}";
+                        btnSendData.Enabled = true;
+                        break;
+
+                    case "RFID Attb: Dis. Ant Ch Update":
+                        tBoxDataOut.Text = "{\"attribute\":{\"s.uhfrfid.antchangeupd\":0}}";
+                        btnSendData.Enabled = true;
+                        break;
+
+                    case "RFID Attb: Enb. Force Update 4sec":
+                        tBoxDataOut.Text = "{\"attribute\":{\"s.uhfrfid.enbforceupd\":1,\"s.uhfrfid.forceupdperiod\":4}}";
+                        btnSendData.Enabled = true;
+                        break;
+
+                    case "RFID Attb: Enb. Force Update 10sec":
+                        tBoxDataOut.Text = "{\"attribute\":{\"s.uhfrfid.enbforceupd\":1,\"s.uhfrfid.forceupdperiod\":10}}";
+                        btnSendData.Enabled = true;
+                        break;
+
+                    case "RFID Attb: Dis. Force Update":
+                        tBoxDataOut.Text = "{\"attribute\":{\"s.uhfrfid.enbforceupd\":0}}";
+                        btnSendData.Enabled = true;
+                        break;
+
+                    case "RFID Attb: Enb Dynamic Q":
+                        tBoxDataOut.Text = "{\"attribute\":{\"s.uhfrfid.dynamicq\":1}}";
+                        btnSendData.Enabled = true;
+                        break;
+
+                    case "RFID Attb: Dis Dynamic Q":
+                        tBoxDataOut.Text = "{\"attribute\":{\"s.uhfrfid.dynamicq\":0}}";
+                        btnSendData.Enabled = true;
                         break;
 
                     case "RFID Attb: Set Q Value 4":
-                        tBoxPublish.Text = "{\"s.uhfrfid.q\":4}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
+                        tBoxDataOut.Text = "{\"attribute\":{\"s.uhfrfid.dynamicq\":0,\"s.uhfrfid.q\":4}}";
+                        btnSendData.Enabled = true;
                         break;
 
-                    case "RFID Attb: Set Reading Mode Sensitive":
-                        tBoxPublish.Text = "{\"s.uhfrfid.mode\":0}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
+                    case "RFID Attb: Set Q Value 8":
+                        tBoxDataOut.Text = "{\"attribute\":{\"s.uhfrfid.dynamicq\":0,\"s.uhfrfid.q\":8}}";
+                        btnSendData.Enabled = true;
                         break;
 
-                    case "RFID Attb: Set Reading Mode Density":
-                        tBoxPublish.Text = "{\"s.uhfrfid.mode\":1}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
+                    case "RFID Attb: Set Tag Session 0":
+                        tBoxDataOut.Text = "{\"attribute\":{\"s.uhfrfid.semode\":0}}";
+                        btnSendData.Enabled = true;
                         break;
 
-                    case "RFID Attb: Set Enable Demo Mode":
-                        tBoxPublish.Text = "{\"s.uhfrfid.demo\":1}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
+                    case "RFID Attb: Set Tag Session 1":
+                        tBoxDataOut.Text = "{\"attribute\":{\"s.uhfrfid.semode\":1}}";
+                        btnSendData.Enabled = true;
                         break;
 
-                    case "RFID Attb: Set Disable Demo Mode":
-                        tBoxPublish.Text = "{\"s.uhfrfid.demo\":0}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
+                    case "RFID Attb: Set Tag Session 2":
+                        tBoxDataOut.Text = "{\"attribute\":{\"s.uhfrfid.semode\":2}}";
+                        btnSendData.Enabled = true;
                         break;
 
-                    case "RFID Attb: Set Reading Mode Custome 1 (Thrd 120h)":
-                        tBoxPublish.Text = "{\"s.uhfrfid.mode\":2,\"s.uhfrfid.mcustmix\":3,\"s.uhfrfid.mcustif\":6,\"s.uhfrfid.mcustthrd\":288}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
+                    case "RFID Attb: Set Tag Session 3":
+                        tBoxDataOut.Text = "{\"attribute\":{\"s.uhfrfid.semode\":3}}";
+                        btnSendData.Enabled = true;
                         break;
 
-                    case "RFID Attb: Set Reading Mode Custome 2 (Thrd 150h)":
-                        tBoxPublish.Text = "{\"s.uhfrfid.mode\":2,\"s.uhfrfid.mcustmix\":3,\"s.uhfrfid.mcustif\":6,\"s.uhfrfid.mcustthrd\":336}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
+                    case "RFID Attb: Set Tag Target A":
+                        tBoxDataOut.Text = "{\"attribute\":{\"s.uhfrfid.target\":0}}";
+                        btnSendData.Enabled = true;
                         break;
 
-                    case "RFID Attb: Set Reading Mode Custome 3 (Thrd 180h)":
-                        tBoxPublish.Text = "{\"s.uhfrfid.mode\":2,\"s.uhfrfid.mcustmix\":3,\"s.uhfrfid.mcustif\":6,\"s.uhfrfid.mcustthrd\":384}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
+                    case "RFID Attb: Set Tag Target B":
+                        tBoxDataOut.Text = "{\"attribute\":{\"s.uhfrfid.target\":1}}";
+                        btnSendData.Enabled = true;
                         break;
 
-                    case "RFID RpcReq: Start Reading":
-                        tBoxPublish.Text = "{\"r.uhfrfid.start\":1}";
-                        btnPubRPCReq.Enabled = true;
-                        btnPubDevUpAttb.Enabled = false;
+                    case "RFID Attb: Set Tag Target A-B":
+                        tBoxDataOut.Text = "{\"attribute\":{\"s.uhfrfid.target\":2}}";
+                        btnSendData.Enabled = true;
                         break;
 
-                    case "RFID RpcReq: Stop Reading":
-                        tBoxPublish.Text = "{\"r.uhfrfid.start\":0}";
-                        btnPubRPCReq.Enabled = true;
-                        btnPubDevUpAttb.Enabled = false;
+                    case "RFID Attb: Set Tag Target B-A":
+                        tBoxDataOut.Text = "{\"attribute\":{\"s.uhfrfid.target\":0}}";
+                        btnSendData.Enabled = true;
                         break;
 
-                    case "RFID RpcReq: Tag Reload":
-                        tBoxPublish.Text = "{\"r.uhfrfid.reload\":1}";
-                        btnPubRPCReq.Enabled = true;
-                        btnPubDevUpAttb.Enabled = false;
-                        break;
-
-                    case "Input Attb: Set Debounce = 10":
-                        tBoxPublish.Text = "{\"s.inputport.setup\":[{\"ch\":0,\"debounce\":10}]}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "Input Attb: CH0, CH1 Set to Input port mode, Input Low is on":
-                        tBoxPublish.Text = "{\"s.inputport.setup\":[{\"ch\":0,\"mode\":1,\"onishigh\":false},{\"ch\":1,\"mode\":1,\"onishigh\":false}]}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "Input Attb: CH0,CH1 Set to Push Button Input, Low is on":
-                        tBoxPublish.Text = "{\"s.inputport.setup\":[{\"ch\":0,\"mode\":0,\"onishigh\":false},{\"ch\":1,\"mode\":0,\"onishigh\":false}]}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "Output Attb: CH0, Pulse Mode, 0.3/0.5, Cnt:4, On is High":
-                        tBoxPublish.Text = "{\"s.outputport.setup\":[{\"ch\":0,\"mode\":1,\"onishigh\":true,\"fperiodon\":3,\"fperiodoff\":5,\"pulsecnt\":4}]}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "Output Attb: CH1, Pulse Mode, 0.3/0.5, Cnt:2, On is High":
-                        tBoxPublish.Text = "{\"s.outputport.setup\":[{\"ch\":1,\"mode\":1,\"onishigh\":true,\"fperiodon\":3,\"fperiodoff\":5,\"pulsecnt\":2}]}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "Output Attb: CH0 Std Mode, On is High":
-                        tBoxPublish.Text = "{\"s.outputport.setup\":[{\"ch\":0,\"mode\":0,\"onishigh\":true}]}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "Output Attb: CH1 Std Mode, On is High":
-                        tBoxPublish.Text = "{\"s.outputport.setup\":[{\"ch\":1,\"mode\":0,\"onishigh\":true}]}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "Output RpcReq: CH0 On":
-                        tBoxPublish.Text = "{\"r.outputport.param\":[{\"ch\":0,\"ison\":true}]}";
-                        btnPubRPCReq.Enabled = true;
-                        btnPubDevUpAttb.Enabled = false;
-                        break;
-
-                    case "Output RpcReq: CH0 Off":
-                        tBoxPublish.Text = "{\"r.outputport.param\":[{\"ch\":0,\"ison\":0}]}";
-                        btnPubRPCReq.Enabled = true;
-                        btnPubDevUpAttb.Enabled = false;
-                        break;
-
-                    case "Output RpcReq: CH1 On":
-                        tBoxPublish.Text = "{\"r.outputport.param\":[{\"ch\":1,\"ison\":true}]}";
-                        btnPubRPCReq.Enabled = true;
-                        btnPubDevUpAttb.Enabled = false;
-                        break;
-
-                    case "Output RpcReq: CH1 Off":
-                        tBoxPublish.Text = "{\"r.outputport.param\":[{\"ch\":1,\"ison\":0}]}";
-                        btnPubRPCReq.Enabled = true;
-                        btnPubDevUpAttb.Enabled = false;
-                        break;
 
                     default:
-                        tBoxPublish.Text = "";
-                        btnPubRPCReq.Enabled = false;
-                        btnPubDevUpAttb.Enabled = false;
+                        tBoxDataOut.Text = "";
+                        btnSendData.Enabled = false;
                         break;
                 }
             }
@@ -839,814 +1140,6 @@ namespace RFIDRegistration
                         tBoxDataOut.Text = "{\"rpcreq\":{\"r.enow.indicator\":[{\"nodeid\":\"7CDFA1D00A60\",\"ch\":0,\"rgbmode\":0,\"buzmode\":0}]}}";
                         break;
 
-                }
-            }
-        }
-
-        private void btnConnectMQTT_Click(object sender, EventArgs e)
-        {
-            if (tBoxIPAddress.Text != "")
-            {
-                try
-                {
-                    client = new MqttClient(tBoxIPAddress.Text, 1883, false, null, null, MqttSslProtocols.TLSv1_2);
-                    clientID_One = Guid.NewGuid().ToString();
-                    // Use Unique ID as Client ID, each time we start the application.
-                    client.Connect(clientID_One);
-                    tBoxDataIn.Text = tBoxDataIn.Text.Insert(0, Environment.NewLine
-                        + "-----------------------------------------" + Environment.NewLine
-                        + "Client Connected to MQTT" + Environment.NewLine
-                        + "Client ID: " + clientID_One + Environment.NewLine
-                        + "Broker Address: " + tBoxIPAddress.Text.ToString() + Environment.NewLine
-                        + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
-                        + "-----------------------------------------");
-
-
-                    // Register a callback-function for implementation
-                    client.MqttMsgPublishReceived += new MqttClient.MqttMsgPublishEventHandler(EventPublished);
-                    ConnectionStatus = true;
-
-                    // Button
-                    btnConnectMQTT.Enabled = false;
-                    btnDisconnectMQTT.Enabled = true;
-                    btnSubTele.Enabled = true;
-                    tBoxDeviceID.Enabled = false;
-                    tBoxIPAddress.Enabled = false;
-                    tBoxPublish.Enabled = true;
-                    cBoxSelectionMQTT.Enabled = true;
-                    btnClearDataIn.Enabled = true;
-
-                }
-                catch (Exception ex)
-                {
-                    ConnectionStatus = false;
-
-                    // Button
-                    btnConnectMQTT.Enabled = true;
-                    btnDisconnectMQTT.Enabled = false;
-                    btnSubTele.Enabled = false;
-                    tBoxDeviceID.Enabled = true;
-                    tBoxIPAddress.Enabled = true;
-                    tBoxPublish.Enabled = false;
-                    cBoxSelectionMQTT.Enabled = false;
-                    btnClearDataIn.Enabled = false;
-
-                    //MessageBox.Show(ex.ToString());
-                    MessageBox.Show("Please try again, Connection failure.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-            else
-            {
-                MessageBox.Show("IP Address Cannot Be Blank!");
-            }
-        }
-
-        private void btnDisconnectMQTT_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                client.Disconnect();
-                tBoxDataIn.Text = tBoxDataIn.Text.Insert(0, Environment.NewLine
-                    + "-----------------------------------------" + Environment.NewLine
-                    + "Client ID: " + clientID_One + Environment.NewLine
-                    + "Client Disconnected To MQTT" + Environment.NewLine
-                    + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
-                    + "-----------------------------------------");
-
-                ConnectionStatus = false;
-
-                btnConnectMQTT.Enabled = true;
-                btnDisconnectMQTT.Enabled = false;
-                btnSubTele.Enabled = false;
-                tBoxDeviceID.Enabled = true;
-                tBoxIPAddress.Enabled = true;
-                tBoxPublish.Enabled = false;
-                cBoxSelectionMQTT.Enabled = false;
-                btnClearDataIn.Enabled = false;
-
-                // TabPages
-                tabPage1.Text = "Device_01";
-            }
-            catch (Exception ex)
-            {
-                btnConnectMQTT.Enabled = false;
-                btnDisconnectMQTT.Enabled = true;
-                btnSubTele.Enabled = true;
-                tBoxDeviceID.Enabled = false;
-                tBoxIPAddress.Enabled = false;
-                tBoxPublish.Enabled = true;
-                cBoxSelectionMQTT.Enabled = true;
-                btnClearDataIn.Enabled = true;
-
-                ConnectionStatus = true;
-
-                tBoxDataIn.Text = tBoxDataIn.Text.Insert(0, Environment.NewLine
-                    + "-----------------------------------------" + Environment.NewLine
-                    + "Client ID: " + clientID_One + Environment.NewLine
-                    + "Client Unable Disconnected!" + Environment.NewLine
-                    + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
-                    + "-----------------------------------------");
-                //MessageBox.Show(ex.ToString());
-                MessageBox.Show("Disconnect unsuccessful, please try again..", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void btnSubTele_Click(object sender, EventArgs e)
-        {
-            if (ConnectionStatus)
-            {
-                if (tBoxDeviceID.Text != "")
-                {
-                    //W3/WIRIO3_943CC64D77F0/telemetry
-                    // Set Topic Name for MQTT
-                    string TopicName_1st = "W3/" + tBoxDeviceID.Text + "/telemetry";
-                    string TopicName_2nd = "W3/" + tBoxDeviceID.Text + "/attributes";
-                    string TopicName_3rd = "W3/" + tBoxDeviceID.Text + "/rpc/response/+";
-
-                    // Subcribe to Topic with QoS Level 2 (Exactly Once)
-                    client.Subscribe(
-                        new string[]
-                        {
-                            TopicName_1st,
-                            TopicName_2nd,
-                            TopicName_3rd
-                        },
-                        new byte[]
-                        {
-                            MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE,
-                            MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE,
-                            MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE
-                        });
-
-                    tBoxDataIn.Text = tBoxDataIn.Text.Insert(0, Environment.NewLine
-                    + "-----------------------------------------" + Environment.NewLine
-                    + "Device ID: " + tBoxDeviceID.Text + Environment.NewLine
-                    + "Client ID: " + clientID_One + Environment.NewLine
-                    + "Subscribe All Topic Successfully!" + Environment.NewLine
-                    + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
-                    + "-----------------------------------------");
-
-                    // TabPages
-                    tabPage1.Text = tBoxDeviceID.Text;
-                }
-                else
-                {
-                    MessageBox.Show("Please Enter a valid Device ID!");
-                }
-            }
-            else
-            {
-                MessageBox.Show("Please Connect to MQTT Broker First!");
-            }
-
-        }
-
-        private void btnPubDevUp_Click(object sender, EventArgs e)
-        {
-            if (ConnectionStatus)
-            {
-                if (tBoxDeviceID.Text != "")
-                {
-                    // Set Topic Name for MQTT
-                    //W3 / WIRIO3_943CC64D77F0 / attributes
-                    string TopicName = "W3/" + tBoxDeviceID.Text + "/attributes";
-
-                    if (tBoxPublish.Text != "")
-                    {
-                        // Publish a message with QoS Level 2 (Exactly Once)
-                        client.Publish(TopicName, Encoding.UTF8.GetBytes(tBoxPublish.Text), MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE, true);
-                    }
-                    else
-                    {
-                        MessageBox.Show("Please Enter a Text for Publish!");
-                    }
-                }
-                else
-                {
-                    MessageBox.Show("Please Enter a valid Device ID!");
-                }
-            }
-            else
-            {
-                MessageBox.Show("Please Connect to MQTT Broker First!");
-            }
-        }
-
-        private void btnPubRPCReq_Click(object sender, EventArgs e)
-        {
-            if (ConnectionStatus)
-            {
-                if (tBoxDeviceID.Text != "")
-                {
-                    // Set Topic Name for MQTT
-                    string TopicName = "W3/" + tBoxDeviceID.Text + "/rpc/request/";
-
-                    if (tBoxPublish.Text != "")
-                    {
-                        // Publish a message with QoS Level 2 (Exactly Once)
-                        client.Publish(TopicName, Encoding.UTF8.GetBytes(tBoxPublish.Text), MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE, true);
-                    }
-                    else
-                    {
-                        MessageBox.Show("Please Enter a Text for Publish!");
-                    }
-                }
-                else
-                {
-                    MessageBox.Show("Please Enter a valid Device ID!");
-                }
-            }
-            else
-            {
-                MessageBox.Show("Please Connect to MQTT Broker First!");
-            }
-        }
-
-        private void cBoxSelectionMQTT_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-            string DataMQTTCommands = cBoxSelectionMQTT.Text;
-
-            if (indicatorChoosen == false)
-            {
-                switch (DataMQTTCommands)
-                {
-                    case "None":
-                        tBoxPublish.Text = "";
-                        btnPubRPCReq.Enabled = false;
-                        btnPubDevUpAttb.Enabled = false;
-                        break;
-
-                    case "Attb: Get All Attribute":
-                        tBoxPublish.Text = "{}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    
-                    // RFID Tag Inventory / Cache Settings ::
-                    case "RFID Attb: Enable Auto Mode":
-                        tBoxPublish.Text = "{\"s.uhfrfid.auto\":1}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "RFID Attb: Disable Auto Mode":
-                        tBoxPublish.Text = "{\"s.uhfrfid.auto\":0}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "RFID Attb: Disable Auto Mode, Menu Mode Period 5 second":
-                        tBoxPublish.Text = "{\"s.uhfrfid.auto\":0,\"s.uhfrfid.period\":5}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "RFID Attb: Disable Auto Mode, Menu Mode Period 10 second":
-                        tBoxPublish.Text = "{\"s.uhfrfid.auto\":0,\"s.uhfrfid.period\":10}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "RFID Attb: Set Internal Reading Period 500ms":
-                        tBoxPublish.Text = "{\"s.uhfrfid.devreadperiod\":500}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "RFID Attb: Set Internal Reading Period 1000ms":
-                        tBoxPublish.Text = "{\"s.uhfrfid.devreadperiod\":1000}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "RFID Attb: Cache do not remove tag":
-                        tBoxPublish.Text = "{\"s.uhfrfid.cacheperiod\":0}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "RFID Attb: Cache Remove Tag, Cache period 10000ms":
-                        tBoxPublish.Text = "{\"s.uhfrfid.cachetagremove\":1,\"s.uhfrfid.cacheperiod\":10000}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "RFID Attb: Cache Remove Tag, Cache Period 5000ms":
-                        tBoxPublish.Text = "{\"s.uhfrfid.cachetagremove\":1,\"s.uhfrfid.cacheperiod\":5000}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "RFID Attb: Cache Remove Tag, Cache Period 1500ms":
-                        tBoxPublish.Text = "{\"s.uhfrfid.cachetagremove\":1,\"s.uhfrfid.cacheperiod\":1500}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "RFID Attb: Enable Tag Remove Update":
-                        tBoxPublish.Text = "{\"s.uhfrfid.tagremoveupd\":1}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "RFID Attb: Disable Tag Remove Update":
-                        tBoxPublish.Text = "{\"s.uhfrfid.tagremoveupd\":0}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "RFID Attb: Enable Anthena Channel Update":
-                        tBoxPublish.Text = "{\"s.uhfrfid.antchangeupd\":1}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "RFID Attb: Disable Anthena Channel Update":
-                        tBoxPublish.Text = "{\"s.uhfrfid.antchangeupd\":0}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "RFID Attb: Enable Force Update 4sec":
-                        tBoxPublish.Text = "{\"s.uhfrfid.enbforceupd\":1,\"s.uhfrfid.forceupdperiod\":4}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "RFID Attb: Enable Force Update 10sec":
-                        tBoxPublish.Text = "{\"s.uhfrfid.enbforceupd\":1,\"s.uhfrfid.forceupdperiod\":10}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "RFID Attb: Disable Force Update":
-                        tBoxPublish.Text = "{\"s.uhfrfid.enbforceupd\":0}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-
-                    // RFID Tag Mode Setting
-                    case "RFID Attb: Enable Dynamic Q":
-                        tBoxPublish.Text = "{\"s.uhfrfid.dynamicq\":1}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "RFID Attb: Disable Dynamic Q":
-                        tBoxPublish.Text = "{\"s.uhfrfid.dynamicq\":0}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "RFID Attb: Set Q Value 4":
-                        tBoxPublish.Text = "{\"s.uhfrfid.dynamicq\":0,\"s.uhfrfid.q\":4}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "RFID Attb: Set Q Value 8":
-                        tBoxPublish.Text = "{\"s.uhfrfid.dynamicq\":0,\"s.uhfrfid.q\":8}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "RFID Attb: Enable Antenna Channel Update":
-                        tBoxPublish.Text = "{\"s.uhfrfid.antchgupd\":1}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "RFID Attb: Disable Antenna Channel Update":
-                        tBoxPublish.Text = "{\"s.uhfrfid.antchgupd\":0}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "RFID Attb: Set Tag Session 0":
-                        tBoxPublish.Text = "{\"s.uhfrfid.semode\":0}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "RFID Attb: Set Tag Session 1":
-                        tBoxPublish.Text = "{\"s.uhfrfid.semode\":1}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "RFID Attb: Set Tag Session 2":
-                        tBoxPublish.Text = "{\"s.uhfrfid.semode\":2}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "RFID Attb: Set Tag Session 3":
-                        tBoxPublish.Text = "{\"s.uhfrfid.semode\":3}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "RFID Attb: Set Tag Target A":
-                        tBoxPublish.Text = "{\"s.uhfrfid.target\":0}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "RFID Attb: Set Tag Target B":
-                        tBoxPublish.Text = "{\"s.uhfrfid.target\":1}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "RFID Attb: Set Tag Target A-B":
-                        tBoxPublish.Text = "{\"s.uhfrfid.target\":2}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "RFID Attb: Set Tag Target B-A":
-                        tBoxPublish.Text = "{\"s.uhfrfid.target\":3}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "RFID Attb: Enable Tag Password = 0xff,0x2d,0x20,0x50":
-                        tBoxPublish.Text = "{\"s.uhfrfid.enbtagpass\":1,\"s.uhfrfid.tagpass:[255,45,32,80]}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "RFID Attb: Disable Tag Password":
-                        tBoxPublish.Text = "{\"s.uhfrfid.enbtagpass\":0}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "RFID Attb: Enable EPC Extended Info":
-                        tBoxPublish.Text = "{\"s.uhfrfid.epcextended\":1}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "RFID Attb: Disable EPC Extended Info":
-                        tBoxPublish.Text = "{\"s.uhfrfid.epcextended\":0}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-
-                    // RFID Reader Setting
-                    case "RFID Attb: Antenna Auto On Mode":
-                        tBoxPublish.Text = "{\"s.uhfrfid.antenb\":[0,0,0,0]}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "RFID Attb: Antenna CH3 Off": // Can be more specific which channel to turn off manually
-                        tBoxPublish.Text = "{\"s.uhfrfid.antenb\":[0,0,2,0]}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "RFID Attb: Set Power to 1dbm": // Power can specific which channel to different power
-                        tBoxPublish.Text = "{\"s.uhfrfid.power\":[1,1,1,1]}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "RFID Attb: Set Power to 20dbm":
-                        tBoxPublish.Text = "{\"s.uhfrfid.power\":[20,20,20,20]}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "RFID Attb: Set Power to 28dbm":
-                        tBoxPublish.Text = "{\"s.uhfrfid.power\":[28,28,28,28]}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "RFID Attb: Set Power to 33dbm":
-                        tBoxPublish.Text = "{ \"s.uhfrfid.power\":[33,33,33,33]}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-
-                    // RFID External Trigger
-                    case "RFID Attb: Enable Input Port 0 Trigger":
-                        tBoxPublish.Text = "{\"s.uhfrfid.inptrig\":[1,0],\"s.inputport.setup\":[{\"ch\":0,\"mode\":1,\"onishigh\":false}]}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "RFID Attb: Enable Input Port 1 Trigger":
-                        tBoxPublish.Text = "{\"s.uhfrfid.inptrig\":[0,1],\"s.inputport.setup\":[{\"ch\":1,\"mode\":1,\"onishigh\":false}]}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "RFID Attb: Enable Input Port 0 & 1 Trigger":
-                        tBoxPublish.Text = "{\"s.uhfrfid.inptrig\":[1,1],\"s.inputport.setup\":[{\"ch\":0,\"mode\":1,\"onishigh\":false},{\"ch\":1,\"mode\":1,\"onishigh\":false}]}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "RFID Attb: Disable All Input Trigger":
-                        tBoxPublish.Text = "{\"s.uhfrfid.inptrig\":[0,0]}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    // RFID Demo Mode and Testing
-                    case "RFID Attb: Set Enable Demo Mode":
-                        tBoxPublish.Text = "{\"s.uhfrfid.demo\":1}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "RFID Attb: Set Disable Demo Mode":
-                        tBoxPublish.Text = "{\"s.uhfrfid.demo\":0}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    // RFID RPC Request
-                    case "RFID RpcReq: Start Reading":
-                        tBoxPublish.Text = "{\"r.uhfrfid.start\":1}";
-                        btnPubRPCReq.Enabled = true;
-                        btnPubDevUpAttb.Enabled = false;
-                        break;
-
-                    case "RFID RpcReq: Stop Reading":
-                        tBoxPublish_03.Text = "{\"r.uhfrfid.start\":0}";
-                        btnPubRPCReq_03.Enabled = true;
-                        btnPubDevUpAttb_03.Enabled = false;
-                        break;
-
-                    case "RFID RpcReq: Tag Reload":
-                        tBoxPublish.Text = "{\"r.uhfrfid.reload\":1}";
-                        btnPubRPCReq.Enabled = true;
-                        btnPubDevUpAttb.Enabled = false;
-                        break;
-
-
-                    // Remote IO Setting
-                    case "Input Attb: Set Debounce = 10":
-                        tBoxPublish.Text = "{\"s.inputport.setup\":[{\"ch\":0,\"debounce\":10}]}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "Input Attb: CH0, CH1 Set to Input port mode, Input Low is on":
-                        tBoxPublish.Text = "{\"s.inputport.setup\":[{\"ch\":0,\"mode\":1,\"onishigh\":false},{\"ch\":1,\"mode\":1,\"onishigh\":false}]}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "Input Attb: CH0,CH1 Set to Push Button Input, Low is on":
-                        tBoxPublish.Text = "{\"s.inputport.setup\":[{\"ch\":0,\"mode\":0,\"onishigh\":false},{\"ch\":1,\"mode\":0,\"onishigh\":false}]}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "Output Attb: CH0, Pulse Mode, 0.3/0.5, Cnt:4, On is High":
-                        tBoxPublish.Text = "{\"s.outputport.setup\":[{\"ch\":0,\"mode\":1,\"onishigh\":true,\"fperiodon\":3,\"fperiodoff\":5,\"pulsecnt\":4}]}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "Output Attb: CH1, Pulse Mode, 0.3/0.5, Cnt:2, On is High":
-                        tBoxPublish.Text = "{\"s.outputport.setup\":[{\"ch\":1,\"mode\":1,\"onishigh\":true,\"fperiodon\":3,\"fperiodoff\":5,\"pulsecnt\":2}]}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "Output Attb: CH0 Std Mode, On is High":
-                        tBoxPublish.Text = "{\"s.outputport.setup\":[{\"ch\":0,\"mode\":0,\"onishigh\":true}]}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    case "Output Attb: CH1 Std Mode, On is High":
-                        tBoxPublish.Text = "{\"s.outputport.setup\":[{\"ch\":1,\"mode\":0,\"onishigh\":true}]}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-
-                    // Remote IO RPC Command
-                    case "Output RpcReq: CH0 On":
-                        tBoxPublish.Text = "{\"r.outputport.param\":[{\"ch\":0,\"ison\":true}]}";
-                        btnPubRPCReq.Enabled = true;
-                        btnPubDevUpAttb.Enabled = false;
-                        break;
-
-                    case "Output RpcReq: CH0 Off":
-                        tBoxPublish_03.Text = "{\"r.outputport.param\":[{\"ch\":0,\"ison\":0}]}";
-                        btnPubRPCReq_03.Enabled = true;
-                        btnPubDevUpAttb_03.Enabled = false;
-                        break;
-
-                    case "Output RpcReq: CH1 On":
-                        tBoxPublish.Text = "{\"r.outputport.param\":[{\"ch\":1,\"ison\":true}]}";
-                        btnPubRPCReq.Enabled = true;
-                        btnPubDevUpAttb.Enabled = false;
-                        break;
-
-                    case "Output RpcReq: CH1 Off":
-                        tBoxPublish.Text = "{\"r.outputport.param\":[{\"ch\":1,\"ison\":0}]}";
-                        btnPubRPCReq.Enabled = true;
-                        btnPubDevUpAttb.Enabled = false;
-                        break;
-
-                    // System Attribute Setting
-                    case "Sys Attb: Set Device EPOC Time to 2022-Aug-26 3:16:23 GMT+0 (Example)":
-                        tBoxPublish.Text = "{\"s.sys.epochsec\":1661483783}";
-                        btnPubDevUpAttb.Enabled = true;
-                        btnPubRPCReq.Enabled = false;
-                        break;
-
-                    // System RPC Command
-                    case "Sys RpcReq: Reboot":
-                        tBoxPublish.Text = "{\"r.sys.reboot\":1}";
-                        btnPubRPCReq.Enabled = true;
-                        btnPubDevUpAttb.Enabled = false;
-                        break;
-
-                    default:
-                        tBoxPublish.Text = "";
-                        btnPubRPCReq.Enabled = false;
-                        btnPubDevUpAttb.Enabled = false;
-                        break;
-                }
-            }
-            else
-            {
-                switch (DataMQTTCommands)
-                {
-                    case "None":
-                        tBoxPublish.Text = "";
-                        break;
-
-                    case "Attb: Get All Attribute":
-                        tBoxPublish.Text = "{}";
-                        btnPubRPCReq.Enabled = false;
-                        btnPubDevUpAttb.Enabled = true;
-                        break;
-
-                    case "RPC: Get List Device":
-                        tBoxPublish.Text = "{\"r.enow.list\":{}}";
-                        btnPubRPCReq.Enabled = true;
-                        btnPubDevUpAttb.Enabled = false;
-                        break;
-
-                    case "Doom: LED Red Blink, Buz Off, Period 10s":
-                        tBoxPublish.Text = "{\"r.enow.indicator\":[{\"nodeid\":\"7CDFA1D1D194\",\"ch\":0,\"rgbmode\":2,\"rgbcolor\":[255,0,0],\"buzmode\":0,\"period\":10}]}";
-                        btnPubRPCReq.Enabled = true;
-                        btnPubDevUpAttb.Enabled = false;
-                        break;
-
-                    case "Doom: LED Green Blink, Buz off, Period Default":
-                        tBoxPublish.Text = "{\"r.enow.indicator\":[{\"nodeid\":\"7CDFA1D1D194\",\"ch\":0,\"rgbmode\":2,\"rgbcolor\":[0,255,0],\"buzmode\":0}]}";
-                        btnPubRPCReq.Enabled = true;
-                        btnPubDevUpAttb.Enabled = false;
-                        break;
-
-                    case "Doom: LED Blue Blink, Buz off, Period Default":
-                        tBoxPublish.Text = "{\"r.enow.indicator\":[{\"nodeid\":\"7CDFA1D1D194\",\"ch\":0,\"rgbmode\":2,\"rgbcolor\":[0,0,255],\"buzmode\":0}]}";
-                        btnPubRPCReq.Enabled = true;
-                        btnPubDevUpAttb.Enabled = false;
-                        break;
-
-                    case "Doom: LED White Blink, Buz off, Period Default":
-                        tBoxPublish.Text = "{\"r.enow.indicator\":[{\"nodeid\":\"7CDFA1D1D194\",\"ch\":0,\"rgbmode\":2,\"rgbcolor\":[255,255,255],\"buzmode\":0}]}";
-                        btnPubRPCReq.Enabled = true;
-                        btnPubDevUpAttb.Enabled = false;
-                        break;
-
-                    case "Doom: LED White On, Buz Off, Period Default":
-                        tBoxPublish.Text = "{\"r.enow.indicator\":[{\"nodeid\":\"7CDFA1D1D194\",\"ch\":0,\"rgbmode\":1,\"rgbcolor\":[255,255,255],\"buzmode\":0}]}";
-                        btnPubRPCReq.Enabled = true;
-                        btnPubDevUpAttb.Enabled = false;
-                        break;
-
-                    case "Doom: Previous Setting LED On, Period Default":
-                        tBoxPublish.Text = "{\"r.enow.indicator\":[{\"nodeid\":\"7CDFA1D1D194\",\"ch\":0,\"rgbmode\":1}]}";
-                        btnPubRPCReq.Enabled = true;
-                        btnPubDevUpAttb.Enabled = false;
-                        break;
-
-                    case "Doom: Previous Setting LED Blink, Period Default":
-                        tBoxPublish.Text = "{\"r.enow.indicator\":[{\"nodeid\":\"7CDFA1D1D194\",\"ch\":0,\"rgbmode\":2}]}";
-                        btnPubRPCReq.Enabled = true;
-                        btnPubDevUpAttb.Enabled = false;
-                        break;
-
-                    case "Doom: LED Off, Period Default":
-                        tBoxPublish.Text = "{\"r.enow.indicator\":[{\"nodeid\":\"7CDFA1D1D194\",\"ch\":0,\"rgbmode\":0}]}";
-                        btnPubRPCReq.Enabled = true;
-                        btnPubDevUpAttb.Enabled = false;
-                        break;
-
-                    case "Doom: Buz On, Period Default":
-                        tBoxPublish.Text = "{\"r.enow.indicator\":[{\"nodeid\":\"7CDFA1D1D194\",\"ch\":0,\"buzmode\":1}]}";
-                        btnPubRPCReq.Enabled = true;
-                        btnPubDevUpAttb.Enabled = false;
-                        break;
-
-                    case "Doom: Buz blink, Period Default":
-                        tBoxPublish.Text = "{\"r.enow.indicator\":[{\"nodeid\":\"7CDFA1D1D194\",\"ch\":0,\"buzmode\":2}]}";
-                        btnPubRPCReq.Enabled = true;
-                        btnPubDevUpAttb.Enabled = false;
-                        break;
-
-                    case "Doom: Buz Off, Period Default":
-                        tBoxPublish.Text = "{\"r.enow.indicator\":[{\"nodeid\":\"7CDFA1D1D194\",\"ch\":0,\"buzmode\":0}]}";
-                        btnPubRPCReq.Enabled = true;
-                        btnPubDevUpAttb.Enabled = false;
-                        break;
-
-                    case "Doom: Buz & LED Off, Period Default":
-                        tBoxPublish.Text = "{\"r.enow.indicator\":[{\"nodeid\":\"7CDFA1D1D194\",\"ch\":0,\"rgbmode\":0,\"buzmode\":0}]}";
-                        btnPubRPCReq.Enabled = true;
-                        btnPubDevUpAttb.Enabled = false;
-                        break;
-
-                    case "WL: LED Red Blink, Buz Off, Period 10s":
-                        tBoxPublish.Text = "{\"r.enow.indicator\":[{\"nodeid\":\"7CDFA1D00A60\",\"ch\":0,\"rgbmode\":2,\"rgbcolor\":[255,0,0],\"buzmode\":0,\"period\":10}]}";
-                        btnPubRPCReq.Enabled = true;
-                        btnPubDevUpAttb.Enabled = false;
-                        break;
-
-                    case "WL: LED Green Blink, Buz off, Period Default":
-                        tBoxPublish.Text = "{\"r.enow.indicator\":[{\"nodeid\":\"7CDFA1D00A60\",\"ch\":0,\"rgbmode\":2,\"rgbcolor\":[0,255,0],\"buzmode\":0}]}";
-                        btnPubRPCReq.Enabled = true;
-                        btnPubDevUpAttb.Enabled = false;
-                        break;
-
-                    case "WL: LED Yellow Blink, Buz off, Period Default":
-                        tBoxPublish.Text = "{\"r.enow.indicator\":[{\"nodeid\":\"7CDFA1D00A60\",\"ch\":0,\"rgbmode\":2,\"rgbcolor\":[0,0,255],\"buzmode\":0}]}";
-                        btnPubRPCReq.Enabled = true;
-                        btnPubDevUpAttb.Enabled = false;
-                        break;
-
-                    case "WL: LED Yellow On, Buz Off, Period Default":
-                        tBoxPublish.Text = "{\"r.enow.indicator\":[{\"nodeid\":\"7CDFA1D00A60\",\"ch\":0,\"rgbmode\":1,\"rgbcolor\":[0,0,255],\"buzmode\":0}]}";
-                        btnPubRPCReq.Enabled = true;
-                        btnPubDevUpAttb.Enabled = false;
-                        break;
-
-                    case "WL: Previous Setting LED On, Period Default":
-                        tBoxPublish.Text = "{\"r.enow.indicator\":[{\"nodeid\":\"7CDFA1D00A60\",\"ch\":0,\"rgbmode\":1}]}";
-                        btnPubRPCReq.Enabled = true;
-                        btnPubDevUpAttb.Enabled = false;
-                        break;
-
-                    case "WL: Previous Setting LED Blink, Period Default":
-                        tBoxPublish.Text = "{\"r.enow.indicator\":[{\"nodeid\":\"7CDFA1D00A60\",\"ch\":0,\"rgbmode\":2}]}";
-                        btnPubRPCReq.Enabled = true;
-                        btnPubDevUpAttb.Enabled = false;
-                        break;
-
-                    case "WL: LED Off, Period Default":
-                        tBoxPublish.Text = "{\"r.enow.indicator\":[{\"nodeid\":\"7CDFA1D00A60\",\"ch\":0,\"rgbmode\":0}]}";
-                        btnPubRPCReq.Enabled = true;
-                        btnPubDevUpAttb.Enabled = false;
-                        break;
-
-                    case "WL: Buz On, Period Default":
-                        tBoxPublish.Text = "{\"r.enow.indicator\":[{\"nodeid\":\"7CDFA1D00A60\",\"ch\":0,\"buzmode\":1}]}";
-                        btnPubRPCReq.Enabled = true;
-                        btnPubDevUpAttb.Enabled = false;
-                        break;
-
-                    case "WL: Buz blink, Period Default":
-                        tBoxPublish.Text = "{\"r.enow.indicator\":[{\"nodeid\":\"7CDFA1D00A60\",\"ch\":0,\"buzmode\":2}]}";
-                        btnPubRPCReq.Enabled = true;
-                        btnPubDevUpAttb.Enabled = false;
-                        break;
-
-                    case "WL: Buz Off, Period Default":
-                        tBoxPublish.Text = "{\"r.enow.indicator\":[{\"nodeid\":\"7CDFA1D00A60\",\"ch\":0,\"buzmode\":0}]}";
-                        btnPubRPCReq.Enabled = true;
-                        btnPubDevUpAttb.Enabled = false;
-                        break;
-
-                    case "WL: Buz & LED Off, Period Default":
-                        tBoxPublish.Text = "{\"r.enow.indicator\":[{\"nodeid\":\"7CDFA1D00A60\",\"ch\":0,\"rgbmode\":0,\"buzmode\":0}]}";
-                        btnPubRPCReq.Enabled = true;
-                        btnPubDevUpAttb.Enabled = false;
-                        break;
-
-                    default:
-                        tBoxPublish.Text = "";
-                        btnPubRPCReq.Enabled = false;
-                        btnPubDevUpAttb.Enabled = false;
-                        break;
                 }
             }
         }
@@ -1789,6 +1282,17 @@ namespace RFIDRegistration
                 MessageBox.Show(ex.ToString());
             }
         }
+
+        private void btnRPCConfig_USB_Click(object sender, EventArgs e)
+        {
+            RPCConfig rPCConfig = new RPCConfig
+            {
+                USBC = true
+            };
+            rPCConfig.ShowDialog();
+        }
+
+        /* ========== COM Port Functions ========== */
 
         /* ========== MQTT Functions ========== */
 
@@ -3384,9 +2888,13 @@ namespace RFIDRegistration
         {
             if (tBoxDeviceID_03.Text != String.Empty && tBoxIPAddress_03.Text != String.Empty)
             {
+                RPCConfig rpcConfig = new RPCConfig
+                {
+                    GetIPAddress = tBoxIPAddress_03.Text,
+                    GetWirioID = tBoxDeviceID_03.Text,
+                    USBC = false,
+                };
                 rpcConfig.ShowDialog();
-                rpcConfig.GetIPAddress = tBoxIPAddress_03.Text;
-                rpcConfig.GetWirioID = tBoxDeviceID_03.Text;
             }
             else
             {
@@ -3680,7 +3188,7 @@ namespace RFIDRegistration
                             // RFID Reader Tag :
                             RFID_detail_Json_Attr RFID_Details_Inv = JsonConvert.DeserializeObject<RFID_detail_Json_Attr>(ReceivedMessage);
 
-                            if (RFID_Details_Inv.Device_ID != null && ReceivedMessage.Contains(RFID_Details_Inv.Device_ID))
+                            if (RFID_Details_Inv.Device_ID != null)
                             {
                                 ListViewItem item = listView_MQTTList.FindItemWithText(RFID_Details_Inv.Device_ID);
 
@@ -3903,7 +3411,7 @@ namespace RFIDRegistration
                                                     + "-----------------------------------------");
                                         }
                                     }
-                                    
+
                                 }
                                 else if (e.Topic.Contains("/telemetry"))
                                 {
@@ -4046,126 +3554,123 @@ namespace RFIDRegistration
                             }
                             else
                             {
-                                // Indicator Battery :
-                                Battery_detail_Json battery_1 = JsonConvert.DeserializeObject<Battery_detail_Json>(ReceivedMessage);
+                                tBoxLog_03.Text = tBoxLog_03.Text.Insert(0, Environment.NewLine
+                                    + "-----------------------------------------" + Environment.NewLine
+                                    + " Device Verification Failure! Please Try Again" + Environment.NewLine
+                                    + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
+                                    + "-----------------------------------------");
+                            }
+                        }
+                        else
+                        {
+                            // Indicator Battery :
+                            Battery_detail_Json battery_1 = JsonConvert.DeserializeObject<Battery_detail_Json>(ReceivedMessage);
 
-                                if (battery_1.Device_ID != null && ReceivedMessage.Contains(battery_1.Device_ID))
+                            if (battery_1.Device_ID != null && ReceivedMessage.Contains(battery_1.Device_ID))
+                            {
+                                ListViewItem item = listView_MQTTList.FindItemWithText(battery_1.Device_ID);
+
+                                if (e.Topic.Contains("/rpc/response/"))
                                 {
-                                    ListViewItem item = listView_MQTTList.FindItemWithText(battery_1.Device_ID);
-
-                                    if (e.Topic.Contains("/rpc/response/"))
+                                    if (ReceivedMessage.Contains("r.enow.list"))
                                     {
-                                        if (ReceivedMessage.Contains("r.enow.list"))
+                                        Battery battery_ = new Battery
                                         {
-                                            Battery battery_ = new Battery
-                                            {
-                                                device_id = battery_1.Device_ID,
-                                                pkt_no = battery_1.Pkt_No,
-                                                battery_name = battery_1.Enow_List[0].Node_ID,
-                                                battery_level = battery_1.Enow_List[0].Battery_level,
-                                                battery_status = battery_1.Enow_List[0].Battery_Status,
-                                            };
+                                            device_id = battery_1.Device_ID,
+                                            pkt_no = battery_1.Pkt_No,
+                                            battery_name = battery_1.Enow_List[0].Node_ID,
+                                            battery_level = battery_1.Enow_List[0].Battery_level,
+                                            battery_status = battery_1.Enow_List[0].Battery_Status,
+                                        };
 
-                                            if (item.SubItems[1].Text.Equals(battery_1.Device_ID))
+                                        if (item.SubItems[1].Text.Equals(battery_1.Device_ID))
+                                        {
+                                            if (battery_1.Enow_List[0].Battery_Status == "0")
                                             {
-                                                if (battery_1.Enow_List[0].Battery_Status == "0")
-                                                {
-                                                    item.SubItems[3].Text = "Connected";
-                                                    item.SubItems[3].ForeColor = Color.Green;
-                                                }
-                                                else if (battery_1.Enow_List[0].Battery_Status == "1")
-                                                {
-                                                    item.SubItems[3].Text = "Disconnected";
-                                                    item.SubItems[3].ForeColor = Color.Red;
-                                                }
+                                                item.SubItems[3].Text = "Connected";
+                                                item.SubItems[3].ForeColor = Color.Green;
                                             }
-
-                                            //HttpClientConnection(battery_);
+                                            else if (battery_1.Enow_List[0].Battery_Status == "1")
+                                            {
+                                                item.SubItems[3].Text = "Disconnected";
+                                                item.SubItems[3].ForeColor = Color.Red;
+                                            }
                                         }
+
+                                        //HttpClientConnection(battery_);
                                     }
+                                }
 
-                                    else if (e.Topic.Contains("/telemetry"))
+                                else if (e.Topic.Contains("/telemetry"))
+                                {
+                                    if (ReceivedMessage.Contains("t.enow.button"))
                                     {
-                                        if (ReceivedMessage.Contains("t.enow.button"))
+                                        Battery battery_ = new Battery
                                         {
-                                            Battery battery_ = new Battery
-                                            {
-                                                device_id = battery_1.Device_ID,
-                                                pkt_no = battery_1.Pkt_No,
-                                                battery_name = battery_1.Enow_Button[0].Node_ID,
-                                                battery_level = battery_1.Enow_Button[0].Battery_level,
-                                                battery_status = battery_1.Enow_Button[0].Battery_Status,
-                                            };
-                                            //HttpClientConnection(battery_);
-                                        }
-                                        else if (ReceivedMessage.Contains("t.enow.battstate"))
+                                            device_id = battery_1.Device_ID,
+                                            pkt_no = battery_1.Pkt_No,
+                                            battery_name = battery_1.Enow_Button[0].Node_ID,
+                                            battery_level = battery_1.Enow_Button[0].Battery_level,
+                                            battery_status = battery_1.Enow_Button[0].Battery_Status,
+                                        };
+                                        //HttpClientConnection(battery_);
+                                    }
+                                    else if (ReceivedMessage.Contains("t.enow.battstate"))
+                                    {
+                                        Battery battery_ = new Battery
                                         {
-                                            Battery battery_ = new Battery
-                                            {
-                                                device_id = battery_1.Device_ID,
-                                                pkt_no = battery_1.Pkt_No,
-                                                battery_name = battery_1.Enow_BattState[0].Node_ID,
-                                                battery_level = battery_1.Enow_BattState[0].Battery_level,
-                                                battery_status = battery_1.Enow_BattState[0].Battery_Status,
-                                            };
-                                            //HttpClientConnection(battery_);
-                                        }
-                                        else if (ReceivedMessage.Contains("t.enow.disconnected"))
+                                            device_id = battery_1.Device_ID,
+                                            pkt_no = battery_1.Pkt_No,
+                                            battery_name = battery_1.Enow_BattState[0].Node_ID,
+                                            battery_level = battery_1.Enow_BattState[0].Battery_level,
+                                            battery_status = battery_1.Enow_BattState[0].Battery_Status,
+                                        };
+                                        //HttpClientConnection(battery_);
+                                    }
+                                    else if (ReceivedMessage.Contains("t.enow.disconnected"))
+                                    {
+                                        Battery battery_ = new Battery
                                         {
-                                            Battery battery_ = new Battery
-                                            {
-                                                device_id = battery_1.Device_ID,
-                                                pkt_no = battery_1.Pkt_No,
-                                                battery_name = battery_1.Enow_Disconnected[0].Node_ID,
-                                                battery_level = battery_1.Enow_Disconnected[0].Battery_level,
-                                                battery_status = battery_1.Enow_Disconnected[0].Battery_Status,
-                                            };
-                                            //HttpClientConnection(battery_);
-                                        }
-                                        else if (ReceivedMessage.Contains("t.enow.connected"))
+                                            device_id = battery_1.Device_ID,
+                                            pkt_no = battery_1.Pkt_No,
+                                            battery_name = battery_1.Enow_Disconnected[0].Node_ID,
+                                            battery_level = battery_1.Enow_Disconnected[0].Battery_level,
+                                            battery_status = battery_1.Enow_Disconnected[0].Battery_Status,
+                                        };
+                                        //HttpClientConnection(battery_);
+                                    }
+                                    else if (ReceivedMessage.Contains("t.enow.connected"))
+                                    {
+                                        Battery battery_ = new Battery
                                         {
-                                            Battery battery_ = new Battery
-                                            {
-                                                device_id = battery_1.Device_ID,
-                                                pkt_no = battery_1.Pkt_No,
-                                                battery_name = battery_1.Enow_Connected[0].Node_ID,
-                                                battery_level = battery_1.Enow_Connected[0].Battery_level,
-                                                battery_status = battery_1.Enow_Connected[0].Battery_Status,
-                                            };
-                                            //HttpClientConnection(battery_);
-                                        }
-                                        else if (ReceivedMessage.Contains("t.enow.indicator"))
+                                            device_id = battery_1.Device_ID,
+                                            pkt_no = battery_1.Pkt_No,
+                                            battery_name = battery_1.Enow_Connected[0].Node_ID,
+                                            battery_level = battery_1.Enow_Connected[0].Battery_level,
+                                            battery_status = battery_1.Enow_Connected[0].Battery_Status,
+                                        };
+                                        //HttpClientConnection(battery_);
+                                    }
+                                    else if (ReceivedMessage.Contains("t.enow.indicator"))
+                                    {
+                                        Battery battery_ = new Battery
                                         {
-                                            Battery battery_ = new Battery
-                                            {
-                                                device_id = battery_1.Device_ID,
-                                                pkt_no = battery_1.Pkt_No,
-                                                battery_name = battery_1.Enow_Indicator[0].Node_ID,
-                                                battery_level = battery_1.Enow_Indicator[0].Battery_level,
-                                                battery_status = battery_1.Enow_Indicator[0].Battery_Status,
-                                                indicator_color = battery_1.Enow_Indicator[0].RGB_Color[0].ToString() + "," + battery_1.Enow_Indicator[0].RGB_Color[1].ToString() + "," + battery_1.Enow_Indicator[0].RGB_Color[2].ToString(),
-                                                rgb_mode = battery_1.Enow_Indicator[0].RGB_Mode,
-                                                indicator_buzz_mode = battery_1.Enow_Indicator[0].Buz_Mode,
-                                                period = battery_1.Enow_Indicator[0].Period,
-                                            };
-                                            //HttpClientConnection(battery_);
-                                        }
+                                            device_id = battery_1.Device_ID,
+                                            pkt_no = battery_1.Pkt_No,
+                                            battery_name = battery_1.Enow_Indicator[0].Node_ID,
+                                            battery_level = battery_1.Enow_Indicator[0].Battery_level,
+                                            battery_status = battery_1.Enow_Indicator[0].Battery_Status,
+                                            indicator_color = battery_1.Enow_Indicator[0].RGB_Color[0].ToString() + "," + battery_1.Enow_Indicator[0].RGB_Color[1].ToString() + "," + battery_1.Enow_Indicator[0].RGB_Color[2].ToString(),
+                                            rgb_mode = battery_1.Enow_Indicator[0].RGB_Mode,
+                                            indicator_buzz_mode = battery_1.Enow_Indicator[0].Buz_Mode,
+                                            period = battery_1.Enow_Indicator[0].Period,
+                                        };
+                                        //HttpClientConnection(battery_);
                                     }
                                 }
                             }
-
                         }
                     });
-                }
-                else
-                {
-                    tBoxOverallReceiver.Text = tBoxOverallReceiver.Text.Insert(0, Environment.NewLine
-                            + "-----------------------------------------" + Environment.NewLine
-                            + "===== Received Message =====" + Environment.NewLine
-                            + "Date & Time :" + DateTime.Now.ToString("[dd-MM-yyyy] hh:mm:ss") + Environment.NewLine
-                            + "Topic:" + e.Topic + Environment.NewLine
-                            + "Message: " + ReceivedMessage + Environment.NewLine
-                            + "-----------------------------------------");
                 }
             }
             catch (Exception ex)

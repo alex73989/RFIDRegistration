@@ -33,20 +33,6 @@ namespace RFIDRegistration
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(IndicatorForm));
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.groupBox14 = new System.Windows.Forms.GroupBox();
-            this.label7 = new System.Windows.Forms.Label();
-            this.tBoxIPAddress = new System.Windows.Forms.TextBox();
-            this.label8 = new System.Windows.Forms.Label();
-            this.groupBox15 = new System.Windows.Forms.GroupBox();
-            this.cBoxSelectionMQTT = new System.Windows.Forms.ComboBox();
-            this.label6 = new System.Windows.Forms.Label();
-            this.btnConnectMQTT = new System.Windows.Forms.Button();
-            this.btnPubRPCReq = new System.Windows.Forms.Button();
-            this.btnPubDevUpAttb = new System.Windows.Forms.Button();
-            this.tBoxPublish = new System.Windows.Forms.TextBox();
-            this.btnDisconnectMQTT = new System.Windows.Forms.Button();
-            this.btnSubTele = new System.Windows.Forms.Button();
-            this.tBoxDeviceID = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.lblStatusCom = new System.Windows.Forms.Label();
@@ -70,6 +56,7 @@ namespace RFIDRegistration
             this.tBoxDataIn = new System.Windows.Forms.TextBox();
             this.btnClearDataIn = new System.Windows.Forms.Button();
             this.gBoxTransmitter = new System.Windows.Forms.GroupBox();
+            this.btnRPCConfig_USB = new System.Windows.Forms.Button();
             this.btnClearDataOut = new System.Windows.Forms.Button();
             this.tBoxDataOut = new System.Windows.Forms.TextBox();
             this.btnSendData = new System.Windows.Forms.Button();
@@ -141,8 +128,6 @@ namespace RFIDRegistration
             this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
-            this.groupBox14.SuspendLayout();
-            this.groupBox15.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.gBoxComPortControl.SuspendLayout();
@@ -181,7 +166,6 @@ namespace RFIDRegistration
             // 
             // tabPage1
             // 
-            this.tabPage1.Controls.Add(this.groupBox14);
             this.tabPage1.Controls.Add(this.groupBox2);
             this.tabPage1.Controls.Add(this.gBoxComPortControl);
             this.tabPage1.Controls.Add(this.groupBox9);
@@ -194,190 +178,6 @@ namespace RFIDRegistration
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "COM Port Comm";
             this.tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // groupBox14
-            // 
-            this.groupBox14.Controls.Add(this.label7);
-            this.groupBox14.Controls.Add(this.tBoxIPAddress);
-            this.groupBox14.Controls.Add(this.label8);
-            this.groupBox14.Controls.Add(this.groupBox15);
-            this.groupBox14.Controls.Add(this.label6);
-            this.groupBox14.Controls.Add(this.btnConnectMQTT);
-            this.groupBox14.Controls.Add(this.btnPubRPCReq);
-            this.groupBox14.Controls.Add(this.btnPubDevUpAttb);
-            this.groupBox14.Controls.Add(this.tBoxPublish);
-            this.groupBox14.Controls.Add(this.btnDisconnectMQTT);
-            this.groupBox14.Controls.Add(this.btnSubTele);
-            this.groupBox14.Controls.Add(this.tBoxDeviceID);
-            this.groupBox14.Location = new System.Drawing.Point(4, 330);
-            this.groupBox14.Margin = new System.Windows.Forms.Padding(2);
-            this.groupBox14.Name = "groupBox14";
-            this.groupBox14.Padding = new System.Windows.Forms.Padding(2);
-            this.groupBox14.Size = new System.Drawing.Size(272, 384);
-            this.groupBox14.TabIndex = 32;
-            this.groupBox14.TabStop = false;
-            this.groupBox14.Text = "MQTT";
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(10, 60);
-            this.label7.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(64, 13);
-            this.label7.TabIndex = 29;
-            this.label7.Text = "IP Address :";
-            // 
-            // tBoxIPAddress
-            // 
-            this.tBoxIPAddress.Location = new System.Drawing.Point(76, 58);
-            this.tBoxIPAddress.Margin = new System.Windows.Forms.Padding(2);
-            this.tBoxIPAddress.Name = "tBoxIPAddress";
-            this.tBoxIPAddress.Size = new System.Drawing.Size(188, 20);
-            this.tBoxIPAddress.TabIndex = 28;
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(5, 228);
-            this.label8.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(93, 13);
-            this.label8.TabIndex = 27;
-            this.label8.Text = "Publish Message :";
-            // 
-            // groupBox15
-            // 
-            this.groupBox15.Controls.Add(this.cBoxSelectionMQTT);
-            this.groupBox15.Location = new System.Drawing.Point(4, 283);
-            this.groupBox15.Margin = new System.Windows.Forms.Padding(2);
-            this.groupBox15.Name = "groupBox15";
-            this.groupBox15.Padding = new System.Windows.Forms.Padding(2);
-            this.groupBox15.Size = new System.Drawing.Size(260, 46);
-            this.groupBox15.TabIndex = 17;
-            this.groupBox15.TabStop = false;
-            this.groupBox15.Text = "MQTT Commands";
-            // 
-            // cBoxSelectionMQTT
-            // 
-            this.cBoxSelectionMQTT.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cBoxSelectionMQTT.FormattingEnabled = true;
-            this.cBoxSelectionMQTT.Items.AddRange(new object[] {
-            "None",
-            "Attb: Get All Attribute",
-            "RPC: Get List Device",
-            "Doom: LED Red Blink, Buz Off, Period 10s",
-            "Doom: LED Green Blink, Buz off, Period Default",
-            "Doom: LED Blue Blink, Buz off, Period Default",
-            "Doom: LED White Blink, Buz off, Period Default",
-            "Doom: LED White On, Buz Off, Period Default",
-            "Doom: Previous Setting LED On, Period Default",
-            "Doom: Previous Setting LED Blink, Period Default",
-            "Doom: LED Off, Period Default",
-            "Doom: Buz On, Period Default",
-            "Doom: Buz blink, Period Default",
-            "Doom: Buz Off, Period Default",
-            "Doom: Buz & LED Off, Period Default",
-            "WL: LED Red Blink, Buz Off, Period 10s",
-            "WL: LED Green Blink, Buz off, Period Default",
-            "WL: LED Blue Blink, Buz off, Period Default",
-            "WL: LED White Blink, Buz off, Period Default",
-            "WL: LED White On, Buz Off, Period Default",
-            "WL: Previous Setting LED On, Period Default",
-            "WL: Previous Setting LED Blink, Period Default",
-            "WL: LED Off, Period Default",
-            "WL: Buz On, Period Default",
-            "WL: Buz blink, Period Default",
-            "WL: Buz Off, Period Default",
-            "WL: Buz & LED Off, Period Default"});
-            this.cBoxSelectionMQTT.Location = new System.Drawing.Point(14, 17);
-            this.cBoxSelectionMQTT.Margin = new System.Windows.Forms.Padding(2);
-            this.cBoxSelectionMQTT.Name = "cBoxSelectionMQTT";
-            this.cBoxSelectionMQTT.Size = new System.Drawing.Size(225, 21);
-            this.cBoxSelectionMQTT.TabIndex = 0;
-            this.cBoxSelectionMQTT.SelectedIndexChanged += new System.EventHandler(this.cBoxSelectionMQTT_SelectedIndexChanged);
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(16, 37);
-            this.label6.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(61, 13);
-            this.label6.TabIndex = 26;
-            this.label6.Text = "Device ID :";
-            // 
-            // btnConnectMQTT
-            // 
-            this.btnConnectMQTT.Location = new System.Drawing.Point(4, 107);
-            this.btnConnectMQTT.Margin = new System.Windows.Forms.Padding(2);
-            this.btnConnectMQTT.Name = "btnConnectMQTT";
-            this.btnConnectMQTT.Size = new System.Drawing.Size(259, 30);
-            this.btnConnectMQTT.TabIndex = 17;
-            this.btnConnectMQTT.Text = "Connect MQTT";
-            this.btnConnectMQTT.UseVisualStyleBackColor = true;
-            this.btnConnectMQTT.Click += new System.EventHandler(this.btnConnectMQTT_Click);
-            // 
-            // btnPubRPCReq
-            // 
-            this.btnPubRPCReq.Location = new System.Drawing.Point(144, 334);
-            this.btnPubRPCReq.Margin = new System.Windows.Forms.Padding(2);
-            this.btnPubRPCReq.Name = "btnPubRPCReq";
-            this.btnPubRPCReq.Size = new System.Drawing.Size(121, 43);
-            this.btnPubRPCReq.TabIndex = 22;
-            this.btnPubRPCReq.Text = "Publish RPC Request";
-            this.btnPubRPCReq.UseVisualStyleBackColor = true;
-            this.btnPubRPCReq.Click += new System.EventHandler(this.btnPubRPCReq_Click);
-            // 
-            // btnPubDevUpAttb
-            // 
-            this.btnPubDevUpAttb.Location = new System.Drawing.Point(4, 334);
-            this.btnPubDevUpAttb.Margin = new System.Windows.Forms.Padding(2);
-            this.btnPubDevUpAttb.Name = "btnPubDevUpAttb";
-            this.btnPubDevUpAttb.Size = new System.Drawing.Size(128, 43);
-            this.btnPubDevUpAttb.TabIndex = 23;
-            this.btnPubDevUpAttb.Text = "Publish Device Update System Attribute";
-            this.btnPubDevUpAttb.UseVisualStyleBackColor = true;
-            this.btnPubDevUpAttb.Click += new System.EventHandler(this.btnPubDevUp_Click);
-            // 
-            // tBoxPublish
-            // 
-            this.tBoxPublish.Location = new System.Drawing.Point(4, 245);
-            this.tBoxPublish.Margin = new System.Windows.Forms.Padding(2);
-            this.tBoxPublish.Name = "tBoxPublish";
-            this.tBoxPublish.ReadOnly = true;
-            this.tBoxPublish.Size = new System.Drawing.Size(260, 20);
-            this.tBoxPublish.TabIndex = 26;
-            // 
-            // btnDisconnectMQTT
-            // 
-            this.btnDisconnectMQTT.Location = new System.Drawing.Point(4, 142);
-            this.btnDisconnectMQTT.Margin = new System.Windows.Forms.Padding(2);
-            this.btnDisconnectMQTT.Name = "btnDisconnectMQTT";
-            this.btnDisconnectMQTT.Size = new System.Drawing.Size(259, 30);
-            this.btnDisconnectMQTT.TabIndex = 25;
-            this.btnDisconnectMQTT.Text = "Disconnect MQTT";
-            this.btnDisconnectMQTT.UseVisualStyleBackColor = true;
-            this.btnDisconnectMQTT.Click += new System.EventHandler(this.btnDisconnectMQTT_Click);
-            // 
-            // btnSubTele
-            // 
-            this.btnSubTele.Location = new System.Drawing.Point(4, 177);
-            this.btnSubTele.Margin = new System.Windows.Forms.Padding(2);
-            this.btnSubTele.Name = "btnSubTele";
-            this.btnSubTele.Size = new System.Drawing.Size(260, 30);
-            this.btnSubTele.TabIndex = 19;
-            this.btnSubTele.Text = "Subscribe MQTT";
-            this.btnSubTele.UseVisualStyleBackColor = true;
-            this.btnSubTele.Click += new System.EventHandler(this.btnSubTele_Click);
-            // 
-            // tBoxDeviceID
-            // 
-            this.tBoxDeviceID.Location = new System.Drawing.Point(76, 35);
-            this.tBoxDeviceID.Margin = new System.Windows.Forms.Padding(2);
-            this.tBoxDeviceID.Name = "tBoxDeviceID";
-            this.tBoxDeviceID.Size = new System.Drawing.Size(188, 20);
-            this.tBoxDeviceID.TabIndex = 18;
             // 
             // groupBox2
             // 
@@ -495,6 +295,7 @@ namespace RFIDRegistration
             // 
             // cBoxParityBits
             // 
+            this.cBoxParityBits.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cBoxParityBits.FormattingEnabled = true;
             this.cBoxParityBits.Items.AddRange(new object[] {
             "None",
@@ -505,7 +306,6 @@ namespace RFIDRegistration
             this.cBoxParityBits.Name = "cBoxParityBits";
             this.cBoxParityBits.Size = new System.Drawing.Size(146, 21);
             this.cBoxParityBits.TabIndex = 9;
-            this.cBoxParityBits.Text = "None";
             // 
             // label5
             // 
@@ -520,6 +320,7 @@ namespace RFIDRegistration
             // 
             // cBoxStopBits
             // 
+            this.cBoxStopBits.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cBoxStopBits.FormattingEnabled = true;
             this.cBoxStopBits.Items.AddRange(new object[] {
             "One",
@@ -529,7 +330,6 @@ namespace RFIDRegistration
             this.cBoxStopBits.Name = "cBoxStopBits";
             this.cBoxStopBits.Size = new System.Drawing.Size(146, 21);
             this.cBoxStopBits.TabIndex = 7;
-            this.cBoxStopBits.Text = "One";
             // 
             // label4
             // 
@@ -544,6 +344,7 @@ namespace RFIDRegistration
             // 
             // cBoxDataBits
             // 
+            this.cBoxDataBits.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cBoxDataBits.FormattingEnabled = true;
             this.cBoxDataBits.Items.AddRange(new object[] {
             "6",
@@ -554,7 +355,6 @@ namespace RFIDRegistration
             this.cBoxDataBits.Name = "cBoxDataBits";
             this.cBoxDataBits.Size = new System.Drawing.Size(146, 21);
             this.cBoxDataBits.TabIndex = 5;
-            this.cBoxDataBits.Text = "8";
             // 
             // label3
             // 
@@ -569,6 +369,7 @@ namespace RFIDRegistration
             // 
             // cBoxBaudRate
             // 
+            this.cBoxBaudRate.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cBoxBaudRate.FormattingEnabled = true;
             this.cBoxBaudRate.Items.AddRange(new object[] {
             "1200",
@@ -578,13 +379,13 @@ namespace RFIDRegistration
             "19200",
             "38400",
             "57600",
-            "115200"});
+            "115200",
+            "921600"});
             this.cBoxBaudRate.Location = new System.Drawing.Point(111, 55);
             this.cBoxBaudRate.Margin = new System.Windows.Forms.Padding(2);
             this.cBoxBaudRate.Name = "cBoxBaudRate";
             this.cBoxBaudRate.Size = new System.Drawing.Size(146, 21);
             this.cBoxBaudRate.TabIndex = 3;
-            this.cBoxBaudRate.Text = "115200";
             // 
             // label2
             // 
@@ -599,6 +400,7 @@ namespace RFIDRegistration
             // 
             // cBoxComPort
             // 
+            this.cBoxComPort.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cBoxComPort.FormattingEnabled = true;
             this.cBoxComPort.Location = new System.Drawing.Point(111, 31);
             this.cBoxComPort.Margin = new System.Windows.Forms.Padding(2);
@@ -655,6 +457,7 @@ namespace RFIDRegistration
             // 
             // gBoxTransmitter
             // 
+            this.gBoxTransmitter.Controls.Add(this.btnRPCConfig_USB);
             this.gBoxTransmitter.Controls.Add(this.btnClearDataOut);
             this.gBoxTransmitter.Controls.Add(this.tBoxDataOut);
             this.gBoxTransmitter.Controls.Add(this.btnSendData);
@@ -668,9 +471,20 @@ namespace RFIDRegistration
             this.gBoxTransmitter.TabStop = false;
             this.gBoxTransmitter.Text = "Transmitter Control";
             // 
+            // btnRPCConfig_USB
+            // 
+            this.btnRPCConfig_USB.Location = new System.Drawing.Point(14, 55);
+            this.btnRPCConfig_USB.Margin = new System.Windows.Forms.Padding(2);
+            this.btnRPCConfig_USB.Name = "btnRPCConfig_USB";
+            this.btnRPCConfig_USB.Size = new System.Drawing.Size(100, 35);
+            this.btnRPCConfig_USB.TabIndex = 17;
+            this.btnRPCConfig_USB.Text = "RPC Config";
+            this.btnRPCConfig_USB.UseVisualStyleBackColor = true;
+            this.btnRPCConfig_USB.Click += new System.EventHandler(this.btnRPCConfig_USB_Click);
+            // 
             // btnClearDataOut
             // 
-            this.btnClearDataOut.Location = new System.Drawing.Point(132, 55);
+            this.btnClearDataOut.Location = new System.Drawing.Point(408, 55);
             this.btnClearDataOut.Margin = new System.Windows.Forms.Padding(2);
             this.btnClearDataOut.Name = "btnClearDataOut";
             this.btnClearDataOut.Size = new System.Drawing.Size(141, 35);
@@ -690,7 +504,7 @@ namespace RFIDRegistration
             // 
             // btnSendData
             // 
-            this.btnSendData.Location = new System.Drawing.Point(14, 55);
+            this.btnSendData.Location = new System.Drawing.Point(304, 55);
             this.btnSendData.Margin = new System.Windows.Forms.Padding(2);
             this.btnSendData.Name = "btnSendData";
             this.btnSendData.Size = new System.Drawing.Size(100, 35);
@@ -1623,9 +1437,6 @@ namespace RFIDRegistration
             this.Load += new System.EventHandler(this.IndicatorForm_Load);
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
-            this.groupBox14.ResumeLayout(false);
-            this.groupBox14.PerformLayout();
-            this.groupBox15.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
@@ -1670,20 +1481,6 @@ namespace RFIDRegistration
 
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.GroupBox groupBox14;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.TextBox tBoxIPAddress;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.GroupBox groupBox15;
-        private System.Windows.Forms.ComboBox cBoxSelectionMQTT;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Button btnConnectMQTT;
-        private System.Windows.Forms.Button btnPubRPCReq;
-        private System.Windows.Forms.Button btnPubDevUpAttb;
-        private System.Windows.Forms.TextBox tBoxPublish;
-        private System.Windows.Forms.Button btnDisconnectMQTT;
-        private System.Windows.Forms.Button btnSubTele;
-        private System.Windows.Forms.TextBox tBoxDeviceID;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.Label lblStatusCom;
@@ -1708,7 +1505,6 @@ namespace RFIDRegistration
         private System.Windows.Forms.Button btnClearDataIn;
         private System.Windows.Forms.GroupBox gBoxTransmitter;
         private System.Windows.Forms.Button btnClearDataOut;
-        private System.Windows.Forms.TextBox tBoxDataOut;
         private System.Windows.Forms.Button btnSendData;
         private System.Windows.Forms.GroupBox gBoxSerialPortCommands;
         private System.Windows.Forms.ComboBox cBoxSelectionCommand;
@@ -1776,5 +1572,7 @@ namespace RFIDRegistration
         private System.Windows.Forms.Button btnPubRPCReq_04;
         private System.Windows.Forms.Button btnPubDevUpAttb_04;
         public System.Windows.Forms.Button btn_TagConfig;
+        private System.Windows.Forms.Button btnRPCConfig_USB;
+        public System.Windows.Forms.TextBox tBoxDataOut;
     }
 }

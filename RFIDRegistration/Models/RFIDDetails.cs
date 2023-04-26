@@ -9,11 +9,6 @@ using Newtonsoft.Json.Serialization;
 
 namespace RFIDRegistration.Models
 {
-    public class RFIDDetails
-    {
-
-    }
-
     public class RFID_detail_Json_Attr
     {
         public RFID_detail_Json_Attr() 
