@@ -28,112 +28,112 @@ namespace RFIDRegistration
 
         private void RegistrationUser_Load(object sender, EventArgs e)
         { 
-            lbl_RegUser_WarnUsername.Text = "";
-            lbl_RegUser_WarnFullname.Text = "";
-            lbl_RegUser_WarnPassword.Text = "";
-            lbl_RegUser_WarnEmpID.Text = "";
-            lbl_RegUser_WarnEmailAddr.Text = "";
-            lbl_RegUser_WarnContactNo.Text = "";
-            lbl_RegUser_WarnCardID.Text = "";
-            lbl_RegUser_WarnUserType.Text = "";
-            lbl_RegUser_WarnGroupID.Text = "";
-            lbl_RegUser_WarnGroupName.Text = "";
-            lbl_RegUser_WarnGroupDesc.Text = "";
+            lbl_RegUser_WarnUsername.Text = string.Empty;
+            lbl_RegUser_WarnFullname.Text = string.Empty;
+            lbl_RegUser_WarnPassword.Text = string.Empty;
+            lbl_RegUser_WarnEmpID.Text = string.Empty;
+            lbl_RegUser_WarnEmailAddr.Text = string.Empty;
+            lbl_RegUser_WarnContactNo.Text = string.Empty;
+            lbl_RegUser_WarnCardID.Text = string.Empty;
+            lbl_RegUser_WarnUserType.Text = string.Empty;
+            lbl_RegUser_WarnGroupID.Text = string.Empty;
+            lbl_RegUser_WarnGroupName.Text = string.Empty;
+            lbl_RegUser_WarnGroupDesc.Text = string.Empty;
         }
 
         public void TextRefreshRegUser()
         {
-            tBox_RegUser_Username.Text = "";
-            tBox_RegUser_Fullname.Text = "";
-            tBox_RegUser_Password.Text = "";
-            tBox_RegUser_EmpID.Text = "";
-            tBox_RegUser_EmailAddr.Text = "";
-            tBox_RegUser_ContactNo.Text = "";
-            tBox_RegUser_CardID.Text = "";
-            cBox_RegUser_UserType.Text = "";
-            tBox_RegUser_GroupID.Text = "";
-            tBox_RegUser_GroupName.Text = "";
-            tBox_RegUser_GroupDesc.Text = "";
+            tBox_RegUser_Username.Text = string.Empty;
+            tBox_RegUser_Fullname.Text = string.Empty;
+            tBox_RegUser_Password.Text = string.Empty;
+            tBox_RegUser_EmpID.Text = string.Empty;
+            tBox_RegUser_EmailAddr.Text = string.Empty;
+            tBox_RegUser_ContactNo.Text = string.Empty;
+            tBox_RegUser_CardID.Text = string.Empty;
+            cBox_RegUser_UserType.Text = string.Empty;
+            tBox_RegUser_GroupID.Text = string.Empty;
+            tBox_RegUser_GroupName.Text = string.Empty;
+            tBox_RegUser_GroupDesc.Text = string.Empty;
         }
 
         private void btn_RegisterNow_Click(object sender, EventArgs e)
         {
-            if (tBox_RegUser_Username.Text != "")
+            if (tBox_RegUser_Username.Text != string.Empty)
             {
-                if (tBox_RegUser_Fullname.Text != "")
+                if (tBox_RegUser_Fullname.Text != string.Empty)
                 {
-                    if (tBox_RegUser_Password.Text != "")
+                    if (tBox_RegUser_Password.Text != string.Empty)
                     {
-                        if (tBox_RegUser_EmpID.Text != "")
+                        if (tBox_RegUser_EmpID.Text != string.Empty)
                         {
-                            if (tBox_RegUser_EmailAddr.Text != "")
+                            if (tBox_RegUser_EmailAddr.Text != string.Empty)
                             {
-                                if (tBox_RegUser_ContactNo.Text != "")
+                                if (tBox_RegUser_ContactNo.Text != string.Empty)
                                 {
-                                    if (tBox_RegUser_CardID.Text != "")
+                                    if (tBox_RegUser_CardID.Text != string.Empty)
                                     {
-                                        if (cBox_RegUser_UserType.Text != "")
+                                        if (cBox_RegUser_UserType.Text != string.Empty)
                                         {
-                                            if (tBox_RegUser_GroupID.Text != "")
+                                            if (tBox_RegUser_GroupID.Text != string.Empty)
                                             {
-                                                if (tBox_RegUser_GroupName.Text != "")
+                                                if (tBox_RegUser_GroupName.Text != string.Empty)
                                                 {
-                                                    if (tBox_RegUser_GroupDesc.Text != "")
+                                                    if (tBox_RegUser_GroupDesc.Text != string.Empty)
                                                     {
                                                         Insert_RegistrationUser();
                                                         TextRefreshRegUser();
                                                     }
-                                                    else if (tBox_RegUser_GroupDesc.Text == "")
+                                                    else if (tBox_RegUser_GroupDesc.Text == string.Empty)
                                                     {
                                                         lbl_RegUser_WarnGroupDesc.Text = RequestFillInTheBlank;
                                                     }
                                                 }
-                                                else if (tBox_RegUser_GroupName.Text == "")
+                                                else if (tBox_RegUser_GroupName.Text == string.Empty)
                                                 {
                                                     lbl_RegUser_WarnGroupName.Text = RequestFillInTheBlank;
                                                 }
                                             }
-                                            else if (tBox_RegUser_GroupID.Text == "")
+                                            else if (tBox_RegUser_GroupID.Text == string.Empty)
                                             {
                                                 lbl_RegUser_WarnGroupID.Text = RequestFillInTheBlank;
                                             }
                                         }
-                                        else if (cBox_RegUser_UserType.Text == "")
+                                        else if (cBox_RegUser_UserType.Text == string.Empty)
                                         {
                                             lbl_RegUser_WarnUserType.Text = RequestFillInTheBlank;
                                         }
                                     }
-                                    else if (tBox_RegUser_CardID.Text == "")
+                                    else if (tBox_RegUser_CardID.Text == string.Empty)
                                     {
                                         lbl_RegUser_WarnCardID.Text = RequestFillInTheBlank;
                                     }
                                 }
-                                else if (tBox_RegUser_ContactNo.Text == "")
+                                else if (tBox_RegUser_ContactNo.Text == string.Empty)
                                 {
                                     lbl_RegUser_WarnContactNo.Text = RequestFillInTheBlank;
                                 }
                             }
-                            else if (tBox_RegUser_EmailAddr.Text == "")
+                            else if (tBox_RegUser_EmailAddr.Text == string.Empty)
                             {
                                 lbl_RegUser_WarnEmailAddr.Text = RequestFillInTheBlank;
                             }
                         }
-                        else if (tBox_RegUser_EmpID.Text == "")
+                        else if (tBox_RegUser_EmpID.Text == string.Empty)
                         {
                             lbl_RegUser_WarnEmpID.Text = RequestFillInTheBlank;
                         }
                     }
-                    else if (tBox_RegUser_Password.Text == "")
+                    else if (tBox_RegUser_Password.Text == string.Empty)
                     {
                         lbl_RegUser_WarnPassword.Text = RequestFillInTheBlank;
                     }
                 }
-                else if (tBox_RegUser_Fullname.Text == "")
+                else if (tBox_RegUser_Fullname.Text == string.Empty)
                 {
                     lbl_RegUser_WarnFullname.Text = RequestFillInTheBlank;
                 }
             }
-            else if (tBox_RegUser_Username.Text == "")
+            else if (tBox_RegUser_Username.Text == string.Empty)
             {
                 lbl_RegUser_WarnUsername.Text = RequestFillInTheBlank;
             }

@@ -696,8 +696,7 @@ namespace RFIDRegistration
                         }
                         else if (s.Contains("t.enow.indicator"))
                         {
-                            string newS = s.ToString();
-                            Battery_detail_Json_tele battery_1 = JsonConvert.DeserializeObject<Battery_detail_Json_tele>(newS);
+                            Battery_detail_Json_tele battery_1 = JsonConvert.DeserializeObject<Battery_detail_Json_tele>(s);
 
                             Battery battery_ = new Battery
                             {
@@ -1257,8 +1256,7 @@ namespace RFIDRegistration
                         }
                         else if (ReceivedMessage.Contains("t.enow.indicator"))
                         {
-                            string newS = ReceivedMessage.ToString();
-                            Battery_detail_Json battery_1 = JsonConvert.DeserializeObject<Battery_detail_Json>(newS);
+                            Battery_detail_Json battery_1 = JsonConvert.DeserializeObject<Battery_detail_Json>(ReceivedMessage);
 
                             Battery battery_ = new Battery
                             {
@@ -2934,12 +2932,12 @@ namespace RFIDRegistration
         {
             if (ConnectionStatus_03)
             {
-                if (tBoxDeviceID_03.Text != "")
+                if (tBoxDeviceID_03.Text != string.Empty)
                 {
                     // Set Topic Name for MQTT
                     string TopicName = "W3/" + tBoxDeviceID_03.Text + "/rpc/request/0";
 
-                    if (tBoxPublish_03.Text != "")
+                    if (tBoxPublish_03.Text != string.Empty)
                     {
                         // Publish a message with QoS Level 2 (Exactly Once)
                         client_03.Publish(TopicName, Encoding.UTF8.GetBytes(tBoxPublish_03.Text), MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE, true);
@@ -2962,7 +2960,7 @@ namespace RFIDRegistration
 
         private void btn_TagConfig_Click(object sender, EventArgs e)
         {
-            if (tBoxDeviceID_03.Text != String.Empty && tBoxIPAddress_03.Text != String.Empty)
+            if (tBoxDeviceID_03.Text != string.Empty && tBoxIPAddress_03.Text != string.Empty)
             {
                 tagConfig.Show();
             }
@@ -2976,13 +2974,13 @@ namespace RFIDRegistration
         {
             if (ConnectionStatus_03)
             {
-                if (tBoxDeviceID_03.Text != "")
+                if (tBoxDeviceID_03.Text != string.Empty)
                 {
                     // Set Topic Name for MQTT
                     //W3 / WIRIO3_943CC64D77F0 / attributes
                     string TopicName = "W3/" + tBoxDeviceID_03.Text + "/attributes";
 
-                    if (tBoxPublish_03.Text != "")
+                    if (tBoxPublish_03.Text != string.Empty)
                     {
                         // Publish a message with QoS Level 2 (Exactly Once)
                         client_03.Publish(TopicName, Encoding.UTF8.GetBytes(tBoxPublish_03.Text), MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE, true);

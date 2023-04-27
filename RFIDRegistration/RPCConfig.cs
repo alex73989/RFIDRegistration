@@ -30,18 +30,18 @@ namespace RFIDRegistration
 
         public void ResetWifiPersonal()
         {
-            tBox_wp_ssid.Text = "";
-            tBox_wp_password.Text = "";
-            tBox_wp_bassid.Text = "";
+            tBox_wp_ssid.Text = string.Empty;
+            tBox_wp_password.Text = string.Empty;
+            tBox_wp_bassid.Text = string.Empty;
         }
         
         public void ResetWifiTTLS()
         {
-            tBox_wttls_ssid.Text = "";
-            tBox_wttls_username.Text = "";
-            tBox_wttls_password.Text = "";
-            tBox_wttls_bassid.Text = "";
-            tBox_wttls_eapid.Text = "";
+            tBox_wttls_ssid.Text = string.Empty;
+            tBox_wttls_username.Text = string.Empty;
+            tBox_wttls_password.Text = string.Empty;
+            tBox_wttls_bassid.Text = string.Empty;
+            tBox_wttls_eapid.Text = string.Empty;
 
             cBox_wttls_EAPIDType.Items.Clear();
             cBox_wttls_Phase2Type.Items.Clear();
@@ -66,8 +66,8 @@ namespace RFIDRegistration
 
         public void ResetWifiTLS()
         {
-            tBox_wtls_ssid.Text = "";
-            tBox_wtls_bassid.Text = "";
+            tBox_wtls_ssid.Text = string.Empty;
+            tBox_wtls_bassid.Text = string.Empty;
             cBox_wtls_EAPIDType.Items.Clear();
 
             cBox_wtls_EAPIDType.Items.AddRange(new string[]
@@ -83,17 +83,17 @@ namespace RFIDRegistration
             rB_static_staticip.Checked = true;
             rB_static_dhcp.Checked = false;
 
-            tBox_static_ip.Text = "";
-            tBox_static_netmask.Text = "";
-            tBox_static_gateway.Text = "";
-            tBox_static_dns1.Text = "";
-            tBox_static_dns2.Text = "";
+            tBox_static_ip.Text = string.Empty;
+            tBox_static_netmask.Text = string.Empty;
+            tBox_static_gateway.Text = string.Empty;
+            tBox_static_dns1.Text = string.Empty;
+            tBox_static_dns2.Text = string.Empty;
         }
 
         public void ResetSNTP()
         {
-            tBox_sntp_serveradrs.Text = "";
-            tBox_sntp_devicetz.Text = "";
+            tBox_sntp_serveradrs.Text = string.Empty;
+            tBox_sntp_devicetz.Text = string.Empty;
         }
 
         public void ResetMQTT()
@@ -103,17 +103,17 @@ namespace RFIDRegistration
             rB_mqtt_brokerdisable.Checked = true;
             rB_mqtt_brokerenable.Checked = false;
 
-            tBox_mqtt_serveradrs.Text = "";
-            tBox_mqtt_port.Text = "";
-            tBox_mqtt_wsprefix.Text = "";
-            tBox_mqtt_username.Text = "";
-            tBox_mqtt_password.Text = "";
-            tBox_mqtt_keepalive.Text = "";
-            tBox_mqtt_pubtele.Text = "";
-            tBox_mqtt_pubatt.Text = "";
-            tBox_mqtt_subatt.Text = "";
-            tBox_mqtt_subrpcreq.Text = "";
-            tBox_mqtt_subrpcreply.Text = "";
+            tBox_mqtt_serveradrs.Text = string.Empty;
+            tBox_mqtt_port.Text = string.Empty;
+            tBox_mqtt_wsprefix.Text = string.Empty;
+            tBox_mqtt_username.Text = string.Empty;
+            tBox_mqtt_password.Text = string.Empty;
+            tBox_mqtt_keepalive.Text = string.Empty;
+            tBox_mqtt_pubtele.Text = string.Empty;
+            tBox_mqtt_pubatt.Text = string.Empty;
+            tBox_mqtt_subatt.Text = string.Empty;
+            tBox_mqtt_subrpcreq.Text = string.Empty;
+            tBox_mqtt_subrpcreply.Text = string.Empty;
 
             cBox_mqtt_connectiontype.Items.Clear();
             cBox_mqtt_qos.Items.Clear();
@@ -146,27 +146,27 @@ namespace RFIDRegistration
 
         public void ResetLoadCertWifiCA()
         {
-            tBox_loadcertwifica_name.Text = "";
-            tBox_loadcertwifica_cert.Text = "";
+            tBox_loadcertwifica_name.Text = string.Empty;
+            tBox_loadcertwifica_cert.Text = string.Empty;
         }
 
         public void ResetLoadCertUser()
         {
-            tBox_loadcertuser_name.Text = "";
-            tBox_loadcertwifica_name.Text = "";
+            tBox_loadcertuser_name.Text = string.Empty;
+            tBox_loadcertwifica_name.Text = string.Empty;
         }
 
         public void ResetLoadCertKey()
         {
-            tBox_loadcertkey_name.Text = "";
-            tBox_loadcertkey_cert.Text = "";
-            tBox_loadcertkey_password.Text = "";
+            tBox_loadcertkey_name.Text = string.Empty;
+            tBox_loadcertkey_cert.Text = string.Empty;
+            tBox_loadcertkey_password.Text = string.Empty;
         }
 
         public void ResetMQTTCA()
         {
-            tBox_mqttca_name.Text = "";
-            tBox_mqttca_cert.Text = "";
+            tBox_mqttca_name.Text = string.Empty;
+            tBox_mqttca_cert.Text = string.Empty;
         }
 
         private void btn_wp_clear_Click(object sender, EventArgs e)
@@ -292,7 +292,7 @@ namespace RFIDRegistration
 
         private void btn_ClearCommand_Click(object sender, EventArgs e)
         {
-            tBox_commanddelivered.Text = "";
+            tBox_commanddelivered.Text = string.Empty;
             SetLogText("Command Delivered Text Cleared!");
         }
 
@@ -348,7 +348,7 @@ namespace RFIDRegistration
             else
             {
                 SetLogText("(WIFI Personal) Unable to proceed the data with null, Please try again!");
-                tBox_commanddelivered.Text = "";
+                tBox_commanddelivered.Text = string.Empty;
             }
         }
 
@@ -414,7 +414,7 @@ namespace RFIDRegistration
             else
             {
                 SetLogText("(WIFI TTLS) Unable to proceed the data with null, Please try again!");
-                tBox_commanddelivered.Text = "";
+                tBox_commanddelivered.Text = string.Empty;
             }
         }
 
@@ -448,7 +448,7 @@ namespace RFIDRegistration
             else
             {
                 SetLogText("(WIFI TLS) Unable to proceed the data with null, Please try again!");
-                tBox_commanddelivered.Text = "";
+                tBox_commanddelivered.Text = string.Empty;
             }
         }
 
@@ -498,7 +498,7 @@ namespace RFIDRegistration
             else
             {
                 SetLogText("(Static IP) Unable to proceed the data with null, Please try again!");
-                tBox_commanddelivered.Text = "";
+                tBox_commanddelivered.Text = string.Empty;
             }
         }
 
@@ -527,7 +527,7 @@ namespace RFIDRegistration
             else
             {
                 SetLogText("(SNTP) Unable to proceed the data with null, Please try again!");
-                tBox_commanddelivered.Text = "";
+                tBox_commanddelivered.Text = string.Empty;
             }
         }
 
@@ -627,7 +627,7 @@ namespace RFIDRegistration
             else if (rB_mqtt_brokerdisable.Checked == true)
             {
                 SetLogText("(MQTT) Unable to proceed the data, Please Enable the MQTT Broker Setting!");
-                tBox_commanddelivered.Text = "";
+                tBox_commanddelivered.Text = string.Empty;
             }
         }
 
@@ -643,7 +643,7 @@ namespace RFIDRegistration
             else
             {
                 SetLogText("(LoadCert WifiCA) Unable to proceed the data with null, Please Try Again!");
-                tBox_commanddelivered.Text = "";
+                tBox_commanddelivered.Text = string.Empty;
             }
         }
 
@@ -659,7 +659,7 @@ namespace RFIDRegistration
             else
             {
                 SetLogText("(LoadCert User) Unable to proceed the data with null, Please Try Again!");
-                tBox_commanddelivered.Text = "";
+                tBox_commanddelivered.Text = string.Empty;
             }
         }
 
@@ -676,7 +676,7 @@ namespace RFIDRegistration
             else
             {
                 SetLogText("(LoadCert Key) Unable to proceed the data with null, Please Try Again!");
-                tBox_commanddelivered.Text = "";
+                tBox_commanddelivered.Text = string.Empty;
             }
         }
 
@@ -692,7 +692,7 @@ namespace RFIDRegistration
             else
             {
                 SetLogText("(LoadCert MQTTCA) Unable to proceed the data with null, Please Try Again!");
-                tBox_commanddelivered.Text = "";
+                tBox_commanddelivered.Text = string.Empty;
             }
         }
 

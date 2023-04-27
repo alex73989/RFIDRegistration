@@ -92,7 +92,7 @@ namespace RFIDRegistration
 
         private void btn_AddPart_Add_Click(object sender, EventArgs e)
         {
-            if (tBox_AddSN_PartNo.Text != "" && tBox_AddSN_SerialNo.Text != "")
+            if (tBox_AddSN_PartNo.Text != string.Empty && tBox_AddSN_SerialNo.Text != string.Empty)
             {
                 sqlConnect.con.Open();
                 SqlCommand cmd = new SqlCommand("Select_RegTagList", sqlConnect.con)
@@ -146,7 +146,7 @@ namespace RFIDRegistration
 
                 sqlConnect.con.Close();
             }
-            else if (tBox_AddSN_PartNo.Text == "" || tBox_AddSN_SerialNo.Text == "")
+            else if (tBox_AddSN_PartNo.Text == string.Empty || tBox_AddSN_SerialNo.Text == string.Empty)
             {
                 lbl_AddPart_Register.Show();
                 lbl_AddPart_Register.Text = "Unable accept blank!";

@@ -31,12 +31,12 @@ namespace RFIDRegistration
         public void TagTextRefresh()
         {
             cBox_Tag_EmpName.SelectedItem = null;
-            tBox_Tag_EPCNo.Text = "";
-            tBox_Tag_PartNo.Text = "";
+            tBox_Tag_EPCNo.Text = string.Empty;
+            tBox_Tag_PartNo.Text = string.Empty;
             cBox_Tag_SerialNo.SelectedItem = null;
             cBox_Tag_Location.SelectedItem = null;
-            tBox_Tag_FunctionUsed.Text = "";
-            tBox_Tag_MoreDesc.Text = "";
+            tBox_Tag_FunctionUsed.Text = string.Empty;
+            tBox_Tag_MoreDesc.Text = string.Empty;
         }
 
         public void SetComboBoxValueEmpName()
@@ -49,11 +49,11 @@ namespace RFIDRegistration
                     CommandType = CommandType.StoredProcedure
                 };
                 sqlCommand.Parameters.AddWithValue("@Option", "GetFullUsersList");
-                sqlCommand.Parameters.AddWithValue("@Username", "");
-                sqlCommand.Parameters.AddWithValue("@Password", "");
-                sqlCommand.Parameters.AddWithValue("@Fullname", "");
-                sqlCommand.Parameters.AddWithValue("@User_Type", "");
-                sqlCommand.Parameters.AddWithValue("@Employee_ID", "");
+                sqlCommand.Parameters.AddWithValue("@Username", string.Empty);
+                sqlCommand.Parameters.AddWithValue("@Password", string.Empty);
+                sqlCommand.Parameters.AddWithValue("@Fullname", string.Empty);
+                sqlCommand.Parameters.AddWithValue("@User_Type", string.Empty);
+                sqlCommand.Parameters.AddWithValue("@Employee_ID", string.Empty);
 
                 SqlDataAdapter da = new SqlDataAdapter(sqlCommand);
                 DataSet ds = new DataSet();
@@ -73,9 +73,9 @@ namespace RFIDRegistration
                 CommandType = CommandType.StoredProcedure
             };
             sqlCommand.Parameters.AddWithValue("@Option", "GetPartList");
-            sqlCommand.Parameters.AddWithValue("@TAG_epc_no", "");
-            sqlCommand.Parameters.AddWithValue("@SERIAL_no", "");
-            sqlCommand.Parameters.AddWithValue("@PART_no", "");
+            sqlCommand.Parameters.AddWithValue("@TAG_epc_no", string.Empty);
+            sqlCommand.Parameters.AddWithValue("@SERIAL_no", string.Empty);
+            sqlCommand.Parameters.AddWithValue("@PART_no", string.Empty);
 
             SqlDataAdapter dataAdapter_GetDeviceList = new SqlDataAdapter(sqlCommand);
             DataTable dt2 = new DataTable();
@@ -117,7 +117,7 @@ namespace RFIDRegistration
 
         private void btnTag_SaveRecords_Click(object sender, EventArgs e)
         {
-            if (cBox_Tag_EmpName.Text != "" && tBox_Tag_EPCNo.Text != "" && tBox_Tag_PartNo.Text != "" && cBox_Tag_SerialNo.Text != ""  && cBox_Tag_Location.Text != "" && tBox_Tag_FunctionUsed.Text != "" && tBox_Tag_MoreDesc.Text != "")
+            if (cBox_Tag_EmpName.Text != string.Empty && tBox_Tag_EPCNo.Text != string.Empty && tBox_Tag_PartNo.Text != string.Empty && cBox_Tag_SerialNo.Text != string.Empty  && cBox_Tag_Location.Text != string.Empty && tBox_Tag_FunctionUsed.Text != string.Empty && tBox_Tag_MoreDesc.Text != string.Empty)
             {
                 if (PublicFunction.DuplicateTagChecking(tBox_Tag_EPCNo.Text, "tag_epc_no", "@tag_epc_no"))
                 {
@@ -240,8 +240,8 @@ namespace RFIDRegistration
                     CommandType = CommandType.StoredProcedure
                 };
                 sqlCommand.Parameters.AddWithValue("@Option", "GetSerialNoBasedOnPartNo");
-                sqlCommand.Parameters.AddWithValue("@TAG_epc_no", "");
-                sqlCommand.Parameters.AddWithValue("@SERIAL_no", "");
+                sqlCommand.Parameters.AddWithValue("@TAG_epc_no", string.Empty);
+                sqlCommand.Parameters.AddWithValue("@SERIAL_no", string.Empty);
                 sqlCommand.Parameters.AddWithValue("@PART_no", tBox_Tag_PartNo.Text);
 
                 SqlDataAdapter da = new SqlDataAdapter(sqlCommand);

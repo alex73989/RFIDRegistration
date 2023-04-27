@@ -36,9 +36,9 @@ namespace RFIDRegistration
 
         private void btn_LoginMain_Click(object sender, EventArgs e)
         {
-            if (tBox_Login_Username.Text != "")
+            if (tBox_Login_Username.Text != string.Empty)
             {
-                if (tBox_Login_Password.Text != "")
+                if (tBox_Login_Password.Text != string.Empty)
                 {
                     sqlConnect.con = new SqlConnection("Data Source=MXPACALEX;Initial Catalog=Dek_MachineDB;Integrated Security=True");
                     sqlConnect.con.Open();
@@ -78,12 +78,12 @@ namespace RFIDRegistration
                     }
                     sqlConnect.con.Close();
                 }
-                else if (tBox_Login_Password.Text == "")
+                else if (tBox_Login_Password.Text == string.Empty)
                 {
                     lbl_LogUser_WarnPassword.Text = RequestFillInTheBlank;
                 }
                                             }
-            else if (tBox_Login_Username.Text == "")
+            else if (tBox_Login_Username.Text == string.Empty)
             {
                 lbl_LogUser_WarnUsername.Text = RequestFillInTheBlank;
             }

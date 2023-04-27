@@ -53,9 +53,9 @@ namespace RFIDRegistration
 
         private void btn_UpdateUser_Update_Click(object sender, EventArgs e)
         {
-            if (tBox_UpdateUser_Username.Text != "" && cBox_UpdateUser_UserType.Text != "" && tBox_UpdateUser_UserGroupID.Text != "" && tBox_UpdateUser_UserGroupName.Text != ""
-                && tBox_UpdateUser_UserGroupDescription.Text != "" && tBox_UpdateUser_Fullname.Text != "" && tBox_UpdateUser_EmpID.Text != ""
-                && tBox_UpdateUser_Email.Text != "" && tBox_UpdateUser_Password.Text != "" && tBox_UpdateUser_MobileNo.Text != "" && tBox_UpdateUser_CardID.Text != "")
+            if (tBox_UpdateUser_Username.Text != string.Empty && cBox_UpdateUser_UserType.Text != string.Empty && tBox_UpdateUser_UserGroupID.Text != string.Empty && tBox_UpdateUser_UserGroupName.Text != string.Empty
+                && tBox_UpdateUser_UserGroupDescription.Text != string.Empty && tBox_UpdateUser_Fullname.Text != string.Empty && tBox_UpdateUser_EmpID.Text != string.Empty
+                && tBox_UpdateUser_Email.Text != string.Empty && tBox_UpdateUser_Password.Text != string.Empty && tBox_UpdateUser_MobileNo.Text != string.Empty && tBox_UpdateUser_CardID.Text != string.Empty)
             {
                 con.Open();
 

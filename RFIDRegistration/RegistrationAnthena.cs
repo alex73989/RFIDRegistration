@@ -32,7 +32,7 @@ namespace RFIDRegistration
 
         public void Insert_RegistrationAnthena()
         {
-            if (tBox_RegAnthena_DevID.Text != "" && tBox_RegAnthena_AntType.Text != "" && cBox_RegAnthena_ChnNo.Text != "" && tBox_RegAnthena_AntLocation.Text != "")
+            if (tBox_RegAnthena_DevID.Text != string.Empty && tBox_RegAnthena_AntType.Text != string.Empty && cBox_RegAnthena_ChnNo.Text != string.Empty && tBox_RegAnthena_AntLocation.Text != string.Empty)
             {
                 sqlConnect.con.Open();
 
@@ -99,10 +99,10 @@ namespace RFIDRegistration
 
         public void ClearTxt()
         {
-            tBox_RegAnthena_DevID.Text = "";
-            tBox_RegAnthena_AntType.Text = "";
+            tBox_RegAnthena_DevID.Text = string.Empty;
+            tBox_RegAnthena_AntType.Text = string.Empty;
             cBox_RegAnthena_ChnNo.SelectedItem = null;
-            tBox_RegAnthena_AntLocation.Text = "";
+            tBox_RegAnthena_AntLocation.Text = string.Empty;
         }
 
         public void Validation()
@@ -161,9 +161,9 @@ namespace RFIDRegistration
                 CommandType = CommandType.StoredProcedure
             };
             sqlCommand.Parameters.AddWithValue("@Option", "GetFullDeviceList");
-            sqlCommand.Parameters.AddWithValue("@Dev_ID", "");
-            sqlCommand.Parameters.AddWithValue("@Model_Name", "");
-            sqlCommand.Parameters.AddWithValue("@Product_Name", "");
+            sqlCommand.Parameters.AddWithValue("@Dev_ID", string.Empty);
+            sqlCommand.Parameters.AddWithValue("@Model_Name", string.Empty);
+            sqlCommand.Parameters.AddWithValue("@Product_Name", string.Empty);
 
             SqlDataAdapter dataAdapter_GetDeviceList = new SqlDataAdapter(sqlCommand);
             DataTable dt2 = new DataTable();

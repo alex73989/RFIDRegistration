@@ -21,8 +21,8 @@ namespace RFIDRegistration
     {
         public bool adminLogin = false;
         private const string requestAttachDeviceText = "Please Connect To Device";
-        public string IuserId = "", IUsername = "", IUserType = "", IUserGroupID = "", IUserGroupName = "", IUserGroupDesc = "",
-            IFullname = "", IEmployeeID = "", IEmail = "", IPassword = "", IMobileNo = "", ICardID = "";
+        public string IuserId = string.Empty, IUsername = string.Empty, IUserType = string.Empty, IUserGroupID = string.Empty, IUserGroupName = string.Empty, IUserGroupDesc = string.Empty,
+            IFullname = string.Empty, IEmployeeID = string.Empty, IEmail = string.Empty, IPassword = string.Empty, IMobileNo = string.Empty, ICardID = string.Empty;
         //private const string requestInputUIIText = "Please input UII (Hex)";
 
         // Address of SQL Server and Database
@@ -90,7 +90,7 @@ namespace RFIDRegistration
                         return;
                     }
                     string comStr = cbCom.SelectedItem.ToString();
-                    if (comStr == "")
+                    if (comStr == string.Empty)
                     {
                         MessageBox.Show("Please Select Serial Port");
                         return;
@@ -198,7 +198,7 @@ namespace RFIDRegistration
                 return;
             }
 
-            string infoStr = "";
+            string infoStr = string.Empty;
             byte[] bSerial = new byte[6];
             byte[] bVersion = new byte[3];
             if (PublicFunction.GetVersion(bSerial, bVersion))
@@ -241,40 +241,40 @@ namespace RFIDRegistration
 
         public void ModifyTagTextRefresh()
         {
-            tBox_ModTag_UserReg.Text = "";
-            tBox_ModTag_EmpName.Text = "";
+            tBox_ModTag_UserReg.Text = string.Empty;
+            tBox_ModTag_EmpName.Text = string.Empty;
 
-            tBox_ModTag_OldSN.Text = "";
-            tBox_ModTag_NewSN.Text = "";
+            tBox_ModTag_OldSN.Text = string.Empty;
+            tBox_ModTag_NewSN.Text = string.Empty;
 
-            tBox_ModTag_OldPN.Text = "";
-            tBox_ModTag_NewPN.Text = "";
+            tBox_ModTag_OldPN.Text = string.Empty;
+            tBox_ModTag_NewPN.Text = string.Empty;
 
-            tBox_ModTag_OldEPCNo.Text = "";
-            tBox_ModTag_NewEPCNo.Text = "";
-            tBox_ModTag_MoreDesc.Text = "";
+            tBox_ModTag_OldEPCNo.Text = string.Empty;
+            tBox_ModTag_NewEPCNo.Text = string.Empty;
+            tBox_ModTag_MoreDesc.Text = string.Empty;
 
-            tBox_ModTag_SearchEPCNo.Text = "";
+            tBox_ModTag_SearchEPCNo.Text = string.Empty;
 
         }
 
         public void ModifyDevTextRefresh()
         {
-            tBox_ModDev_UserReg.Text = "";
-            tBox_ModDev_EmpName.Text = "";
-            tBox_ModDev_OldDevID.Text = "";
-            tBox_ModDev_NewDevID.Text = "";
-            tBox_ModDev_OldModel.Text = "";
-            tBox_ModDev_NewModel.Text = "";
-            tBox_ModDev_OldProductName.Text = "";
-            tBox_ModDev_NewProductName.Text = "";
-            tBox_ModDev_OldCommType.Text = "";
-            cBox_ModDev_NewCommType.Text = "";
-            tBox_ModDev_OldDevIP.Text = "";
-            tBox_ModDev_NewDevIP.Text = "";
-            tBox_ModDev_MoreDesc.Text = "";
+            tBox_ModDev_UserReg.Text = string.Empty;
+            tBox_ModDev_EmpName.Text = string.Empty;
+            tBox_ModDev_OldDevID.Text = string.Empty;
+            tBox_ModDev_NewDevID.Text = string.Empty;
+            tBox_ModDev_OldModel.Text = string.Empty;
+            tBox_ModDev_NewModel.Text = string.Empty;
+            tBox_ModDev_OldProductName.Text = string.Empty;
+            tBox_ModDev_NewProductName.Text = string.Empty;
+            tBox_ModDev_OldCommType.Text = string.Empty;
+            cBox_ModDev_NewCommType.Text = string.Empty;
+            tBox_ModDev_OldDevIP.Text = string.Empty;
+            tBox_ModDev_NewDevIP.Text = string.Empty;
+            tBox_ModDev_MoreDesc.Text = string.Empty;
 
-            tBox_ModDev_SearchDevID.Text = "";
+            tBox_ModDev_SearchDevID.Text = string.Empty;
         }
 
 
@@ -289,9 +289,9 @@ namespace RFIDRegistration
                     CommandType = CommandType.StoredProcedure
                 };
                 sqlCommand.Parameters.AddWithValue("@Option", "GetFullTagList");
-                sqlCommand.Parameters.AddWithValue("@TAG_epc_no", "");
-                sqlCommand.Parameters.AddWithValue("@SERIAL_no", "");
-                sqlCommand.Parameters.AddWithValue("@PART_no", "");
+                sqlCommand.Parameters.AddWithValue("@TAG_epc_no", string.Empty);
+                sqlCommand.Parameters.AddWithValue("@SERIAL_no", string.Empty);
+                sqlCommand.Parameters.AddWithValue("@PART_no", string.Empty);
 
                 SqlDataAdapter dataAdapter_GetTagList = new SqlDataAdapter(sqlCommand);
                 DataTable dt = new DataTable();
@@ -311,9 +311,9 @@ namespace RFIDRegistration
                     CommandType = CommandType.StoredProcedure
                 };
                 sqlCommand.Parameters.AddWithValue("@Option", "GetFullDeviceList");
-                sqlCommand.Parameters.AddWithValue("@Dev_ID", "");
-                sqlCommand.Parameters.AddWithValue("@Model_Name", "");
-                sqlCommand.Parameters.AddWithValue("@Product_Name", "");
+                sqlCommand.Parameters.AddWithValue("@Dev_ID", string.Empty);
+                sqlCommand.Parameters.AddWithValue("@Model_Name", string.Empty);
+                sqlCommand.Parameters.AddWithValue("@Product_Name", string.Empty);
 
                 SqlDataAdapter dataAdapter_GetDeviceList = new SqlDataAdapter(sqlCommand);
                 DataTable dt2 = new DataTable();
@@ -333,11 +333,11 @@ namespace RFIDRegistration
                     CommandType = CommandType.StoredProcedure
                 };
                 sqlCommand.Parameters.AddWithValue("@Option", "GetFullUsersList");
-                sqlCommand.Parameters.AddWithValue("@Username", "");
-                sqlCommand.Parameters.AddWithValue("@Password", "");
-                sqlCommand.Parameters.AddWithValue("@Fullname", "");
-                sqlCommand.Parameters.AddWithValue("@User_Type", "");
-                sqlCommand.Parameters.AddWithValue("@Employee_ID", "");
+                sqlCommand.Parameters.AddWithValue("@Username", string.Empty);
+                sqlCommand.Parameters.AddWithValue("@Password", string.Empty);
+                sqlCommand.Parameters.AddWithValue("@Fullname", string.Empty);
+                sqlCommand.Parameters.AddWithValue("@User_Type", string.Empty);
+                sqlCommand.Parameters.AddWithValue("@Employee_ID", string.Empty);
 
                 SqlDataAdapter dataAdapter_GetUserList = new SqlDataAdapter(sqlCommand);
                 DataTable dt2 = new DataTable();
@@ -378,7 +378,7 @@ namespace RFIDRegistration
 
             string SerialNo, PartNo, EPCTagNo;
 
-            if (tBox_ModTag_NewSN.Text == "")
+            if (tBox_ModTag_NewSN.Text == string.Empty)
             {
                 SerialNo = tBox_ModTag_OldSN.Text;
             }
@@ -387,7 +387,7 @@ namespace RFIDRegistration
                 SerialNo = tBox_ModTag_NewSN.Text;
             }
 
-            if (tBox_ModTag_NewPN.Text == "")
+            if (tBox_ModTag_NewPN.Text == string.Empty)
             {
                 PartNo = tBox_ModTag_OldPN.Text;
             }
@@ -396,7 +396,7 @@ namespace RFIDRegistration
                 PartNo = tBox_ModTag_NewPN.Text;
             }
 
-            if (tBox_ModTag_NewEPCNo.Text == "")
+            if (tBox_ModTag_NewEPCNo.Text == string.Empty)
             {
                 EPCTagNo = tBox_ModTag_OldEPCNo.Text;
             }
@@ -405,12 +405,12 @@ namespace RFIDRegistration
                 EPCTagNo = tBox_ModTag_NewEPCNo.Text;
             }
 
-            if (tBox_ModTag_UserReg.Text == "")
+            if (tBox_ModTag_UserReg.Text == string.Empty)
             {
                 MessageBox.Show("User Registered Cannot Be Empty!");
                 AddToShowModifyTag("User Registered Has A NULL Value, Please Try Again!");
             }
-            else if(tBox_ModTag_EmpName.Text == "")
+            else if(tBox_ModTag_EmpName.Text == string.Empty)
             {
                 MessageBox.Show("Employee Name Cannot Be Empty!");
                 AddToShowModifyTag("Employee Name Has A NULL Value, Please Try Again!");
@@ -457,7 +457,7 @@ namespace RFIDRegistration
             // Search
             sqlConnect.con.Open();
 
-            if (tBox_ModTag_SearchEPCNo.Text != "")
+            if (tBox_ModTag_SearchEPCNo.Text != string.Empty)
             { 
                 SqlCommand cmd = new SqlCommand("Select_RegTagList", sqlConnect.con)
                 {
@@ -475,7 +475,7 @@ namespace RFIDRegistration
                 dataGridView_TagList.DataSource = dt;
                 AddToShowModifyTag("Data Founded Under Database");
             }
-            else if (tBox_ModTag_SearchEPCNo.Text == "")
+            else if (tBox_ModTag_SearchEPCNo.Text == string.Empty)
             {
                 SqlCommand cmd = new SqlCommand("Select_RegTagList", sqlConnect.con)
                 {
@@ -483,9 +483,9 @@ namespace RFIDRegistration
                 };
 
                 cmd.Parameters.AddWithValue("@Option", "GetFullTagList");
-                cmd.Parameters.AddWithValue("@TAG_epc_no", "");
-                cmd.Parameters.AddWithValue("@SERIAL_no", "");
-                cmd.Parameters.AddWithValue("@PART_no", "");
+                cmd.Parameters.AddWithValue("@TAG_epc_no", string.Empty);
+                cmd.Parameters.AddWithValue("@SERIAL_no", string.Empty);
+                cmd.Parameters.AddWithValue("@PART_no", string.Empty);
                 SqlDataAdapter sd = new SqlDataAdapter(cmd);
 
                 DataTable dt = new DataTable();
@@ -714,7 +714,7 @@ namespace RFIDRegistration
         private void tBox_ModTag_Search_TextChanged(object sender, EventArgs e)
         {
             sqlConnect.con.Open();
-            if (tBox_ModTag_SearchEPCNo.Text != "")
+            if (tBox_ModTag_SearchEPCNo.Text != string.Empty)
             {
                 /*SqlCommand cmd = new SqlCommand("SELECT * FROM registration_tag_tb WHERE tag_epc_no = @tag_epc_no", con);
                 cmd.Parameters.AddWithValue("@tag_epc_no", tBox_ModTag_SearchEPCNo.Text);
@@ -724,8 +724,8 @@ namespace RFIDRegistration
 
                 cmd.Parameters.AddWithValue("@Option", "GetListTagEPC");
                 cmd.Parameters.AddWithValue("@TAG_epc_no", tBox_ModTag_SearchEPCNo.Text);
-                cmd.Parameters.AddWithValue("@SERIAL_no", "");
-                cmd.Parameters.AddWithValue("@PART_no", "");
+                cmd.Parameters.AddWithValue("@SERIAL_no", string.Empty);
+                cmd.Parameters.AddWithValue("@PART_no", string.Empty);
                 SqlDataReader da = cmd.ExecuteReader();
                 
                 while (da.Read())
@@ -806,7 +806,7 @@ namespace RFIDRegistration
 
             string DeviceID, ModelName, ProductName, CommType, DeviceIPAddr;
 
-            if (tBox_ModDev_NewDevID.Text == "")
+            if (tBox_ModDev_NewDevID.Text == string.Empty)
             {
                 DeviceID = tBox_ModDev_OldDevID.Text;
             }
@@ -815,7 +815,7 @@ namespace RFIDRegistration
                 DeviceID = tBox_ModDev_NewDevID.Text;
             }
 
-            if (tBox_ModDev_NewModel.Text == "")
+            if (tBox_ModDev_NewModel.Text == string.Empty)
             {
                 ModelName = tBox_ModDev_OldModel.Text;
             }
@@ -824,7 +824,7 @@ namespace RFIDRegistration
                 ModelName = tBox_ModDev_NewModel.Text;
             }
 
-            if (tBox_ModDev_NewProductName.Text == "")
+            if (tBox_ModDev_NewProductName.Text == string.Empty)
             {
                 ProductName = tBox_ModDev_OldProductName.Text;
             }
@@ -833,7 +833,7 @@ namespace RFIDRegistration
                 ProductName = tBox_ModDev_NewProductName.Text;
             }
 
-            if (cBox_ModDev_NewCommType.Text == "")
+            if (cBox_ModDev_NewCommType.Text == string.Empty)
             {
                 CommType = tBox_ModDev_OldCommType.Text;
             }
@@ -842,7 +842,7 @@ namespace RFIDRegistration
                 CommType = cBox_ModDev_NewCommType.Text;
             }
 
-            if (tBox_ModDev_NewDevIP.Text == "")
+            if (tBox_ModDev_NewDevIP.Text == string.Empty)
             {
                 DeviceIPAddr = tBox_ModDev_OldDevIP.Text;
             }
@@ -851,12 +851,12 @@ namespace RFIDRegistration
                 DeviceIPAddr = tBox_ModDev_NewDevIP.Text;
             }
 
-            if (tBox_ModDev_UserReg.Text == "")
+            if (tBox_ModDev_UserReg.Text == string.Empty)
             {
                 MessageBox.Show("User Registered Cannot Be Empty!");
                 AddToShowModifyDev("User Registered Has A NULL Value, Please Try Again!");
             }
-            else if (tBox_ModDev_EmpName.Text == "")
+            else if (tBox_ModDev_EmpName.Text == string.Empty)
             {
                 MessageBox.Show("Employee Name Cannot Be Empty!");
                 AddToShowModifyDev("Employee Name Has A NULL Value, Please Try Again!");
@@ -970,7 +970,7 @@ namespace RFIDRegistration
             // Search
             sqlConnect.con.Open();
 
-            if (tBox_ModDev_SearchDevID.Text != "")
+            if (tBox_ModDev_SearchDevID.Text != string.Empty)
             {
 
                 SqlCommand cmd = new SqlCommand("Select_RegDeviceList", sqlConnect.con)
@@ -989,7 +989,7 @@ namespace RFIDRegistration
                 dataGridView_DevList.DataSource = dt;
                 AddToShowModifyDev("Data Founded Under Database!");
             }
-            else if (tBox_ModDev_SearchDevID.Text == "")
+            else if (tBox_ModDev_SearchDevID.Text == string.Empty)
             {
                 SqlCommand cmd = new SqlCommand("Select_RegDeviceList", sqlConnect.con)
                 {
@@ -997,9 +997,9 @@ namespace RFIDRegistration
                 };
 
                 cmd.Parameters.AddWithValue("@Option", "GetFullDeviceList");
-                cmd.Parameters.AddWithValue("@Dev_ID", "");
-                cmd.Parameters.AddWithValue("@Model_Name", "");
-                cmd.Parameters.AddWithValue("@Product_Name", "");
+                cmd.Parameters.AddWithValue("@Dev_ID", string.Empty);
+                cmd.Parameters.AddWithValue("@Model_Name", string.Empty);
+                cmd.Parameters.AddWithValue("@Product_Name", string.Empty);
                 SqlDataAdapter sd = new SqlDataAdapter(cmd);
 
                 DataTable dt = new DataTable();
@@ -1296,7 +1296,7 @@ namespace RFIDRegistration
         {
             sqlConnect.con.Open();
 
-            if (tBox_ModUser_Search.Text != "")
+            if (tBox_ModUser_Search.Text != string.Empty)
             {
 
                 SqlCommand cmd = new SqlCommand("Select_UsersTB", sqlConnect.con)
@@ -1306,8 +1306,8 @@ namespace RFIDRegistration
 
                 cmd.Parameters.AddWithValue("@Option", "GetSearchingList");
                 cmd.Parameters.AddWithValue("@Username", tBox_ModUser_Search.Text);
-                cmd.Parameters.AddWithValue("@Password", "");
-                cmd.Parameters.AddWithValue("@Fullname", "");
+                cmd.Parameters.AddWithValue("@Password", string.Empty);
+                cmd.Parameters.AddWithValue("@Fullname", string.Empty);
                 cmd.Parameters.AddWithValue("@User_Type", tBox_ModUser_Search.Text);
                 cmd.Parameters.AddWithValue("@Employee_ID", tBox_ModUser_Search.Text);
                 SqlDataAdapter sd = new SqlDataAdapter(cmd);
@@ -1316,7 +1316,7 @@ namespace RFIDRegistration
                 sd.Fill(dt);
                 dataGridView_UserList.DataSource = dt;
             }
-            else if (tBox_ModUser_Search.Text == "")
+            else if (tBox_ModUser_Search.Text == string.Empty)
             {
                 SqlCommand cmd = new SqlCommand("Select_UsersTB", sqlConnect.con)
                 {
@@ -1324,11 +1324,11 @@ namespace RFIDRegistration
                 };
 
                 cmd.Parameters.AddWithValue("@Option", "GetFullUsersList");
-                cmd.Parameters.AddWithValue("@Username", "");
-                cmd.Parameters.AddWithValue("@Password", "");
-                cmd.Parameters.AddWithValue("@Fullname", "");
-                cmd.Parameters.AddWithValue("@User_Type", "");
-                cmd.Parameters.AddWithValue("@Employee_ID", "");
+                cmd.Parameters.AddWithValue("@Username", string.Empty);
+                cmd.Parameters.AddWithValue("@Password", string.Empty);
+                cmd.Parameters.AddWithValue("@Fullname", string.Empty);
+                cmd.Parameters.AddWithValue("@User_Type", string.Empty);
+                cmd.Parameters.AddWithValue("@Employee_ID", string.Empty);
                 SqlDataAdapter sd = new SqlDataAdapter(cmd);
 
                 DataTable dt = new DataTable();

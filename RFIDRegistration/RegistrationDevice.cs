@@ -26,13 +26,13 @@ namespace RFIDRegistration
 
         public void DeviceTextRefresh()
         {
-            tBox_Dev_ID.Text = "";
-            cBox_Dev_EmpName.Text = "";
-            tBox_Dev_Model.Text = "";
-            tBox_Dev_ProductName.Text = "";
-            cBox_Dev_CommType.Text = "";
-            tBox_Dev_IPAddress.Text = "";
-            tBox_Dev_MoreDesc.Text = "";
+            tBox_Dev_ID.Text = string.Empty;
+            cBox_Dev_EmpName.Text = string.Empty;
+            tBox_Dev_Model.Text = string.Empty;
+            tBox_Dev_ProductName.Text = string.Empty;
+            cBox_Dev_CommType.Text = string.Empty;
+            tBox_Dev_IPAddress.Text = string.Empty;
+            tBox_Dev_MoreDesc.Text = string.Empty;
         }
 
         public void SetComboBoxValueEmpName()
@@ -45,11 +45,11 @@ namespace RFIDRegistration
                     CommandType = CommandType.StoredProcedure
                 };
                 sqlCommand.Parameters.AddWithValue("@Option", "GetFullUsersList");
-                sqlCommand.Parameters.AddWithValue("@Username", "");
-                sqlCommand.Parameters.AddWithValue("@Password", "");
-                sqlCommand.Parameters.AddWithValue("@Fullname", "");
-                sqlCommand.Parameters.AddWithValue("@User_Type", "");
-                sqlCommand.Parameters.AddWithValue("@Employee_ID", "");
+                sqlCommand.Parameters.AddWithValue("@Username", string.Empty);
+                sqlCommand.Parameters.AddWithValue("@Password", string.Empty);
+                sqlCommand.Parameters.AddWithValue("@Fullname", string.Empty);
+                sqlCommand.Parameters.AddWithValue("@User_Type", string.Empty);
+                sqlCommand.Parameters.AddWithValue("@Employee_ID", string.Empty);
 
                 SqlDataAdapter da = new SqlDataAdapter(sqlCommand);
                 DataSet ds = new DataSet();
@@ -64,8 +64,8 @@ namespace RFIDRegistration
 
         private void btnDev_SaveRecords_Click(object sender, EventArgs e)
         {
-            if (cBox_Dev_EmpName.Text != "" && tBox_Dev_ID.Text != "" && tBox_Dev_Model.Text != ""
-                && tBox_Dev_ProductName.Text != "" && cBox_Dev_CommType.Text != "" && tBox_Dev_IPAddress.Text != "" && tBox_Dev_MoreDesc.Text != "")
+            if (cBox_Dev_EmpName.Text != string.Empty && tBox_Dev_ID.Text != string.Empty && tBox_Dev_Model.Text != string.Empty
+                && tBox_Dev_ProductName.Text != string.Empty && cBox_Dev_CommType.Text != string.Empty && tBox_Dev_IPAddress.Text != string.Empty && tBox_Dev_MoreDesc.Text != string.Empty)
             {
                 if (PublicFunction.DuplicateDeviceChecking(tBox_Dev_ID.Text, "Dev_ID", "@Dev_ID"))
                 {
@@ -96,13 +96,13 @@ namespace RFIDRegistration
                         CommandType = CommandType.StoredProcedure
                     };
                     sqlCommand.Parameters.AddWithValue("@Option", "GetListFullname");
-                    sqlCommand.Parameters.AddWithValue("@Username", "");
-                    sqlCommand.Parameters.AddWithValue("@Password", "");
+                    sqlCommand.Parameters.AddWithValue("@Username", string.Empty);
+                    sqlCommand.Parameters.AddWithValue("@Password", string.Empty);
                     sqlCommand.Parameters.AddWithValue("@Fullname", cBox_Dev_EmpName.SelectedItem.ToString());
-                    sqlCommand.Parameters.AddWithValue("@User_Type", "");
-                    sqlCommand.Parameters.AddWithValue("@Employee_ID", "");
+                    sqlCommand.Parameters.AddWithValue("@User_Type", string.Empty);
+                    sqlCommand.Parameters.AddWithValue("@Employee_ID", string.Empty);
 
-                    string UserIdRead = "";
+                    string UserIdRead = string.Empty;
                     SqlDataReader reader = sqlCommand.ExecuteReader();
                     while (reader.Read())
                     {

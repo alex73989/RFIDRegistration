@@ -44,10 +44,10 @@ namespace RFIDRegistration
             chBox_FS_InvertTrue.Enabled= false;
             chBox_FS_InvertFalse.Enabled= false;
 
-            cBox_FS_TagSelectionMode.Text = "";
-            tBox_FS_BitAddress.Text = "";
-            tBox_FS_LenBit.Text = "";
-            tBox_FS_Data.Text = "";
+            cBox_FS_TagSelectionMode.Text = string.Empty;
+            tBox_FS_BitAddress.Text = string.Empty;
+            tBox_FS_LenBit.Text = string.Empty;
+            tBox_FS_Data.Text = string.Empty;
             chBox_FS_InvertTrue.Checked = false;
             chBox_FS_InvertFalse.Checked = false;
         }
@@ -73,12 +73,12 @@ namespace RFIDRegistration
 
             chBox_ART_EnableTagData.Checked = false;
             chBox_ART_DisableTagData.Checked = false;
-            cBox_ART_MemoryBankType.Text = "";
-            tBox_ART_StartAddr.Text = "";
-            tBox_ART_WordCount.Text = "";
+            cBox_ART_MemoryBankType.Text = string.Empty;
+            tBox_ART_StartAddr.Text = string.Empty;
+            tBox_ART_WordCount.Text = string.Empty;
             chBox_ART_EnableTagPassword.Checked = false;
             chBox_ART_DisableTagPassword.Checked = false;
-            tBox_ART_TagPassword.Text = "";
+            tBox_ART_TagPassword.Text = string.Empty;
         }
 
         public void ResetTR()
@@ -166,17 +166,17 @@ namespace RFIDRegistration
             chBox_TW_InvertFalse.Enabled = false;
 
 
-            cBox_TW_WriteOption.Text = "";
-            tBox_TW_Timeout.Text = "";
-            tBox_TW_WriteAddress.Text = "";
-            tBox_TW_WriteData.Text = "";
-            tBox_TW_LockMask.Text = "";
-            tBox_TW_LockAction.Text = "";
-            tBox_TW_Password.Text = "";
-            cBox_TW_TSOption.Text = "";
-            tBox_TW_TSStartAddress.Text = "";
-            tBox_TW_TSLenBit.Text = "";
-            tBox_TW_TSData.Text = "";
+            cBox_TW_WriteOption.Text = string.Empty;
+            tBox_TW_Timeout.Text = string.Empty;
+            tBox_TW_WriteAddress.Text = string.Empty;
+            tBox_TW_WriteData.Text = string.Empty;
+            tBox_TW_LockMask.Text = string.Empty;
+            tBox_TW_LockAction.Text = string.Empty;
+            tBox_TW_Password.Text = string.Empty;
+            cBox_TW_TSOption.Text = string.Empty;
+            tBox_TW_TSStartAddress.Text = string.Empty;
+            tBox_TW_TSLenBit.Text = string.Empty;
+            tBox_TW_TSData.Text = string.Empty;
             chBox_TW_InvertTrue.Checked = false;
             chBox_TW_InvertFalse.Checked = false;
         }
@@ -187,7 +187,7 @@ namespace RFIDRegistration
             chBox_TS_Disable.Checked= false;
 
             tBox_TS_RatePeriod.Enabled = false;
-            tBox_TS_RatePeriod.Text = "";
+            tBox_TS_RatePeriod.Text = string.Empty;
         }
 
         public void SetLogText(string GetText)
@@ -250,7 +250,7 @@ namespace RFIDRegistration
             else
             {
                 SetLogText("(Filter Settings) Unable to proceed the data with null, Please try again!");
-                tBox_Comm.Text = "";
+                tBox_Comm.Text = string.Empty;
             }
         }
 
@@ -277,7 +277,7 @@ namespace RFIDRegistration
                         else if (tBox_ART_TagPassword.Text == null)
                         {
                             SetLogText("(Auto Read Tag) Unable to proceed the data with null, Please try again!");
-                            tBox_Comm.Text = "";
+                            tBox_Comm.Text = string.Empty;
                         }
 
                     }
@@ -290,7 +290,7 @@ namespace RFIDRegistration
                     tBox_ART_WordCount.Text == null)
                 {
                     SetLogText("(Auto Read Tag) Unable to proceed the data with null, Please try again!");
-                    tBox_Comm.Text = "";
+                    tBox_Comm.Text = string.Empty;
                 }
             }
             else if (chBox_ART_EnableTagData.Checked == false && chBox_ART_DisableTagData.Checked == true)
@@ -376,7 +376,7 @@ namespace RFIDRegistration
                         else
                         {
                             SetLogText("(Tag Reading) Unable to proceed the data with null, Please try again!");
-                            tBox_Comm.Text = "";
+                            tBox_Comm.Text = string.Empty;
                         }
                     }
                     else if (cBox_TR_TSOption.Text == null)
@@ -387,13 +387,13 @@ namespace RFIDRegistration
                 else
                 {
                     SetLogText("(Tag Reading) Unable to proceed the data with null, Please try again!");
-                    tBox_Comm.Text = "";
+                    tBox_Comm.Text = string.Empty;
                 }
             }
             else
             {
                 SetLogText("(Tag Reading) Unable to proceed the data with null, Please try again!");
-                tBox_Comm.Text = "";
+                tBox_Comm.Text = string.Empty;
             }
         }
 
@@ -489,7 +489,7 @@ namespace RFIDRegistration
                         else
                         {
                             SetLogText("(Tag Writting) Unable to proceed the data with null, Please try again!");
-                            tBox_Comm.Text = "";
+                            tBox_Comm.Text = string.Empty;
                         }
 
                     }
@@ -501,13 +501,13 @@ namespace RFIDRegistration
                 else
                 {
                     SetLogText("(Tag Writting) Unable to proceed the data with null, Please try again!");
-                    tBox_Comm.Text = "";
+                    tBox_Comm.Text = string.Empty;
                 }
             }
             else
             {
                 SetLogText("(Tag Writting) Unable to proceed the data with null, Please try again!");
-                tBox_Comm.Text = "";
+                tBox_Comm.Text = string.Empty;
             }
         }
 
@@ -558,13 +558,13 @@ namespace RFIDRegistration
 
             if (chBox_ART_EnableTagData.Checked == false && chBox_ART_DisableTagData.Checked == true)
             {
-                cBox_ART_MemoryBankType.Text = "";
+                cBox_ART_MemoryBankType.Text = string.Empty;
                 cBox_ART_MemoryBankType.Enabled = false;
 
-                tBox_ART_StartAddr.Text = "";
+                tBox_ART_StartAddr.Text = string.Empty;
                 tBox_ART_StartAddr.Enabled = false;
 
-                tBox_ART_WordCount.Text = "";
+                tBox_ART_WordCount.Text = string.Empty;
                 tBox_ART_WordCount.Enabled = false;
 
                 chBox_ART_EnableTagPassword.Checked = false;
@@ -573,7 +573,7 @@ namespace RFIDRegistration
                 chBox_ART_DisableTagPassword.Checked = false;
                 chBox_ART_DisableTagPassword.Enabled = false;
 
-                tBox_ART_TagPassword.Text = "";
+                tBox_ART_TagPassword.Text = string.Empty;
                 tBox_ART_TagPassword.Enabled = false;
             }
         }
@@ -608,7 +608,7 @@ namespace RFIDRegistration
 
             if (chBox_ART_EnableTagPassword.Checked == false && chBox_ART_DisableTagPassword.Checked == true)
             {
-                tBox_ART_TagPassword.Text = "";
+                tBox_ART_TagPassword.Text = string.Empty;
                 tBox_ART_TagPassword.Enabled = false;
             }
         }

@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using RFIDRegistration.Models;
+using System;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using System.Data.SqlClient;
-using RFIDRegistration.Models;
+using System.Drawing;
+using System.Windows.Forms;
 
 namespace RFIDRegistration
 {
@@ -24,7 +19,7 @@ namespace RFIDRegistration
 
         private void btn_AddPart_Add_Click(object sender, EventArgs e)
         {
-            if (tBox_AddPart_PartNo.Text != "")
+            if (tBox_AddPart_PartNo.Text != string.Empty)
             {
                 sqlConnect.con.Open();
                 SqlCommand cmd = new SqlCommand("Select_RegTagList", sqlConnect.con)
@@ -41,7 +36,7 @@ namespace RFIDRegistration
 
                 cmd.ExecuteNonQuery();
                 int counter = (int)returnParameter.Value;
-                
+
                 if (counter == 1)
                 {
                     lbl_AddPart_Register.Show();
@@ -112,7 +107,7 @@ namespace RFIDRegistration
 
         public void ClearTxt()
         {
-            tBox_AddPart_PartNo.Text = "";
+            tBox_AddPart_PartNo.Text = string.Empty;
         }
     }
 }
